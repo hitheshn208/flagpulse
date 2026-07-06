@@ -14,3 +14,8 @@ WHERE environment_id=$1`, [environment_id]);
 
     return response.rows;
 }
+
+exports.getEnvId = async(sdkKey) =>{
+    const response = await db.query("SELECT id FROM environments WHERE sdk_key = $1", [sdkKey]);
+    return response.rows[0].id;
+}

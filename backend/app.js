@@ -12,6 +12,9 @@ const sdkRouter = require('./routes/sdk');
 const authRouter = require("./routes/auth");
 const projectRouter = require("./routes/projects");
 const envRouter = require("./routes/environments");
+const flagRouter = require("./routes/flags");
+const sseRouter = require("./services/sse");
+
 const {verifyUser} = require("./middleware/auth");
 const errorHandler = require("./middleware/errorHandler")
 
@@ -29,12 +32,20 @@ app.get("/protected", verifyUser, (req, res)=>{
 })
 
 //Routers
+app.use("/api/v1/stream", sseRouter);
 app.use("/api/v1",sdkRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/projects", verifyUser, projectRouter);
 app.use("/api/environments", verifyUser, envRouter);
+app.use("/api/flags", verifyUser, flagRouter);
 
 app.use(errorHandler);
+
+app.use((req, res)=>{
+    return res.status(404).json({
+        message: `Page not found for route ${req.path}`
+    })
+})
 
 const port = process.env.PORT;
 const serverStart = async ()=>{

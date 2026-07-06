@@ -1,25 +1,16 @@
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const path = require("path");
+const AppError = require("../utils/AppError");
 dotenv.config({path: path.join(__dirname, "../../.env")});
 
 exports.verifyUser = (req, res, next)=>{
-    try{
-        const token = req.cookies.token;
+    const token = req.cookies.token;
 
-        if(!token)
-            return res.status(401).json({
-                message: "No token provided"
-            })
+    if(!token)
+        throw new AppError("No token provided", 401);
 
-        const decode = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decode;
-        next();
-        
-    }catch(e){
-        console.log(e);
-        return res.status(401).json({
-            message: "Invalid token"
-        })
-    }
+    const decode = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decode;
+    next();
 }

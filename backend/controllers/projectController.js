@@ -1,5 +1,8 @@
 const {createProject, createDefaultEnvironments, getProjects, fetchAllEnvironments, insertEnvironment, insertFlag} = require("../model/projectModel");
+const {invalidateFlagValuesFromCache} = require("../model/flagCache");
 const AppError = require("../utils/AppError");
+const { insertAuditLog } = require("../model/auditLogModel");
+const { sendClient } = require("../services/sse");
 
 exports.getProjects = async (req, res)=>{
     const owner_id = req.user.id;
@@ -64,7 +67,14 @@ exports.createFlag = async (req, res)=>{
     if(!key || !name || !type || !default_value)
         throw new AppError("Information missing", 404);
 
-    await insertFlag(projectId, key, name, type, default_value);
+    const validTypes = ['boolean', 'string', 'number', 'json']
+    if (!validTypes.includes(type))
+        throw new AppError("Invalid flag type", 400)
+
+    const {flag_id, envIds} = await insertFlag(projectId, key, name, type, default_value);
+    await invalidateFlagValuesFromCache(envIds);
+    await insertAuditLog(flag_id, envIds, req.user.id, "New flag added", null, null, null, "create");
+    await Promise.all(envIds.map(id=> sendClient(id.environment_id, {type: "flag_created", flag_id})));
     return res.status(201).json({
         message: "Flag created"
     })

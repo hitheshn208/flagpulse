@@ -1,5 +1,5 @@
 const {getFlags, getFlagsFromDb} = require("../model/sdkModel");
-const {getFlagsFromCache, setFlagValuesToCache} = require("../model/sdkCache");
+const {getFlagsFromCache, setFlagValuesToCache} = require("../model/flagCache");
 
 exports.fetchFlags = async (req, res)=>{
     const sdkKey = req.get("x-sdk-key");

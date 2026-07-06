@@ -29,15 +29,25 @@ exports.insertEnvironment = async (name, slug, projectId) =>{
 }
 
 exports.insertFlag = async (projectId, key, name, type, defaultValue)=>{
-    //! Violates referential integrity Constraint if Env id id sent instead if project Id and server crashes
-    const project = await db.query("SELECT * FROM projects WHERE id = $1", [projectId]);
-    if(project.rows.length === 0)
-        throw new AppError("No project found", 404);
+    // ! Violates referential integrity Constraint if Env id id sent instead if project Id and server crashes
+    try{
+        const project = await db.query("SELECT * FROM projects WHERE id = $1", [projectId]);
+        if(project.rows.length === 0)
+            throw new AppError("No project found", 404);
 
-    const response = await db.query("INSERT INTO flags (project_id, key, name, type) VALUES ($1, $2, $3, $4) RETURNING id", [projectId, key, name, type]);
-    const flag_id = response.rows[0].id;
-    await db.query(`INSERT INTO flag_values (flag_id, environment_id, default_value)
-                    SELECT $1, id, $2
-                    FROM environments
-                    WHERE project_id = $3`, [flag_id, defaultValue, projectId]);    
+        const response = await db.query("INSERT INTO flags (project_id, key, name, type) VALUES ($1, $2, $3, $4) RETURNING id", [projectId, key, name, type]);
+        const flag_id = response.rows[0].id;
+        const evnIds = await db.query(`INSERT INTO flag_values (flag_id, environment_id, default_value)
+                        SELECT $1, id, $2
+                        FROM environments
+                        WHERE project_id = $3 RETURNING environment_id`, [flag_id, defaultValue, projectId]);    
+        return {flag_id, envIds: evnIds.rows};
+    }catch (err){
+        if(err.code === "23514")
+            throw new AppError("Invalid flag type", 400);
+        else if(err.code === "23505")
+            throw new AppError("Flag key already exists", 400)
+        else
+            throw err;
+    }
 }
