@@ -5,3 +5,11 @@ exports.changeKey = async (envId)=>{
     console.log(response.rows);
     return response.rows[0];
 }
+
+exports.fetchAllFlags = async (envId)=>{
+    const response = await db.query(`SELECT f.name, f.key, f.type, fv.is_enabled, fv.default_value, fv.rollout_percentage, fv.targeting_attribute, fv.targeting_value, fv.targeting_return_value
+        FROM flag_values fv
+        JOIN flags f ON f.id = fv.flag_id
+        WHERE fv.environment_id = $1`, [envId]);
+    return response.rows;
+}

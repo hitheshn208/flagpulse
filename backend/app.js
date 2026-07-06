@@ -12,11 +12,16 @@ const sdkRouter = require('./routes/sdk');
 const authRouter = require("./routes/auth");
 const projectRouter = require("./routes/projects");
 const envRouter = require("./routes/environments");
-const {verifyUser} = require("./middleware/auth")
+const {verifyUser} = require("./middleware/auth");
+const errorHandler = require("./middleware/errorHandler")
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser())
+app.use((req, res, next)=>{
+    console.log(req.method, req.path);
+    next();
+})
 
 //Test
 app.get("/protected", verifyUser, (req, res)=>{
@@ -28,6 +33,8 @@ app.use("/api/v1",sdkRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/projects", verifyUser, projectRouter);
 app.use("/api/environments", verifyUser, envRouter);
+
+app.use(errorHandler);
 
 const port = process.env.PORT;
 const serverStart = async ()=>{
