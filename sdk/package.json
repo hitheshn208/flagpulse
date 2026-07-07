@@ -1,0 +1,12 @@
+{
+  "name": "flagbase-sdk",
+  "version": "1.0.0",
+  "description": "Lightweight feature flag SDK for Flagbase - self-hostable feature flag platform",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
