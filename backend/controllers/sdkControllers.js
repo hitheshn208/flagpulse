@@ -24,12 +24,8 @@ exports.fetchFlags = async (req, res)=>{
             console.log("Cache miss");
         }else
             console.log("Cache hit");
-            
-        console.log("Flags ", flags);
         
-        return res.json({
-            flags
-        })
+        return res.json(flags);
     }catch(e){
         console.log(e);
         return res.status(500).json({

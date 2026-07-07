@@ -18,13 +18,14 @@ exports.editFlagValue = async (req, res) => {
     const { is_enabled, default_value, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value, reason } = req.body;
 
     const response = await changeFlagValue({flagId, envId, is_enabled, default_value, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value});
-    await invalidateFlagValuesFromCache(envId);
+    await invalidateFlagValuesFromCache(envId);//^Invalidate from cache
     
     const old_value = JSON.stringify(response.old.rows[0]);
     const new_value = JSON.stringify(response.new.rows[0]);
 
-    await insertAuditLog(flagId, envId, req.user.id, "Flag value changed", old_value, new_value, reason ? reason : null, "update");
-    await sendClient(envId, { type: "flag_updated", ...response.new.rows[0] } );
+    await insertAuditLog(flagId, envId, req.user.id, "Flag value changed", old_value, new_value, reason ? reason : null, "update"); //^Log the changes
+    console.log("Sending SSE event to:", envId)
+    await sendClient(envId, { type: "flag_updated", ...response.new.rows[0] } ); //^Send edited flags
     return res.json(response.new.rows);
 }
 
@@ -36,10 +37,10 @@ exports.deleteFlag = async (req, res)=>{
         throw new AppError("Invalid flag id", 400);
 
     const envIds = await removeFlag(flagId);
-    await invalidateFlagValuesFromCache(envIds);
-    await insertAuditLog(flagId, envIds, req.user.id, "Flag deleted", null, null, null, "delete");
+    await invalidateFlagValuesFromCache(envIds);//^Invalidate in cache
+    await insertAuditLog(flagId, envIds, req.user.id, "Flag deleted", null, null, null, "delete");//^add to Log
     
-    await Promise.all(envIds.map(id=> sendClient(id.environment_id, {type: "flag_deleted", flag_id: flagId})));
+    await Promise.all(envIds.map(id=> sendClient(id.environment_id, {type: "flag_deleted", flag_id: flagId})));//^Send event to all evnironments associated to the flag
 
     return res.json({
         success: true,

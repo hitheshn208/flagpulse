@@ -72,11 +72,10 @@ exports.createFlag = async (req, res)=>{
         throw new AppError("Invalid flag type", 400)
 
     const {flag_id, envIds} = await insertFlag(projectId, key, name, type, default_value);
-    await invalidateFlagValuesFromCache(envIds);
-    await insertAuditLog(flag_id, envIds, req.user.id, "New flag added", null, null, null, "create");
-    await Promise.all(envIds.map(id=> sendClient(id.environment_id, {type: "flag_created", flag_id})));
+    await invalidateFlagValuesFromCache(envIds);//^Invalidate in cache
+    await insertAuditLog(flag_id, envIds, req.user.id, "New flag added", null, null, null, "create"); //^Log creation
+    await Promise.all(envIds.map(id=> sendClient(id.environment_id, {type: "flag_created", flag_id}))); //^Send event
     return res.status(201).json({
         message: "Flag created"
-    })
-    ;
+    });
 }

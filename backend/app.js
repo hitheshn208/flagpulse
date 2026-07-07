@@ -4,6 +4,7 @@ const express = require('express');
 const cookieParser = require("cookie-parser") ;
 const dotenv = require('dotenv');
 dotenv.config({path: path.join(__dirname, "../.env")});
+const cors = require("cors");
 
 
 const redisClient = require("./config/redis");
@@ -13,14 +14,15 @@ const authRouter = require("./routes/auth");
 const projectRouter = require("./routes/projects");
 const envRouter = require("./routes/environments");
 const flagRouter = require("./routes/flags");
-const sseRouter = require("./services/sse");
+const sseRouter = require("./routes/sse");
 
 const {verifyUser} = require("./middleware/auth");
 const errorHandler = require("./middleware/errorHandler")
 
 const app = express();
 app.use(express.json());
-app.use(cookieParser())
+app.use(cors({ origin: true }));
+app.use(cookieParser());
 app.use((req, res, next)=>{
     console.log(req.method, req.path);
     next();
