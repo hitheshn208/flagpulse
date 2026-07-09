@@ -1,0 +1,83 @@
+.page{
+    display: flex;
+    height:100vh;
+    background-color: #18191b;
+}
+
+.project-info-content{
+    width: 100%;
+    padding: 28px 32px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.environments-page{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+}
+
+.environments-header{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.environments-title{
+    margin: 0;
+    color: #f8fafc;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.environments-caption{
+    margin: 6px 0 0;
+    color: #a1a1aa;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.new-environment-button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 0 18px;
+    border: 1px solid #474a4f;
+    border-radius: 14px;
+    background: #202124;
+    color: #f3f4f6;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.new-environment-button:hover{
+    background: #26282b;
+    border-color: #5a5d62;
+}
+
+.new-environment-button:active{
+    transform: translateY(1px);
+}
+
+.new-environment-button .material-symbols-outlined{
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.environments-list{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 350px);
+    gap: 10px;
+    justify-items: center;
+}

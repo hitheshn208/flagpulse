@@ -20,8 +20,16 @@ exports.getProjects = async (owner_id)=>{
 }
 
 exports.fetchAllEnvironments = async (projectId) =>{
-    const response = await db.query("SELECT id, name, slug, sdk_key, created_at FROM environments WHERE project_id = $1", [projectId]);
-    return response.rows;
+    const response = await db.query(`SELECT e.id, e.name, e.slug, e.sdk_key, e.created_at, e.icon, COUNT(fv.flag_id) as total_flags
+        FROM environments e
+        JOIN flag_values fv ON fv.environment_id = e.id
+        WHERE project_id = $1
+        GROUP BY e.id`, [projectId]);
+
+    const project = await db.query("SELECT id, name, slug, created_at FROM projects WHERE id = $1", [projectId])
+    if(project.rows.length === 0)
+        throw new AppError("Project Not found", 400);
+    return {project: project.rows[0], environments: response.rows};
 }
 
 exports.insertEnvironment = async (name, slug, projectId) =>{

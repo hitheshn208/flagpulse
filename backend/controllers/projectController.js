@@ -30,11 +30,11 @@ exports.getProjectEnvironments = async (req, res)=>{
     if (!uuidRegex.test(projectId))
         throw new AppError("Invalid Project Id", 400)
 
-    const environments = await fetchAllEnvironments(projectId);
+    const {project, environments} = await fetchAllEnvironments(projectId);
     if(environments.length === 0) 
         throw new AppError("No environments for this project", 404)
 
-    return res.json(environments);
+    return res.json({project, environments});
 }
 
 exports.createProjectEnvironments = async (req, res)=>{

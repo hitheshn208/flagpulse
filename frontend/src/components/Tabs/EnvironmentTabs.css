@@ -1,0 +1,80 @@
+.capsule_container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    background: #18191b;
+    /* border-bottom: 1px solid #2a2c2f; */
+    width:100%;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.capsule_group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.capsule {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 16px;
+    border: 1px solid #474a4f;
+    border-radius: 12px;
+    background: #202124;
+    color: #f3f4f6;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1;
+    width:fit-content
+}
+
+.capsule span{
+    margin-right: 5px;
+    font-weight: 400;
+    font-size: 1.2rem;
+    /* color: white; */
+}
+
+.new_flag_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 38px;
+    padding: 0 18px;
+    border: 1px solid #474a4f;
+    border-radius: 12px;
+    background: #202124;
+    color: #f3f4f6;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    width:9rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.new_flag_button:hover {
+    background: #26282b;
+    border-color: #5a5d62;
+}
+
+.new_flag_button:active {
+    transform: translateY(1px);
+}
+
+.new_flag_icon {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.capsule_active{
+    background-color: white;
+    color: black;
+}

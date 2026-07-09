@@ -30,3 +30,9 @@ exports.removeFlag = async (flagId) => {
         throw new AppError("Flag not found", 404);
     return envIds.rows;
 }
+exports.changeFlagStatus = async ({flagId, envId, is_enabled})=>{
+    const response = await db.query("UPDATE flag_values SET is_enabled = $1 WHERE flag_id = $2 AND environment_id = $3 RETURNING flag_id, environment_id, is_enabled", [is_enabled, flagId, envId])
+    if(response.rows.length === 0)
+        throw new AppError("Unable to change the flag value", 404);
+    return response.rows[0];
+}

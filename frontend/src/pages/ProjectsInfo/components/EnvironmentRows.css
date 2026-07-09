@@ -1,0 +1,165 @@
+button:disabled{
+    opacity:0.5;
+}
+
+
+.env-card{
+    width:300px;
+    height:fit-content;
+    background-color: rgb(36, 36, 36);
+    display: flex;
+    flex-direction: column;
+    color:white;
+    font-family: "Google Sans", sans-serif;
+    gap:10px;
+    padding:20px;
+    border-radius: 5px;
+    border-top: 3px solid #22c55e;
+}
+
+button{
+    font-family: "Google Sans", sans-serif;
+
+}
+
+.env-name{
+    padding-block: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-bottom: 1px rgb(80, 80, 80) solid;
+    display: flex;
+    align-items: center;
+    gap:10px
+}
+
+.sdk-key-heading{
+    font-size: small;
+    color: rgb(124, 124, 124);
+    font-weight: 500;
+}
+
+.sdk-key-container{
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+    overflow: hidden;
+    padding: 0 8px;
+    background-color: rgba(0, 0, 0, 0);
+    align-items: center;
+    gap: 5px;
+}
+
+.sdk-key-icon{
+    font-size: 18px;
+    color:#7f7f7f;
+}
+
+.sdk-key{
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0);
+    /* padding:8px; */
+}
+
+.copy-btn{
+    background-color: rgba(0, 0, 0, 0);
+    border:rgb(73, 72, 72) 1px solid;
+    /* border:none; */
+    cursor:pointer;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:4px;
+    border-radius: 5px;
+}
+
+.copy-icon{
+    color:white;
+    font-size: 18px;
+}
+
+.flags{
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: rgb(177, 177, 177);
+    margin-block:5px
+}
+
+.regenerate-key-btn{
+    background-color: transparent;
+    outline: none;
+    border: 1px rgb(255, 131, 131) solid;
+    padding:8px;
+    color: rgb(255, 131, 131);
+    border-radius: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.regenerate-key-btn span{
+    font-size: 18px;
+}
+
+.regenerate-key-btn:hover{
+    background-color: rgb(52, 52, 52);
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 300px);
+    gap: 10px;
+    justify-items: center;
+}
+
+.border-top-green{
+    border-top: 3px solid #22c55e;
+}
+
+.border-top-blue{
+    border-top: 3px solid #3b82f6;
+}
+
+.border-top-purple{
+    border-top: 3px solid #a855f7;
+}
+
+.border-top-orange{
+    border-top: 3px solid #f59e0b;
+}
+
+.border-top-cyan{
+    border-top: 3px solid #06b6d4;
+}
+
+.border-top-pink{
+    border-top: 3px solid #ec4899;
+}
+
+.border-top-red{
+    border-top: 3px solid #ef4444;
+}
+
+.border-top-yellow{
+    border-top: 3px solid #eab308;
+}
+
+.border-top-indigo{
+    border-top: 3px solid #6366f1;
+}
+
+.border-top-teal{
+    border-top: 3px solid #14b8a6;
+}
+
+.border-top-emerald{
+    border-top: 3px solid #10b981;
+}
+
+.border-top-rose{
+    border-top: 3px solid #f43f5e;
+}
