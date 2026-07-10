@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
-const Loader = () => {
+const Loader = (prop) => {
   return (
     <StyledWrapper>
       <svg viewBox="0 0 16 16" height={48} width={48} className="windows-loading-spinner">
-        <circle r="5px" cy="8px" cx="8px" />
+        <circle r={`${prop.r}px`} cy={`${prop.cy}px`} cx={`${prop.cx}px`} />
       </svg>
     </StyledWrapper>
   );

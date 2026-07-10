@@ -43,17 +43,17 @@ exports.createProjectEnvironments = async (req, res)=>{
     if (!uuidRegex.test(projectId))
         throw new AppError("Invalid project Id", 400);
 
-    const {name} = req.body;
+    const {name, icon} = req.body;
     if(!name)
         throw new AppError("Environment name required", 400);
     
     const slug = name.toLowerCase().replace(/\s+/g, "-");
 
-    await insertEnvironment(name, slug, projectId);
+    const {environment, flags} = await insertEnvironment(name, slug, projectId, icon);
     return res.status(201).json({
-        message: "Enviroment added"
-    })
-    ;
+        environment, 
+        flags
+    });
 }
 
 exports.createFlag = async (req, res)=>{

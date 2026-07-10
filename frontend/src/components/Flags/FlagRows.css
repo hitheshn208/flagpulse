@@ -14,7 +14,7 @@
 .flag_table_header,
 .flag_row {
     display: grid;
-    grid-template-columns: minmax(0, 2.4fr) minmax(92px, 0.8fr) minmax(110px, 0.9fr) minmax(88px, 0.6fr);
+    grid-template-columns: minmax(0, 1.5fr) minmax(92px, 1.4fr) minmax(110px, 0.9fr) minmax(88px, 0.6fr);
     column-gap: 16px;
     align-items: center;
 }
@@ -86,6 +86,55 @@
     line-height: 1.2;
 }
 
+.flag_table_cell_type {
+    justify-content: center;
+}
+
+.flag_type_badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    color: #f8fafc;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.flag_type_badge_boolean {
+    background: rgba(14, 165, 233, 0.18);
+    border-color: rgba(14, 165, 233, 0.3);
+    color: #7dd3fc;
+}
+
+.flag_type_badge_string {
+    background: rgba(168, 85, 247, 0.16);
+    border-color: rgba(168, 85, 247, 0.28);
+    color: #d8b4fe;
+}
+
+.flag_type_badge_number {
+    background: rgba(245, 158, 11, 0.16);
+    border-color: rgba(245, 158, 11, 0.28);
+    color: #fbbf24;
+}
+
+.flag_type_badge_json {
+    background: rgba(34, 197, 94, 0.14);
+    border-color: rgba(34, 197, 94, 0.26);
+    color: #86efac;
+}
+
+.flag_type_badge_unknown {
+    background: rgba(148, 163, 184, 0.14);
+    border-color: rgba(148, 163, 184, 0.24);
+    color: #cbd5e1;
+}
+
 .flag_table_cell_updated {
     color: #a6abb2;
     font-weight: 500;
@@ -141,6 +190,12 @@
     .flag_table_cell_type,
     .flag_table_cell_updated {
         font-size: 13px;
+    }
+
+    .flag_type_badge {
+        min-width: 0;
+        padding: 5px 10px;
+        font-size: 11px;
     }
 
     .flag_table_header {

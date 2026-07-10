@@ -15,9 +15,9 @@ exports.editFlagValue = async (req, res) => {
     if (!uuidRegex.test(envId))
         throw new AppError("Invalid environment id", 400);
 
-    const { is_enabled, default_value, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value, reason } = req.body;
+    const { is_enabled, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value, reason } = req.body;
 
-    const response = await changeFlagValue({flagId, envId, is_enabled, default_value, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value});
+    const response = await changeFlagValue({flagId, envId, is_enabled, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value});
     await invalidateFlagValuesFromCache(envId);//^Invalidate from cache
     
     const old_value = JSON.stringify(response.old.rows[0]);
@@ -73,5 +73,7 @@ exports.toggleFlag = async (req, res) => {
 
     const {is_enabled} = req.body;
     const response = await changeFlagStatus({envId, flagId, is_enabled});
+    await invalidateFlagValuesFromCache(envId);
+    await sendClient(envId, { type: "flag_updated", ...response } );
     return res.json(response);
 }

@@ -3,6 +3,9 @@ import "./EnvironmentRows.css";
 
 function EnvironmentRows(prop) {
     const [disabled, setDisabled] = useState(false);
+    const clientCount = Number(prop.clientCount) || 0;
+    const hasClients = clientCount > 0;
+
     const maskSdkKey = (sdkKey) => {
         if (!sdkKey) {
             return "";
@@ -31,6 +34,12 @@ function EnvironmentRows(prop) {
         <>        
             <div className={`env-card border-top-${borderTopColors[prop.index % borderTopColors.length]}`}>
                 <div className="env-name"> <span className="material-symbols-outlined">{prop.icon}</span> {prop.name}</div>
+                <div className={hasClients ? "client-status client-status-active" : "client-status client-status-inactive"}>
+                    <span className="client-status-dot" />
+                    <span className="client-status-text">
+                        {hasClients ? `${clientCount} clients connected` : "No clients connected"}
+                    </span>
+                </div>
                 <div className="sdk-key-heading">SDK key</div>
                 <div className="sdk-key-container">
                     <span className="material-symbols-outlined sdk-key-icon">vpn_key</span>

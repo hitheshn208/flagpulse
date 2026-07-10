@@ -5,6 +5,14 @@ function FlagRows({ flag, onToggle }) {
     
     const [referenceTime] = useState(() => Date.now());
 
+    const formatFlagType = (value) => {
+        if (!value) {
+            return "-";
+        }
+
+        return String(value).toLowerCase();
+    };
+
     const formatUpdatedAt = (value) => {
         if (!value) {
             return "-";
@@ -54,7 +62,7 @@ function FlagRows({ flag, onToggle }) {
     const handleToggleButton = async (flag, isEnabled) => {
         try{
             setRowDisabled(true);
-            const response = await onToggle?.(flag.id, !isEnabled);
+            const response = await onToggle?.(flag, !isEnabled);
             flag.is_enabled = response.is_enabled;
             setIsEnabled(response.is_enabled);
         }catch(e){
@@ -66,7 +74,9 @@ function FlagRows({ flag, onToggle }) {
     const key = flag.id ?? flag.key ?? flag.slug;
     const [isEnabled, setIsEnabled] = useState(flag.is_enabled);
     const flagKey = flag.key ?? "-";
+    const flagType = formatFlagType(flag.type);
     const updatedAt = formatUpdatedAt(flag.updated_at);
+    const flagTypeClass = flagType !== "-" ? `flag_type_badge flag_type_badge_${flagType}` : "flag_type_badge flag_type_badge_unknown";
 
     const [rowDisabled, setRowDisabled] = useState(false);
 
@@ -77,7 +87,9 @@ function FlagRows({ flag, onToggle }) {
                 <code className="flag_key">{flagKey}</code>
             </div>
 
-            <div className="flag_table_cell flag_table_cell_type">{flag.type ?? "-"}</div>
+            <div className="flag_table_cell flag_table_cell_type">
+                <span className={flagTypeClass}>{flagType}</span>
+            </div>
 
             <div className="flag_table_cell flag_table_cell_updated">{updatedAt}</div>
 

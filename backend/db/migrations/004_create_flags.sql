@@ -4,6 +4,6 @@ CREATE TABLE flags (
   key VARCHAR(255) NOT NULL,
   name VARCHAR(255) NOT NULL,
   type VARCHAR(50) NOT NULL CHECK (type IN ('boolean', 'string', 'number', 'json')),
-  created_at TIMESTAMP DEFAULT NOW(),
+  created_at TIMESTAMPTZ  DEFAULT NOW(),
   UNIQUE(project_id, key)
 );

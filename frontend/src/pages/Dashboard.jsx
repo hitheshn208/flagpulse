@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProjects } from "../services/dashboard.service";
+import { getProjects } from "../services/project.service.js";
 import ProjectCard from "../components/Cards/ProjectCard";
 
 function Dashboard() {

@@ -22,7 +22,7 @@ const errorHandler = require("./middleware/errorHandler")
 const app = express();
 app.use(express.json());
 app.use(cors({ 
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "http://127.0.0.1:5500", "http://127.0.0.1:5501"],
     credentials: true }));
 app.use(cookieParser());
 app.use((req, res, next)=>{

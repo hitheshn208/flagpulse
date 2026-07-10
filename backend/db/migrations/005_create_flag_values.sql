@@ -8,6 +8,6 @@ CREATE TABLE flag_values (
   targeting_attribute VARCHAR(255),
   targeting_value TEXT,
   targeting_return_value TEXT,
-  updated_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMPTZ  DEFAULT NOW(),
   UNIQUE(flag_id, environment_id)
 );
