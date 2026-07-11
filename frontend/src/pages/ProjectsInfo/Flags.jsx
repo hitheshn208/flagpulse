@@ -3,18 +3,22 @@ import FlagRows from "../../components/Flags/FlagRows";
 import EnvironmentTabs from "../../components/Tabs/EnvironmentTabs";
 import { toggleFlagValue } from "../../services/flags.service";
 import "./Flags.css";
+import NewFlagModal from "./components/NewFlagModal";
 
 function Flags({
+    projectId,
     active,
     environments,
     flags,
     onEnvironmentChange,
+    fetchFlags
 }) {
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
+    const [isnewFlagModalEnabled, setNewFlagModal] = useState(false);
 
     const environmentKey = active?.id ?? active?.name ?? "environment";
-
+    
     const counts = useMemo(() => ({
         all: flags.length,
         enabled: flags.filter(flag => flag.is_enabled).length,
@@ -49,6 +53,7 @@ function Flags({
                 environments={environments}
                 active={active?.name}
                 onEnvironmentChange={onEnvironmentChange}
+                setNewFlagModal={setNewFlagModal}
             />
 
             <div className="flags_toolbar">
@@ -111,6 +116,8 @@ function Flags({
                 ))}
 
             </div>
+
+            {isnewFlagModalEnabled && <NewFlagModal projectId={projectId} setNewFlagModal={setNewFlagModal} environments={environments} fetchFlags={fetchFlags}/>}
         </>
     );
 }

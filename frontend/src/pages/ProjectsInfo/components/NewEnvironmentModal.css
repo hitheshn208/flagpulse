@@ -50,6 +50,15 @@
 	margin-bottom: 22px;
 }
 
+.new-environment-modal__description {
+	max-width: 330px;
+	margin-top: 8px;
+	color: #beb9af;
+	font-size: 17px;
+	line-height: 1.15;
+	font-weight: 600;
+}
+
 .new-environment-modal__title {
 	margin: 0;
 	color: #ffffff;
@@ -59,14 +68,7 @@
 	letter-spacing: -0.03em;
 }
 
-.new-environment-modal__description {
-	max-width: 330px;
-	margin-top: 8px;
-	color: #beb9af;
-	font-size: 17px;
-	line-height: 1.15;
-	font-weight: 600;
-}
+
 
 .new-environment-modal__close {
 	display: inline-flex;

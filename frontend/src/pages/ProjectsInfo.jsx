@@ -8,6 +8,7 @@ import Environments from "./ProjectsInfo/Environments";
 import AuditLogs from "./ProjectsInfo/AuditLogs";
 function ProjectsInfo() {
     const { projectId } = useParams();
+    
     // eslint-disable-next-line no-unused-vars
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("environments");
@@ -84,8 +85,10 @@ function ProjectsInfo() {
                 {activeTab === "flags" ? (
                     <Flags
                         environments={environments}
+                        projectId={projectId}
                         active={activeEnvironment}
                         onEnvironmentChange={handleEnvironmentChange}
+                        fetchFlags={fetchFlags}
                         flags={flagsByEnv[activeEnvironment?.id] ?? []}
                     />
                 ) : activeTab === "environments" ? (

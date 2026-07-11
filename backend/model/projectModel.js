@@ -49,8 +49,8 @@ exports.insertEnvironment = async (name, slug, projectId, icon) => {
         const environment = envResult.rows[0];
 
         await client.query(
-            `INSERT INTO flag_values (flag_id, environment_id, is_enabled)
-            SELECT id, $1, false
+            `INSERT INTO flag_values (flag_id, environment_id, is_enabled, targeting_return_value)
+            SELECT id, $1, false, default_value
             FROM flags
             WHERE project_id = $2`,
         [environment.id, projectId]
@@ -74,26 +74,37 @@ exports.insertEnvironment = async (name, slug, projectId, icon) => {
         client.release();
     }
 };
-exports.insertFlag = async (projectId, key, name, type, defaultValue)=>{
-    // ! Violates referential integrity Constraint if Env id id sent instead if project Id and server crashes
-    try{
+
+exports.insertFlag = async (projectId, key, name, type, defaultValue, description) => {
+    try {
         const project = await db.query("SELECT * FROM projects WHERE id = $1", [projectId]);
-        if(project.rows.length === 0)
+        if (project.rows.length === 0)
             throw new AppError("No project found", 404);
 
-        const response = await db.query("INSERT INTO flags (project_id, key, name, type, default_value) VALUES ($1, $2, $3, $4, $5) RETURNING id", [projectId, key, name, type, defaultValue]);
+        const serializedDefault = JSON.stringify(defaultValue);
+
+        const response = await db.query(
+            "INSERT INTO flags (project_id, key, name, type, default_value, description) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
+            [projectId, key, name, type, serializedDefault, description]
+        );
         const flag_id = response.rows[0].id;
-        const evnIds = await db.query(`INSERT INTO flag_values (flag_id, environment_id)
-                        SELECT $1, id
-                        FROM environments
-                        WHERE project_id = $2 RETURNING environment_id`, [flag_id, projectId]);    
-        return {flag_id, envIds: evnIds.rows};
-    }catch (err){
-        if(err.code === "23514")
+
+        const envIds = await db.query(
+            `INSERT INTO flag_values (flag_id, environment_id, targeting_return_value)
+            SELECT $1, id, $3
+            FROM environments
+            WHERE project_id = $2
+            RETURNING environment_id`,
+            [flag_id, projectId, serializedDefault]
+        );
+
+        return { flag_id, envIds: envIds.rows };
+    } catch (err) {
+        if (err.code === "23514")
             throw new AppError("Invalid flag type", 400);
-        else if(err.code === "23505")
-            throw new AppError("Flag key already exists", 400)
+        else if (err.code === "23505")
+            throw new AppError("Flag key already exists", 400);
         else
             throw err;
     }
-}
+};

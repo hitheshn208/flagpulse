@@ -11,7 +11,8 @@ function EnvironmentTabs(props) {
                     </div>
                 ))}
             </div>
-            <button type="button" className="new_flag_button">
+            <button type="button" className="new_flag_button"
+            onClick={()=> props.setNewFlagModal(true)}>
                 <span className="new_flag_icon">+</span>
                 New flag
             </button>

@@ -10,3 +10,8 @@ export async function createEnvironments(projectId, data){
     console.log(response.data)
     return response.data;
 }
+
+export async function createFlag(data){
+    const response = await api.post(`/api/projects/${data.projectId}/flags`, data);
+    return response.data;
+}

@@ -62,16 +62,16 @@ exports.createFlag = async (req, res)=>{
     if (!uuidRegex.test(projectId))
         throw new AppError("Invalid project Id", 400);
     
-    const {key, name, type, default_value} = req.body;
-    console.log(key, name, type, default_value);
-    if(!key || !name || !type || !default_value)
+    const {key, name, type, value, description} = req.body;
+    console.log(key, name, type, value, description);
+    if(!key || !name || !type || !value)
         throw new AppError("Information missing", 404);
 
     const validTypes = ['boolean', 'string', 'number', 'json']
     if (!validTypes.includes(type))
         throw new AppError("Invalid flag type", 400)
 
-    const {flag_id, envIds} = await insertFlag(projectId, key, name, type, default_value);
+    const {flag_id, envIds} = await insertFlag(projectId, key, name, type, value, description);
     await invalidateFlagValuesFromCache(envIds);//^Invalidate in cache
     await insertAuditLog(flag_id, envIds, req.user.id, "New flag added", null, null, null, "create"); //^Log creation
     await Promise.all(envIds.map(id=> sendClient(id.environment_id, {type: "flag_created", flag_id}))); //^Send event
