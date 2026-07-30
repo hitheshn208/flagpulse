@@ -24,8 +24,9 @@ exports.removeClient = async (envId, res)=>{
 
 exports.sendClient = async (envId, data) => {
     const envClients = connections.get(envId);
-    if(!envClients)
+    if(!envClients){
         return;
+    }
     envClients.forEach(res => {
         res.write(`data: ${JSON.stringify(data)}\n\n`)
     });

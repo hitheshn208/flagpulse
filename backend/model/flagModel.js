@@ -9,6 +9,9 @@ exports.changeFlagValue = async ({is_enabled,  rollout_percentage, targeting_att
     if(response.old.rows.length === 0)
         throw new AppError("Flag not found", 404);
 
+    if(typeof targeting_return_value === 'string')
+        targeting_return_value = JSON.stringify(targeting_return_value);
+
     response["new"] = await db.query(`UPDATE flag_values SET 
         is_enabled = $1,
         rollout_percentage = $2,
@@ -23,16 +26,20 @@ exports.changeFlagValue = async ({is_enabled,  rollout_percentage, targeting_att
 }
 
 exports.removeFlag = async (flagId) => {
-    const envIds = await db.query("SELECT environment_id FROM flag_values WHERE flag_id = $1", [flagId])
     const response = await db.query("DELETE FROM flags where id = $1 RETURNING id", [flagId]);
     if(response.rows.length === 0)
         throw new AppError("Flag not found", 404);
-    return envIds.rows;
 }
+
 exports.changeFlagStatus = async ({flagId, envId, is_enabled})=>{
     const response = await db.query(`UPDATE flag_values SET is_enabled = $1, updated_at = NOW() WHERE flag_id = $2 AND environment_id = $3 
-        RETURNING flag_id, environment_id, is_enabled, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value`, [is_enabled, flagId, envId])
+        RETURNING flag_id, is_enabled, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value`, [is_enabled, flagId, envId])
     if(response.rows.length === 0)
         throw new AppError("Unable to change the flag value", 404);
     return response.rows[0];
+}
+
+exports.getEnvIdsOfFlags = async (flagId)=>{
+    const envIds = await db.query("SELECT environment_id FROM flag_values WHERE flag_id = $1", [flagId])
+    return envIds.rows;
 }

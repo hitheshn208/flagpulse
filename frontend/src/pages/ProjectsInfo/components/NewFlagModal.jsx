@@ -3,6 +3,7 @@ import "./NewFlagModal.css"
 import Loader from "../../../components/Loaders/Loader";
 import FlagTypeSettings from "./FlagTypeSettings";
 import { createFlag } from "../../../services/project.service";
+import { Notify } from "../../../components/Toasts/Toast";
 
 function NewFlagModal({setNewFlagModal, projectId, environments = [], fetchFlags}) {
     const [flagName, setflagName] = useState("");
@@ -30,15 +31,18 @@ function NewFlagModal({setNewFlagModal, projectId, environments = [], fetchFlags
             type: flagType.toLocaleLowerCase(),
             value
         }
-        console.log(data);
         try {
             await createFlag(data);
             environments.forEach(env => {
                 fetchFlags(env.id);
             });
-            
-        } catch (error) {
-            console.log(error);
+            Notify("success", "Flag created successfully");
+        } catch (e) {
+            if (e.response) {
+                Notify("error", e.response.data.message)
+            } else {
+                Notify("error", "Failed to create flag.");
+            }
         }finally{
             setflagName("");
             setValue(null);

@@ -7,19 +7,22 @@ const {findUserByEmail, createUser} = require("../model/authModel")
 const AppError = require("../utils/AppError");
 
 exports.registerUser = async (req, res)=>{
-    const {email, password} = req.body;
+    const {name, email, password, confirmPassword} = req.body;
     
-    if(!email || !password)
-        throw new AppError("Invalid credentials", 400)
+    if(!email || !password || !confirmPassword || !name)
+        throw new AppError("Invalid credentials", 404);
 
 
     const isRegistered = await findUserByEmail(email);
     if(isRegistered)
         throw new AppError("User Already registererd", 400)
 
+    if(password !== confirmPassword)
+        throw new AppError("Passwords don't match", 400);
+
     const hashedpassword = await bcrypt.hash(password, 10);
     
-    await createUser(email, hashedpassword);
+    await createUser(name, email, hashedpassword);
 
     return res.status(201).json({
         message: "User registered successfully"

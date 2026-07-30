@@ -2,13 +2,18 @@
     display: flex;
     height:100vh;
     background-color: #18191b;
+    box-sizing: border-box;
 }
 
 .project-info-content{
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
     padding: 28px 32px;
+    height:100vh;
     box-sizing: border-box;
     overflow-y: auto;
+    padding-top: 0px;
 }
 
 .environments-page{
@@ -16,6 +21,7 @@
     flex-direction: column;
     gap: 18px;
     width: 100%;
+    padding-top: 10px;
 }
 
 .environments-header{

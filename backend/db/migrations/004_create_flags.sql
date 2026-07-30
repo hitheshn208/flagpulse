@@ -4,7 +4,7 @@ CREATE TABLE flags (
   key VARCHAR(255) NOT NULL,
   name VARCHAR(255) NOT NULL,
   type VARCHAR(50) NOT NULL CHECK (type IN ('boolean', 'string', 'number', 'json')),
-  default_value TEXT NOT NULL,
+  default_value JSONB NOT NULL,
   description TEXT,
   created_at TIMESTAMPTZ  DEFAULT NOW(),
   UNIQUE(project_id, key)

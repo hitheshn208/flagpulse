@@ -14,12 +14,86 @@ button:disabled{
     gap:10px;
     padding:20px;
     border-radius: 5px;
-    border-top: 3px solid #22c55e;
+    /* border-top: 3px solid #22c55e; */
+    position: relative;
 }
 
 button{
     font-family: "Google Sans", sans-serif;
 
+}
+
+.env-card-menu-button{
+    position:absolute;
+    right:15px;
+    width:fit-content;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.env-card-menu-button span{
+    color: white;
+
+}
+
+.env-card-menu {
+    position: absolute;
+    top: 50px;
+    right: 35px;
+    background: #222;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+    padding:5px 15px;
+    min-width: 120px;
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.35),
+    0 0 0 1px rgba(255,255,255,.06);
+
+    opacity: 0;
+    transform: translateY(-6px) scale(.95);
+    transform-origin: top right;
+    transition:
+        opacity .15s ease,
+        transform .18s cubic-bezier(.16,1,.3,1);
+    pointer-events: none;
+}
+
+.env-card-menu-open{
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.env-card-menu button{
+    background: transparent;
+    color:white;
+    border:none;
+    font-size: medium;
+    font-weight: 700;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap:7px;
+    padding: 8px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.env-card-menu button span{
+    font-size: 1.25rem;
+}
+
+.env-card-menu button:hover{
+    background: rgba(255,80,80,.15);
+    color: #ff6b6b;
 }
 
 .env-name{
@@ -196,4 +270,149 @@ button{
 
 .border-top-rose{
     border-top: 3px solid #f43f5e;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(6px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 999;
+}
+
+.delete-modal {
+    width: 440px;
+    background: #202124;
+
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 18px;
+
+    padding: 28px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.45);
+
+    animation: modalPop .18s ease;
+}
+
+.modal-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.danger-icon {
+    width: fit-content;
+    height: fit-content;
+
+    border-radius: 14px;
+
+    background: rgba(255,70,70,.12);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: larger;
+    color: #ff6b6b;
+    padding: 5px 8px;
+}
+
+.danger-icon span {
+    font-size: 30px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: white;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:15px;
+}
+
+.modal-header p {
+    margin-top: 8px;
+    color: #9ca3af;
+    line-height: 1.6;
+}
+
+.warning-box {
+    margin-top: 22px;
+
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    background: rgba(255,180,0,.08);
+    color: #fbbf24;
+
+    border: 1px solid rgba(255,180,0,.15);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 28px;
+}
+
+.btn {
+    padding: 11px 18px;
+
+    border-radius: 10px;
+    border: none;
+
+    cursor: pointer;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    transition: .2s;
+}
+
+.secondary {
+    background: #313338;
+    color: white;
+}
+
+.secondary:hover {
+    background: #3c3f45;
+}
+
+.danger {
+    background: #dc2626;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.danger:hover {
+    background: #ef4444;
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: scale(.95) translateY(-12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }

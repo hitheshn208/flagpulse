@@ -1,7 +1,10 @@
+import { memo, useState } from "react";
+import {toggleFlagValue} from "../../../services/flags.service.js"
+import {Notify} from "../../../components/Toasts/Toast";
 import "./FlagRows.css";
-import { useState } from "react";
 
-function FlagRows({ flag, onToggle }) {
+function FlagRows({ flag, handleFlagInfo, isSelected = false, activeEnv, setFlagsByEnv, loading }) {
+    console.log("Redered rows");
     
     const [referenceTime] = useState(() => Date.now());
 
@@ -59,29 +62,41 @@ function FlagRows({ flag, onToggle }) {
         });
     };
 
-    const handleToggleButton = async (flag, isEnabled) => {
-        try{
-            setRowDisabled(true);
-            const response = await onToggle?.(flag, !isEnabled);
-            flag.is_enabled = response.is_enabled;
-            setIsEnabled(response.is_enabled);
-        }catch(e){
-            console.log(e);
-        }finally{
-            setRowDisabled(false);
+    const isEnabled = Boolean(flag?.is_enabled);
+    const [isdisabled, setDisabled] = useState(false);
+
+    const updateFlagEnabled = async (envId, flagId, nextEnabled) => {
+        setDisabled(true);
+        if (!envId) {
+            return;
         }
-    }
+        try{
+            await toggleFlagValue(envId, flagId, nextEnabled)
+    
+            setFlagsByEnv(prev => ({
+                ...prev,
+                [envId]: (prev[envId] ?? []).map(item => (
+                    item.id === flagId ? { ...item, is_enabled: nextEnabled } : item
+                ))
+            }));
+        }catch(e){
+            Notify("error", "Failed to change status")
+        }finally{
+            setTimeout(()=>setDisabled(false), 1000);
+        }
+    };
+
+    const handleToggleButton = (flag, nextEnabled) => {
+        updateFlagEnabled(activeEnv?.id, flag.id, nextEnabled);
+    };
     const key = flag.id ?? flag.key ?? flag.slug;
-    const [isEnabled, setIsEnabled] = useState(flag.is_enabled);
     const flagKey = flag.key ?? "-";
     const flagType = formatFlagType(flag.type);
     const updatedAt = formatUpdatedAt(flag.updated_at);
     const flagTypeClass = flagType !== "-" ? `flag_type_badge flag_type_badge_${flagType}` : "flag_type_badge flag_type_badge_unknown";
 
-    const [rowDisabled, setRowDisabled] = useState(false);
-
     return (
-        <div className={rowDisabled ? "flag_row disabled-row" : "flag_row"} key={key} role="row">
+        <div className={isSelected ? "flag_row flag_row_selected" : "flag_row"} key={key} role="row" onClick={()=>{handleFlagInfo(flag)}}>
             <div className="flag_table_cell flag_table_cell_name">
                 <p className="flag_name">{flag.name}</p>
                 <code className="flag_key">{flagKey}</code>
@@ -97,15 +112,32 @@ function FlagRows({ flag, onToggle }) {
                 <button
                     type="button"
                     className={isEnabled ? "flag_switch flag_switch_enabled" : "flag_switch"}
-                    onClick={() => handleToggleButton(flag, isEnabled)}
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        handleToggleButton(flag, !isEnabled);
+                    }}
                     aria-pressed={isEnabled}
                     aria-label={`Toggle ${flag.name}`}
+                    disabled={isdisabled}
                 >
                     <span className="flag_switch_thumb" />
                 </button>
+
+                <span className="material-symbols-outlined flag_row_right_arrow">
+                            arrow_forward_ios
+                </span>
             </div>
         </div>
     );
 }
 
-export default FlagRows;
+function areEqual(prevProps, nextProps) {
+    return (
+        prevProps.flag === nextProps.flag &&
+        prevProps.isSelected === nextProps.isSelected &&
+        prevProps.activeEnv?.id === nextProps.activeEnv?.id &&
+        prevProps.setFlagsByEnv === nextProps.setFlagsByEnv
+    );
+}
+
+export default memo(FlagRows, areEqual);

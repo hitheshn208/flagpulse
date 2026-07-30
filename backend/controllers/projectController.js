@@ -1,8 +1,9 @@
-const {createProject, createDefaultEnvironments, getProjects, fetchAllEnvironments, insertEnvironment, insertFlag} = require("../model/projectModel");
+const {createProject, createDefaultEnvironments, getProjects, fetchAllEnvironments, insertEnvironment, insertFlag, removeEnvironment, updateProject, removeProject} = require("../model/projectModel");
 const {invalidateFlagValuesFromCache} = require("../model/flagCache");
 const AppError = require("../utils/AppError");
 const { insertAuditLog } = require("../model/auditLogModel");
 const { sendClient } = require("../services/sse");
+const { stringify } = require("uuid");
 
 exports.getProjects = async (req, res)=>{
     const owner_id = req.user.id;
@@ -29,12 +30,9 @@ exports.getProjectEnvironments = async (req, res)=>{
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
     if (!uuidRegex.test(projectId))
         throw new AppError("Invalid Project Id", 400)
+    const {project, environments, stats} = await fetchAllEnvironments(projectId);
 
-    const {project, environments} = await fetchAllEnvironments(projectId);
-    if(environments.length === 0) 
-        throw new AppError("No environments for this project", 404)
-
-    return res.json({project, environments});
+    return res.json({project, environments, stats});
 }
 
 exports.createProjectEnvironments = async (req, res)=>{
@@ -63,19 +61,69 @@ exports.createFlag = async (req, res)=>{
         throw new AppError("Invalid project Id", 400);
     
     const {key, name, type, value, description} = req.body;
-    console.log(key, name, type, value, description);
-    if(!key || !name || !type || !value)
+    if(!key || !name || !type)
         throw new AppError("Information missing", 404);
 
     const validTypes = ['boolean', 'string', 'number', 'json']
     if (!validTypes.includes(type))
         throw new AppError("Invalid flag type", 400)
 
-    const {flag_id, envIds} = await insertFlag(projectId, key, name, type, value, description);
+    const {flag_id, envIds} = await insertFlag(projectId, key, name, type, type === 'string' ? JSON.stringify(value) : value, description);
     await invalidateFlagValuesFromCache(envIds);//^Invalidate in cache
     await insertAuditLog(flag_id, envIds, req.user.id, "New flag added", null, null, null, "create"); //^Log creation
     await Promise.all(envIds.map(id=> sendClient(id.environment_id, {type: "flag_created", flag_id}))); //^Send event
     return res.status(201).json({
         message: "Flag created"
     });
+}
+
+
+exports.deleteProjectEnvironment = async (req, res)=>{
+    const projectId = req.params.id;
+
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(projectId))
+        throw new AppError("Invalid project Id", 400);
+
+    const envId = req.params.envId;
+    if (!uuidRegex.test(envId))
+        throw new AppError("Invalid environment Id", 400);
+
+    await removeEnvironment(projectId, envId)
+
+    return res.status(200).json({
+        message : "Flag delete successfully"
+    })
+}
+
+exports.editProject = async (req, res) => {
+    const projectId = req.params.id;
+
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(projectId))
+        throw new AppError("Invalid project Id", 400);
+
+    const {name} = req.body;
+        if(!name)
+            throw new AppError("Project Name required", 404);
+
+    const slug = name.toLowerCase().replace(/\s+/g, "-");
+
+    await updateProject(projectId, name, slug);
+    return res.json({
+        message: "Project updated successfully"
+    })
+}
+
+exports.deleteProject = async (req, res) => {
+    const projectId = req.params.id;
+
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(projectId))
+        throw new AppError("Invalid project Id", 400);
+
+    await removeProject(projectId);
+    return res.json({
+        message: "Project deleted successfully"
+    })
 }

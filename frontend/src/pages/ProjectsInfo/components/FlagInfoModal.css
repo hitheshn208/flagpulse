@@ -1,0 +1,351 @@
+.flag-info-container{
+	width: 0;
+	height: 100%;
+	box-sizing: border-box;
+	background: linear-gradient(180deg, #1d1e20 0%, #18191b 100%);
+	transition: opacity 0.3s ease, transform 0.3s ease, padding 0.3s ease;
+	overflow: auto;
+	opacity: 0;
+	transform: translateX(24px);
+	border-left: 1px solid #2a2c2f;
+	position: relative;
+	flex: 0 0 auto;
+	color: #f5f5f5;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.flag-info-open {
+	width: 35%;
+	min-width: 340px;
+	padding: 24px;
+	opacity: 1;
+	transform: translateX(0);
+	border-radius: 10px;
+}
+
+.flag-info-closed {
+	padding: 0;
+	border-left: none;
+	pointer-events: none;
+}
+
+.flag-info-header,
+.flag-info-summary-card,
+.flag-info-section,
+.flag-info-footer,
+.flag-info-env-card,
+.flag-delete-modal__panel {
+	box-sizing: border-box;
+	border: 1px solid #2a2d31;
+	border-radius: 16px;
+	background: #111214;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.02) inset;
+}
+
+.flag-info-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 20px 18px 18px;
+}
+
+.flag-info-heading-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.flag-info-close {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border: 1px solid #34383d;
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.04);
+	color: #d1d5db;
+	cursor: pointer;
+	transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.flag-info-close:hover {
+	background: rgba(255, 255, 255, 0.08);
+	border-color: #454b53;
+}
+
+.flag-info-close .material-symbols-outlined {
+	font-size: 20px;
+	line-height: 1;
+}
+
+.flag-info-title {
+	margin: 0;
+	color: #a1a1aa;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.flag-info-name {
+	margin: 0;
+	color: #f8fafc;
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.1;
+	word-break: break-word;
+}
+
+.flag-info-key {
+	margin: 0;
+	color: #8b93a1;
+	font-size: 14px;
+	font-weight: 600;
+	word-break: break-word;
+}
+
+.flag-info-summary-card {
+	display: grid;
+	gap: 14px;
+	padding: 18px;
+}
+
+.flag-info-summary-row {
+	display: grid;
+	gap: 6px;
+}
+
+.flag-info-summary-label,
+.flag-info-section-title,
+.flag-info-env-subtitle,
+.flag-info-env-help,
+.flag-delete-modal__eyebrow {
+	color: #8b93a1;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.flag-info-summary-value {
+	color: #f4f4f5;
+	font-size: 15px;
+	line-height: 1.45;
+}
+
+.flag-info-summary-value--description {
+	color: #d4d4d8;
+}
+
+.flag-info-section {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 18px;
+}
+
+.flag-info-section-header {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.flag-info-section-title {
+	margin: 0;
+	font-size: 13px;
+}
+
+.flag-info-section-caption {
+	margin: 0;
+	color: #9ca3af;
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.flag-info-environments-container {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	height: fit-content;
+}
+
+.flag-info-footer {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 16px;
+	padding: 18px;
+}
+
+.flag-info-footer p {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	margin: 0;
+	color: #ff8a8a;
+	font-size: 14px;
+	line-height: 1.45;
+	font-weight: 500;
+	text-transform: none;
+	letter-spacing: 0;
+}
+
+.flag-info-footer p .material-symbols-outlined {
+	font-size: 24px;
+	line-height: 1.2;
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+.flag-info-delete-button {
+	width: fit-content;
+	align-self: flex-start;
+	padding: 10px 16px;
+	border: 1px solid #540f0f;
+	border-radius: 12px;
+	background: #ba1a1a;
+	color: #ffffff;
+	font: inherit;
+	font-size: 14px;
+	font-weight: 700;
+	cursor: pointer;
+	align-self: flex-end;
+	transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.16s ease;
+}
+
+.flag-info-delete-button:hover {
+	background: rgb(195, 55, 55);
+	border-color: #751b1b;
+}
+
+.flag-info-delete-button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.flag-delete-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 60;
+	display: grid;
+	place-items: center;
+	padding: 24px;
+}
+
+.flag-delete-modal__backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(10, 10, 10, 0.72);
+	backdrop-filter: blur(2px);
+}
+
+.flag-delete-modal__panel {
+	position: relative;
+	z-index: 1;
+	width: min(100%, 520px);
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.flag-delete-modal__title {
+	margin: 0;
+	color: #f8fafc;
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1.15;
+}
+
+.flag-delete-modal__description {
+	margin: 0;
+	color: #d1d5db;
+	font-size: 15px;
+	line-height: 1.55;
+}
+
+.flag-delete-modal__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 4px;
+}
+
+.flag-delete-modal__button {
+	min-height: 42px;
+	padding: 0 16px;
+	border-radius: 12px;
+	font: inherit;
+	font-size: 15px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: transform 0.16s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.flag-delete-modal__button:active {
+	transform: translateY(1px);
+}
+
+.flag-delete-modal__button--secondary {
+	border: 1px solid #43464b;
+	background: transparent;
+	color: #f5f5f5;
+}
+
+.flag-delete-modal__button--secondary:hover {
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.flag-delete-modal__button--danger {
+	border: 1px solid #7f1d1d;
+	background: #ba1a1a;
+	color: #ffffff;
+}
+
+.flag-delete-modal__button--danger:hover {
+	background: #c44567;
+}
+
+@media (max-width: 960px) {
+	.flag-info-open {
+		width: 100%;
+		min-width: 0;
+	}
+
+	.flag-info-container {
+		border-left: none;
+		border-top: 1px solid #2a2c2f;
+	}
+}
+
+@media (max-width: 640px) {
+	.flag-info-open,
+	.flag-delete-modal {
+		padding: 16px;
+	}
+
+	.flag-info-header,
+	.flag-info-summary-card,
+	.flag-info-section,
+	.flag-info-footer,
+	.flag-delete-modal__panel {
+		border-radius: 14px;
+	}
+
+	.flag-info-name {
+		font-size: 24px;
+	}
+
+	.flag-delete-modal__actions {
+		flex-direction: column-reverse;
+	}
+
+	.flag-delete-modal__button {
+		width: 100%;
+	}
+}

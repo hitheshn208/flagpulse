@@ -1,20 +1,37 @@
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0");
 
 .sidebar {
+    --sidebar-expanded-width: 20%;
+    --sidebar-collapsed-width: 78px;
     display: flex;
     flex-direction: column;
     height: 100%;
-    width: 20%;
+    flex: 0 0 var(--sidebar-expanded-width);
     padding: 18px 14px;
     box-sizing: border-box;
     background: #171819;
     border-right: 1px solid #2a2c2f;
     gap:20px;
     overflow: hidden;
+	transition: flex-basis 0.28s ease, padding 0.28s ease;
 }
+
+.sidebar-collapsed {
+    flex-basis: var(--sidebar-collapsed-width);
+    padding: 18px 10px;
+}
+
 
 .sidebar p {
     margin: 0;
+}
+
+.sidebar-project {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+    transition: opacity 0.2s ease, max-height 0.2s ease, margin 0.2s ease;
 }
 
 .project-word {
@@ -57,6 +74,11 @@
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+.option-label {
+    white-space: nowrap;
+    transition: opacity 0.2s ease, transform 0.2s ease, max-width 0.2s ease;
+}
+
 .option-icon.material-symbols-outlined {
     font-size: 20px;
     line-height: 1;
@@ -71,4 +93,23 @@
 .option:not(.active):hover {
     color: #e5e7eb;
     background: #202326;
+}
+
+.sidebar-collapsed .sidebar-project {
+    max-height: 0;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar-collapsed .option {
+    justify-content: center;
+    padding-inline: 0;
+}
+
+.sidebar-collapsed .option-label {
+    max-width: 0;
+    opacity: 0;
+    transform: translateX(-8px);
+    pointer-events: none;
 }

@@ -9,6 +9,7 @@
     background: #1b1c1f;
     border: 1px solid #2d2f33;
     overflow: hidden;
+    transition: transform 0.3s ease, width 0.3s ease, max-width 0.3s ease;
 }
 
 .flag_table_header,
@@ -36,10 +37,28 @@
     width: 100%;
     border-top: 1px solid #2c2e32;
     background: #1f202300;
+    transition: background-color 0.2s ease, transform 0.3s ease;
 }
 
 .flag_row:hover{
     background-color: #282828;
+}
+
+.flag_row_selected {
+    background-color: rgba(14, 165, 233, 0.08);
+}
+
+.flag_row_selected:hover {
+    background-color: rgba(14, 165, 233, 0.12);
+}
+
+.flags-workspace-shrunk .flag_rows_container {
+    transform: scale(0.992);
+}
+
+.flags-workspace-shrunk .flag_row {
+    transform: scale(0.985);
+    transform-origin: center;
 }
 
 .flag_row:last-child {
@@ -54,6 +73,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    font-size: 15px;
 }
 
 .flag_name {
@@ -84,6 +104,17 @@
     font-size: 15px;
     font-weight: 600;
     line-height: 1.2;
+}
+
+.flag_table_cell_status{
+    justify-content: space-between;
+}
+
+.flag_row_right_arrow{
+    margin-right: 25px;
+    opacity: 0.75;
+    font-size: medium;
+    cursor: default;
 }
 
 .flag_table_cell_type {
@@ -242,4 +273,13 @@
     pointer-events: none;
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.flag_row.disabled-row {
+    pointer-events: none;
+}
+
+
+button:disabled{
+    opacity: 0.5;
 }

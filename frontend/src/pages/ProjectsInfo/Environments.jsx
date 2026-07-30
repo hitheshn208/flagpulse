@@ -1,3 +1,4 @@
+import SkeletonLoading from "../../components/Skeleton/SkeletonLoading";
 import { createEnvironments } from "../../services/project.service";
 import EnvironmentRows from "./components/EnvironmentRows";
 import NewEnvironmentModal from "./components/NewEnvironmentModal";
@@ -35,15 +36,25 @@ function Environments(prop) {
             </div>
 
             <div className="environments-list">
-                {environments.map((environment, idx) => (
+                {
+                    prop.loading ?
+                    <SkeletonLoading count={3} width={340} height={260}/> :
+                    environments.length === 0 ? 
+                    <p>Hello</p> 
+                    
+                    :environments.map((environment, idx) => (
                     <EnvironmentRows
                         key={environment.id ?? environment.name ?? environment.sdk_key}
+                        id={environment.id}
                         name={environment.name}
                         sdk_key={environment.sdk_key}
                         total_flags={environment.total_flags}
                         icon={environment.icon}
                         index={idx}
                         clientCount={prop.clientCounts[environment.id] ?? 0}
+                        setEnvironments={prop.setEnvironments}
+                        ProjectId={prop.ProjectId}
+                        setFlagsByEnv={prop.setFlagsByEnv}
                     />
                 ))}
             </div>
