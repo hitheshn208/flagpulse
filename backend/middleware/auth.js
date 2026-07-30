@@ -9,8 +9,11 @@ exports.verifyUser = (req, res, next)=>{
 
     if(!token)
         throw new AppError("No token provided", 401);
-
-    const decode = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decode;
-    next();
+    try{
+        const decode = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decode;
+        next();
+    }catch(e){
+        throw new AppError("Unauthorized", 401);
+    }
 }

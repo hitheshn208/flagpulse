@@ -23,6 +23,5 @@ exports.getAllFlags = async (req, res)=>{
         throw new AppError("Invalid environment id", 400);
 
     const flags = await fetchAllFlags(envId);
-    console.log(flags)
     return res.json(flags);
 }

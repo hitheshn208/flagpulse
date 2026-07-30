@@ -14,6 +14,7 @@ class FlagbaseClient {
 
         this.flags = [];
         this.context = null;
+        this.listeners = new Set();
     }
 
     async init() {
@@ -69,9 +70,15 @@ class FlagbaseClient {
 
             this.flags = flags;
             this.cache.set(flags);
+            this.listeners.forEach(cb => cb(this.flags));
         } catch (err) {
             console.error("Failed to refresh flags", err);
         }
+    }
+
+    onUpdate(callback) {
+        this.listeners.add(callback);
+        return () => this.listeners.delete(callback);
     }
 
     destroy() {
@@ -80,6 +87,7 @@ class FlagbaseClient {
 
         this.flags = [];
         this.context = null;
+        this.listeners.clear();  
     }
 }
 

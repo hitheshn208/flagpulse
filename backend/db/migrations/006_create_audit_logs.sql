@@ -7,5 +7,5 @@ CREATE TABLE audit_logs (
   old_value TEXT,
   new_value TEXT,
   reason TEXT,
-  created_at TIMESTAMP DEFAULT NOW()
+  created_at TIMESTAMPTZ  DEFAULT NOW()
 );

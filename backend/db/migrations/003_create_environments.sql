@@ -4,6 +4,6 @@ CREATE TABLE environments (
   name VARCHAR(255) NOT NULL,
   slug VARCHAR(255) NOT NULL,
   sdk_key UUID DEFAULT gen_random_uuid(),
-  created_at TIMESTAMP DEFAULT NOW(),
+  created_at TIMESTAMPTZ  DEFAULT NOW(),
   UNIQUE(project_id, slug)
 );
