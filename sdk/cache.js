@@ -1,4 +1,4 @@
-class CacheManager{
+export default class CacheManager{
     constructor(ttl){
         this.TTL = ttl ?? 300000;
         this.FLAGS_KEY = "flagbase_flags";
@@ -36,5 +36,3 @@ class CacheManager{
         localStorage.removeItem(this.TIMESTAMP_KEY);
     }
 }
-
-module.exports = CacheManager
