@@ -1,4 +1,4 @@
-class SSEManager{
+export default class SSEManager{
     constructor(baseUrl, onUpdate){
         this.baseUrl = baseUrl;
         this.onUpdate = onUpdate;
@@ -40,5 +40,3 @@ class SSEManager{
         clearTimeout(this.timeout);
     }
 }
-
-module.exports = SSEManager
