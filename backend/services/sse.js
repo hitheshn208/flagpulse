@@ -1,9 +1,16 @@
 const { getEnvId } = require("../model/sdkModel");
+const AppError = require("../utils/AppError");
 const connections = new Map();
 const dashboardConnections = new Map();
 
 exports.addClient = async (sdkKey, res)=>{
-    const envId = await getEnvId(sdkKey);
+    const dbRes = await getEnvId(sdkKey);
+    if(dbRes.length === 0){
+        console.log("Changed the sdk key");
+        res.write(`data: ${JSON.stringify({"sdkKeyChanged": true})}\n\n`);
+        return null;
+    }
+    const envId = dbRes[0].id;
     if(!connections.has(envId))
         connections.set(envId, []);
     connections.get(envId).push(res);                                                                                                                                          

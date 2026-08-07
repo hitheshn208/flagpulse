@@ -16,10 +16,17 @@ export default class SSEManager{
 
         this.es.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            if("sdkKeyChanged" in data){
+                console.log("sdk key changed");
+                this.es.close();
+                return;               
+            }
             this.onUpdate(data);
         }
 
         this.es.onerror = (err) =>{
+            console.log(err);
+            
             this.es.close();
             this.timeout = setTimeout(()=>{
                 this.connect(sdkKey)

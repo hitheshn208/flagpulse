@@ -1,24 +1,55 @@
 import SkeletonLoading from "../../components/Skeleton/SkeletonLoading";
+import { Notify } from "../../components/Toasts/Toast";
+import { rotateEnvironmentKey } from "../../services/environment.service";
 import { createEnvironments } from "../../services/project.service";
 import EnvironmentRows from "./components/EnvironmentRows";
 import NewEnvironmentModal from "./components/NewEnvironmentModal";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 function Environments(prop) {
     const environments = prop.environments ?? [];
     const [isModalOpen, setModalOpen] = useState(false);
+    const [rotatedSdkKeysByEnv, setRotatedSdkKeysByEnv] = useState({});
 
     const handleCloseModal = ()=>{
         setModalOpen(false);
     }
 
     const handleModalSubmit = async (data)=>{
-        const response = await createEnvironments(prop.projectId, data);
-        console.log(response.environment, response.flags);
-        prop.setEnvironments(prev => [...prev, response.environment]);
-        prop.setFlagsByEnv(prev => ({ ...prev, [response.environment.id]: response.flags }));
-        setModalOpen(false);
+        try {
+            const response = await createEnvironments(prop.projectId, data);
+            console.log(response.environment, response.flags);
+            prop.setEnvironments(prev => [...prev, response.environment]);
+            prop.setFlagsByEnv(prev => ({ ...prev, [response.environment.id]: response.flags }));
+        } catch (e) {
+            if (e.response) {
+                console.log(e.response.data.message);
+                Notify("error", e.response.data.message);
+            } else {
+                Notify("error", "Network error");
+            }
+        }finally{
+            setModalOpen(false);
+        }
     }
+
+    const handleRotateKey = useCallback(async (envId, setLoading) => {
+        try {
+            setLoading(true);
+            const response = await rotateEnvironmentKey(envId);
+            console.log(response.sdk_key);
+            setRotatedSdkKeysByEnv(prev => ({ ...prev, [envId]: response.sdk_key }));
+        } catch (e) {
+            if (e.response) {
+                console.log(e.response.data.message);
+                Notify("error", e.response.data.message);
+            } else {
+                Notify("error", "Network error");
+            }
+        }finally{
+            setLoading(false);
+        }
+    }, []);
 
     return (
         <>
@@ -47,14 +78,14 @@ function Environments(prop) {
                         key={environment.id ?? environment.name ?? environment.sdk_key}
                         id={environment.id}
                         name={environment.name}
-                        sdk_key={environment.sdk_key}
+                        sdk_key={rotatedSdkKeysByEnv[environment.id] ?? environment.sdk_key}
                         total_flags={environment.total_flags}
                         icon={environment.icon}
                         index={idx}
-                        clientCount={prop.clientCounts[environment.id] ?? 0}
                         setEnvironments={prop.setEnvironments}
                         ProjectId={prop.ProjectId}
                         setFlagsByEnv={prop.setFlagsByEnv}
+                        handleRotateKey={handleRotateKey}
                     />
                 ))}
             </div>

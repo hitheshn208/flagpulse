@@ -12,8 +12,7 @@ import ProjectSettings from "./ProjectsInfo/ProjectSettings";
 
 function ProjectsInfo() {
     const { projectId } = useParams();
-    
-    // eslint-disable-next-line no-unused-vars
+
     const [loading, setLoading] = useState(true);
     const [flagsloading, setFlagsLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("environments");
@@ -21,7 +20,6 @@ function ProjectsInfo() {
     const [environments, setEnvironments] = useState([]);
     const [activeEnvironment, setActiveEnvironment] = useState(null);
     const [flagsByEnv, setFlagsByEnv] = useState({});
-    const [clientCounts, setClientCounts] = useState({}); 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [isFlagInfoOpen, setIsFlagInfoOpen] = useState(false);
     const [selectedFlag, setSelectedFlag] = useState(null);
@@ -76,28 +74,6 @@ function ProjectsInfo() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [projectId]);
 
-    useEffect(() => {
-        if (!environments?.length) return;
-
-        const eventSources = environments.map(env => {
-            const es = new EventSource(
-                `${import.meta.env.VITE_API_URL}/api/v1/stream/dashboard?environment_id=${env.id}`,
-                { withCredentials: true }
-            );
-
-            es.addEventListener('presence', (e) => {
-                const { count } = JSON.parse(e.data);
-                setClientCounts(prev => ({ ...prev, [env.id]: count }));
-            });
-
-            return es;
-        });
-
-        return () => {
-            eventSources.forEach(es => es.close());
-        };
-    }, [environments]);
-
     const handleEnvironmentChange = (env) => {
         setActiveEnvironment(env);
     };
@@ -142,9 +118,9 @@ function ProjectsInfo() {
                     />
                 ) : activeTab === "environments" ? (
                     <Environments 
+                        key={projectId}
                         projectId={projectId}
                         environments={environments} 
-                        clientCounts={clientCounts}
                         setEnvironments={setEnvironments}    
                         setFlagsByEnv={setFlagsByEnv}
                         loading={loading}

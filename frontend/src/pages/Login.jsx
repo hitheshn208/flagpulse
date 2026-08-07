@@ -3,7 +3,6 @@ import { login } from "../services/auth.service";
 import Loader from "../components/Loaders/Loader";
 import { Link, useNavigate } from "react-router-dom";
 import { Toast, Notify } from "../components/Toasts/Toast";
-import "./Login.css";
 
 function Login() {
     const [email, setEmail] = useState("");

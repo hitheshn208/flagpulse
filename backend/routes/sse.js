@@ -12,8 +12,6 @@ sseRouter.get("/", async (req, res)=>{
     const sdkKey = req.query.sdkKey;
     const envId = await addClient(sdkKey, res);
     console.log("Client connected for env:", envId)
-    
-    
     req.on('close', () => {
         console.log("Connection closing for ", envId);
         removeClient(envId, res);

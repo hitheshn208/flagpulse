@@ -69,7 +69,7 @@
     font-size: 17px;
     font-weight: 600;
     line-height: 1;
-    cursor: default;
+    cursor: url("/pointer.png"), auto;
     overflow: hidden;
     transition: background-color 0.2s ease, color 0.2s ease;
 }

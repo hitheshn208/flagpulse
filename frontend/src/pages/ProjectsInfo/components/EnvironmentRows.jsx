@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import "./EnvironmentRows.css";
 import { deleteEnvironment } from "../../../services/environment.service";
 import { Notify } from "../../../components/Toasts/Toast";
@@ -7,8 +7,9 @@ function EnvironmentRows(prop) {
     const [disabled, setDisabled] = useState(false);
     const [open, setOpen] = useState(false);
     const [deleteModal, setDeletemodal] = useState(false);
+    const [isRotating, setIsRotating] = useState(false);
+    const [clientCount, setClientCount] = useState(0);
     const menuRef = useRef(null);
-    const clientCount = Number(prop.clientCount) || 0;
     const hasClients = clientCount > 0;
 
     const maskSdkKey = (sdkKey) => {
@@ -45,6 +46,29 @@ function EnvironmentRows(prop) {
             document.removeEventListener("click", handleClick);
         };
     }, []);
+
+    useEffect(() => {
+        if (!prop.id) {
+            return undefined;
+        }
+
+        const eventSource = new EventSource(
+            `${import.meta.env.VITE_API_URL}/api/v1/stream/dashboard?environment_id=${prop.id}`,
+            { withCredentials: true }
+        );
+
+        const handlePresence = (e) => {
+            const { count } = JSON.parse(e.data);
+            setClientCount(count);
+        };
+
+        eventSource.addEventListener("presence", handlePresence);
+
+        return () => {
+            eventSource.removeEventListener("presence", handlePresence);
+            eventSource.close();
+        };
+    }, [prop.id, prop.sdk_key]);
 
     const handleDelete = async ()=>{
         try {
@@ -102,7 +126,7 @@ function EnvironmentRows(prop) {
                     </button>
                 </div>
                 <div className="flags">{prop.total_flags} flags configured</div>
-                <button className="regenerate-key-btn">
+                <button className="regenerate-key-btn" onClick={()=>prop.handleRotateKey(prop.id, setIsRotating)} disabled={isRotating}>
                     <span className="material-symbols-outlined">cached</span>Rotate Key
                 </button>
             </div>
@@ -142,4 +166,4 @@ function EnvironmentRows(prop) {
     );
 }
 
-export default EnvironmentRows;
+export default memo(EnvironmentRows);
