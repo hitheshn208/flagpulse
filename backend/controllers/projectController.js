@@ -3,7 +3,6 @@ const {invalidateFlagValuesFromCache} = require("../model/flagCache");
 const AppError = require("../utils/AppError");
 const { insertAuditLog } = require("../model/auditLogModel");
 const { sendClient } = require("../services/sse");
-const { stringify } = require("uuid");
 
 exports.getProjects = async (req, res)=>{
     const owner_id = req.user.id;
@@ -61,17 +60,24 @@ exports.createFlag = async (req, res)=>{
         throw new AppError("Invalid project Id", 400);
     
     const {key, name, type, value, description} = req.body;
+
     if(!key || !name || !type)
         throw new AppError("Information missing", 404);
 
     const validTypes = ['boolean', 'string', 'number', 'json']
     if (!validTypes.includes(type))
-        throw new AppError("Invalid flag type", 400)
+        throw new AppError("Invalid flag type", 400);
 
-    const {flag_id, envIds} = await insertFlag(projectId, key, name, type, type === 'string' ? JSON.stringify(value) : value, description);
+    let serialisedValue = value;
+
+    if(type === 'string' || type === 'json')
+        serialisedValue = JSON.stringify(value);
+
+    const {flag_id, envIds} = await insertFlag(projectId, key, name, type, serialisedValue, description);
     await invalidateFlagValuesFromCache(envIds);//^Invalidate in cache
     await insertAuditLog(flag_id, envIds, req.user.id, "New flag added", null, null, null, "create"); //^Log creation
     await Promise.all(envIds.map(id=> sendClient(id.environment_id, {type: "flag_created", flag_id}))); //^Send event
+
     return res.status(201).json({
         message: "Flag created"
     });

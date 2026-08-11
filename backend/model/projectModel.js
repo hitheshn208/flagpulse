@@ -86,19 +86,21 @@ exports.insertEnvironment = async (name, slug, projectId, icon) => {
 };
 
 exports.insertFlag = async (projectId, key, name, type, defaultValue, description) => {
+    const client = await db.connect();
     try {
-        const project = await db.query("SELECT * FROM projects WHERE id = $1", [projectId]);
+        await client.query("BEGIN");
+        const project = await client.query("SELECT * FROM projects WHERE id = $1", [projectId]);
         if (project.rows.length === 0)
             throw new AppError("No project found", 404);
 
 
-        const response = await db.query(
+        const response = await client.query(
             "INSERT INTO flags (project_id, key, name, type, default_value, description) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
             [projectId, key, name, type, defaultValue, description]
         );
         const flag_id = response.rows[0].id;
 
-        const envIds = await db.query(
+        const envIds = await client.query(
             `INSERT INTO flag_values (flag_id, environment_id, targeting_return_value)
             SELECT $1, id, $3
             FROM environments
@@ -107,14 +109,21 @@ exports.insertFlag = async (projectId, key, name, type, defaultValue, descriptio
             [flag_id, projectId, defaultValue]
         );
 
+        await client.query("COMMIT");
         return { flag_id, envIds: envIds.rows };
+
     } catch (err) {
+        await client.query("ROLLBACK");
+
         if (err.code === "23514")
             throw new AppError("Invalid flag type", 400);
         else if (err.code === "23505")
             throw new AppError("Flag key already exists", 400);
         else
             throw err;
+
+    }finally{
+        await client.release();
     }
 };
 

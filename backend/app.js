@@ -1,14 +1,7 @@
-const path = require('path');
-
 const express = require('express');
 const cookieParser = require("cookie-parser") ;
-const dotenv = require('dotenv');
-dotenv.config({path: path.join(__dirname, "../.env")});
 const cors = require("cors");
 
-
-const redisClient = require("./config/redis");
-const db = require('./config/postgres');
 const sdkRouter = require('./routes/sdk');
 const authRouter = require("./routes/auth");
 const projectRouter = require("./routes/projects");
@@ -34,7 +27,7 @@ app.use((req, res, next)=>{
     next();
 })
 
-//Test
+
 app.get("/protected", verifyUser, (req, res)=>{
     return res.json({ message: "Protected Route", user: req.user})
 })
@@ -55,18 +48,4 @@ app.use((req, res)=>{
     })
 })
 
-const port = process.env.PORT;
-const serverStart = async ()=>{
-    await redisClient.connect();
-    app.listen(port, ()=>{
-        console.log(`Server is online: http://localhost:${port}`)
-    })
-}
-serverStart();
-
-process.on('SIGINT', async ()=>{
-    await redisClient.quit();
-    await db.end()
-    console.log("Server shutting down");
-    process.exit(0);    
-})
+module.exports = app;
