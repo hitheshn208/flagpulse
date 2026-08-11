@@ -109,7 +109,6 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 } */
- @import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
 
 *{
   cursor: url("/pointer.png"), auto;
@@ -117,7 +116,7 @@ code {
 
 html{
   min-height: 100vh;
-  font-family: "Google Sans", sans-serif;
+  font-family: "Geist", sans-serif;
   margin:0;
 }
 

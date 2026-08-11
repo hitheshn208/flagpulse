@@ -4,15 +4,38 @@ import Loader from "../../../components/Loaders/Loader";
 import FlagTypeSettings from "./FlagTypeSettings";
 import { createFlag } from "../../../services/project.service";
 import { Notify } from "../../../components/Toasts/Toast";
+import JsonEditor from "./JsonEditor";
 
 function NewFlagModal({setNewFlagModal, projectId, environments = [], fetchFlags}) {
     const [flagName, setflagName] = useState("");
     const [keyName, setKeyName] = useState("");
     const [description, setDescription] = useState("");
     const [flagType, setFlagType] = useState("");
-    const flagTypes = ["Boolean", "String", "Number", "JSON"];
     const [loading, setLoading] = useState(false);
     const [value, setValue] = useState(null);
+
+    const flagTypes = [
+        {
+            type: "Boolean",
+            icon: "toggle_on",
+            description: "Enable / disable a feature"
+        },
+        {
+            type: "String",
+            icon: "match_case",
+            description: "Dynamic text or configuration"
+        },
+        {
+            type: "Number",
+            icon: "123",
+            description: "Limits, thresholds, numeric config"
+        },
+        {
+            type: "JSON",
+            icon: "data_object",
+            description: "Complex configuration"
+        },
+    ]
 
     const handleClose = ()=>{
         setflagName("");
@@ -79,18 +102,21 @@ function NewFlagModal({setNewFlagModal, projectId, environments = [], fetchFlags
                 <div className="new-flag-modal__backdrop" onClick={handleClose} aria-hidden="true" />
                 <form onSubmit={handleSubmit} className="new-flag-modal__outer-panel">
                     <div className="new-flag-modal__header">
-                        <div>
-                            <h2 id="new-flag-title" className="new-flag-modal__title">Add Flag</h2>
-                        </div>
+                            <button type="button" className="new-flag-modal__close" onClick={handleClose} aria-label="Close modal">
+                                <span className="material-symbols-outlined" aria-hidden="true">arrow_left_alt</span>
+                            </button>
+                            <h2 id="new-flag-title" className="new-flag-modal__title">Create New Flag</h2>
 
-                        <button type="button" className="new-flag-modal__close" onClick={handleClose} aria-label="Close modal">
-                            <span className="material-symbols-outlined" aria-hidden="true">close</span>
-                        </button>
+                        <div className="new-environment-modal__actions">
+                            <button type="submit" className="new-flag-modal__button new-flag-modal__button--primary">
+                                {loading ? <Loader r={5} cx={5} cy={5}/> : "Create flag"}
+                            </button>
+                        </div>
                     </div>
                     <div className="new-flag-modal__inner-panel">
                         <div className="new-flag-modal__left-panel">
                             <div className="new-flag-modal__input-container">
-                                <label htmlFor="flagName" className="new-flag-modal__label">Name</label>
+                                <label htmlFor="flagName" className="new-flag-modal__label">Name*</label>
                                 <input type="text" id="flagName" className="new-flag-modal__input" 
                                 value={flagName}
                                 onChange={handleNameChange}
@@ -105,10 +131,11 @@ function NewFlagModal({setNewFlagModal, projectId, environments = [], fetchFlags
                                 onChange={handleKeyChange}
                                 required
                                 />
+                                <p className="flag-key-info">Key is auto-generated from the name</p>
                             </div>
 
                             <div className="new-flag-modal__input-container" style={{flexGrow: 1}}>
-                                <label htmlFor="flagkey" className="new-flag-modal__label">Description</label>
+                                <label htmlFor="flagkey" className="new-flag-modal__label">Description (Optional)</label>
                                 <textarea name="description" id="description" cols="30" rows="3" placeholder="What does this flag control?" className="new-flag-modal__textarea"
                                 value={description}
                                 onChange={e=> setDescription(e.target.value)}                         
@@ -119,12 +146,20 @@ function NewFlagModal({setNewFlagModal, projectId, environments = [], fetchFlags
                     <div className="new-flag-modal__right-panel">
 
                         <div className="new-flag-modal__input-container">
-                            <label htmlFor="flagkey" className="new-flag-modal__label">Type</label>
+                            <label htmlFor="flagkey" className="new-flag-modal__label">Type*</label>
                             <div className="new-flag-modal__flag-type-container">
-                                {flagTypes.map((type, index)=>{
-                                    return <div className={flagType === type ? "flag-type-capsule capsule-active" : "flag-type-capsule"} key={index}
-                                    onClick={()=> setFlagType(type)}
-                                    >{type}</div>
+                                {flagTypes.map((flag, index)=>{
+                                    return( 
+                                    <div className={flagType === flag.type ? "flag-type-capsule capsule-active" : "flag-type-capsule"} key={index}
+                                    onClick={()=> setFlagType(flag.type)}
+                                    >
+                                        <span class="material-symbols-outlined">{flag.icon}</span>
+                                        <div>
+                                            <div className="flagType_name">
+                                                {flag.type}
+                                            </div>
+                                        </div>
+                                    </div>)
                                 })}
                             </div>
                         </div>
@@ -138,21 +173,12 @@ function NewFlagModal({setNewFlagModal, projectId, environments = [], fetchFlags
                                 flagType === "Number" ?
                                 <FlagTypeSettings keyName={keyName} setValue={setValue} flagType={flagType}/> :                                 
                                 flagType === "JSON" ? 
-                                "Coming soon" :
+                                <JsonEditor setValue={setValue}/> :
                                 <p className="no-flag-type-message">Choose a type to configure its default value</p>
                             }
                         </div>
                     </div>
                     </div>
-
-                    <div className="new-environment-modal__actions">
-                    <button type="button" className="new-flag-modal__button new-flag-modal__button--secondary" onClick={handleClose}>
-                        Cancel
-                    </button>
-                    <button type="submit" className="new-flag-modal__button new-flag-modal__button--primary">
-                        {loading ? <Loader r={5} cx={5} cy={5}/> : "Create flag"}
-                    </button>
-                </div>
                 </form>
             </div>
         </>

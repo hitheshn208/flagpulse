@@ -3,8 +3,7 @@
 	inset: 0;
 	z-index: 50;
 	display: grid;
-	place-items: center;
-	padding: 24px;
+	place-items: end;
 }
 
 .new-flag-modal__backdrop{
@@ -16,13 +15,14 @@
 
 .new-flag-modal__outer-panel{
     position: relative;
+	left:0;
 	z-index: 1;
-	width: min(100%, 980px);
-	max-width: calc(100vw - 48px);
+	width: 45%;
+	height:100vh;
+	max-height:100vh;
+	/* max-width: calc(100vw - 48px); */
 	box-sizing: border-box;
-	border: 1px solid #4a4a4a;
-	border-radius: 18px;
-	background: linear-gradient(180deg, #31302d 0%, #292826 100%);
+	background: #18191b;
 	box-shadow:
 		0 22px 60px rgba(0, 0, 0, 0.55),
 		0 2px 0 rgba(255, 255, 255, 0.02) inset;
@@ -30,48 +30,50 @@
 	color: #f5f5f5;
     display: flex;
     flex-direction: column;
+	overflow: auto;
 }
 
 .new-flag-modal__header {
 	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
+	align-items: center;
 	gap: 16px;
 	margin-bottom: 22px;
+	width:100%;
 }
 
 .new-flag-modal__inner-panel{
 	width: 100%;
 	display: flex;
+	flex-direction: column;
 	justify-content: space-between;
-    gap:20px;
+    gap:50px;
 }
 
 .new-flag-modal__input-container{
     display: flex;
     flex-direction: column;
-    gap:5px
+    gap:12px;
 }
 
-.new-flag-modal__left-panel{
-    display: flex;
-    flex-direction: column;
-    gap:15px;
-	flex: 1 1 0;
-	min-width: 0;
+.flag-key-info{
+	font-size: 0.8rem;
+	color: rgb(181, 181, 181);
+	margin:0;
+
 }
 
+.new-flag-modal__left-panel ,
 .new-flag-modal__right-panel{
     display: flex;
     flex-direction: column;
-    gap:15px;
+    gap:20px;
 	flex: 1 1 0;
 	min-width: 0;
 }
 
 .new-flag-modal__label{
     color: #beb9af;
-	font-size: 0.9rem;
+	font-size: 1.05rem;
 	font-weight: 500;
 	line-height: 1.2;
     padding-left: 5px;
@@ -82,7 +84,7 @@
 	box-sizing: border-box;
 	height: 44px;
 	border: 1px solid #49453f;
-	border-radius: 9px;
+	border-radius: 5px;
 	background: #2a2926;
 	color: #f7f7f7;
 	padding: 0 18px;
@@ -96,7 +98,7 @@
 	box-sizing: border-box;
 	height: 44px;
 	border: 1px solid #49453f;
-	border-radius: 9px;
+	border-radius: 5px;
 	background: #2a2926;
 	color: #f7f7f7;
 	padding: 0 18px;
@@ -109,7 +111,7 @@
 .new-flag-modal__textarea{
 	box-sizing: border-box;
 	border: 1px solid #49453f;
-	border-radius: 9px;
+	border-radius: 5px;
 	background: #2a2926;
 	color: #f7f7f7;
 	padding: 8px 18px;
@@ -125,20 +127,20 @@
 }
 
 .new-flag-modal__input:focus{
-    border-color: #ffaa4f;
+    border-color: #dcdcdc;
 	box-shadow: 0 0 0 3px rgba(79, 131, 255, 0.18);
 	background: #2d2c28;
 }
 
 .new-flag-modal__code:focus{
-    border-color: #ffaa4f;
+    border-color: #dcdcdc;
 	box-shadow: 0 0 0 3px rgba(79, 131, 255, 0.18);
 	background: #2d2c28;
 }
 
 
 .new-flag-modal__textarea:focus{
-    border-color: #ffaa4f;
+    border-color: #dcdcdc;
 	box-shadow: 0 0 0 3px rgba(79, 131, 255, 0.18);
 	background: #2d2c28;
 }
@@ -184,33 +186,57 @@
 .new-flag-modal__flag-type-container{
     display: flex;
     width:100%;
-    font-size: 0.95rem;
-    font-weight: 500;;
     margin-top: 5px;
     justify-content: space-around;
+	gap:10px
 }
 
 .flag-type-capsule{
-    padding:5px 15px;
+    padding:10px ;
     border-radius: 10px;
     border: 1px rgba(255, 255, 255, 0.381) solid;
     cursor: pointer;
-    min-width: 70px;
-    text-align: center;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width:calc((100vw - 40%)/4);
 }
+
+.flag-type-capsule span{
+	padding:2px;
+	background-color: rgb(31, 31, 31);
+	height:fit-content;
+	border-radius: 5px;
+	color:rgb(194, 194, 194);
+}
+
+.flag-type-capsule div{
+	display: flex;
+	flex-direction: column;
+	gap:5px;
+	text-align: center;
+}
+
+
+/* .flag-type-capsule div .flagType_name{
+	
+} */
 
 .flag-type-capsule:hover{
     background-color: rgba(255, 255, 255, 0.119);
 }
 
 .capsule-active{
-    background-color: white;
-    color:black;
+    border-color: white
+}
+.capsule-active span{
+	color:rgb(0, 0, 0);
+	background: rgb(255, 255, 255)
 }
 
-.capsule-active:hover{
+/* .capsule-active:hover{
     background-color: white;
-}
+} */
 
 .new-flag-modal__value-input-container{
     height:100%;
@@ -235,14 +261,6 @@
     flex-direction: column;
     gap:15px;
     margin-top: 5px;
-}
-
-.new-flag-modal__boolean-input-container p{
-    margin: 0px;
-    color: rgb(150, 150, 150);
-    font-size: small;
-    font-weight: 400;
-    margin-bottom: 10px;
 }
 
 .boolean-capsule-container{
@@ -316,7 +334,7 @@ input[type="number"]{
 	border-radius: 10px;
 	font: inherit;
 	font-size: 16px;
-	font-weight: 700;
+	font-weight: 500;
 	cursor: pointer;
 	transition: transform 0.16s ease, background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
 }
@@ -325,23 +343,28 @@ input[type="number"]{
 	transform: translateY(1px);
 }
 
-.new-flag-modal__button--secondary {
-	border-color: #54514b;
-	background: transparent;
-	color: #f5f5f5;
-}
-
-.new-flag-modal__button--secondary:hover {
-	background: rgba(255, 255, 255, 0.06);
-}
-
 .new-flag-modal__button--primary {
 	border-color: #f4f3ef;
-	background: #f4f3ef;
+	background: #c9c9c9;
 	color: #161513;
 }
 
 .new-flag-modal__button--primary:hover {
 	background: #ffffff;
 	border-color: #ffffff;
+}
+
+.new-flag-modal__type-instruction {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #a1a1aa;
+}
+
+
+.new-flag-modal__default-hint {
+    margin: 10px 0 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #71717a;
 }

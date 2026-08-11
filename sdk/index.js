@@ -53,7 +53,7 @@ export default class FlagPulseClient {
         if(!flag)
             return fallback;
         if(flag.is_enabled)
-            return JSON.parse(flag.targeting_return_value);
+            return flag.targeting_return_value;
         return fallback;
     }
 
