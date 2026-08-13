@@ -1,8 +1,8 @@
 const db = require("../config/postgres");
 const AppError = require("../utils/AppError");
 
-exports.createProject = async (name, slug, owner_id) =>{
-    const response = await db.query("INSERT INTO projects (name, slug, owner_id) VALUES ($1, $2, $3) RETURNING id, name, slug, created_at", [name, slug, owner_id]);
+exports.createProject = async (name, slug, owner_id, description = null) =>{
+    const response = await db.query("INSERT INTO projects (name, slug, owner_id, description) VALUES ($1, $2, $3, $4) RETURNING id, name, slug, created_at", [name, slug, owner_id, description]);
     response.rows[0]["environments_count"] = 0;
     response.rows[0]["flags_count"] = 0;
     return response.rows[0];
@@ -18,7 +18,7 @@ exports.createProject = async (name, slug, owner_id) =>{
 
 exports.getProjects = async (owner_id)=>{
     // const response = await db.query("SELECT id, name, slug, created_at FROM projects WHERE owner_id = $1", [owner_id]);
-    const response = await db.query(`SELECT p.id, p.name, p.slug, p.created_at, count(distinct e.id) as environments_count, count(distinct f.id) as flags_count
+    const response = await db.query(`SELECT p.id, p.name, p.slug, p.created_at, p.description, count(distinct e.id) as environments_count, count(distinct f.id) as flags_count
                                         FROM projects p
                                         LEFT JOIN environments e ON p.id = e.project_id
                                         LEFT JOIN Flags f on p.id = f.project_id

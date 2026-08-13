@@ -1,0 +1,313 @@
+.projects-page {
+  width: 100%;
+  padding: 32px;
+}
+
+/* =========================
+   Header
+   ========================= */
+
+.projects-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.projects-heading h1 {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-family: var(--font-sans);
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.projects-heading p {
+  margin: 5px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.projects-summary {
+  display: block;
+  margin-top: 10px;
+
+  color: var(--color-text-subtle);
+
+  font-size: 12px;
+}
+
+/* =========================
+   New Project
+   ========================= */
+
+.new-project-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 9px 15px;
+
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.new-project-btn:hover {
+  background: var(--color-primary-hover);
+}
+
+.new-project-btn:active {
+  transform: translateY(1px);
+}
+
+.new-project-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* =========================
+   Project Grid
+   ========================= */
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* =========================
+   Project Card
+   ========================= */
+
+.project-card {
+  width: 100%;
+  min-height: 245px;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+  color: inherit;
+
+  font-family: inherit;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.project-card:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
+  transform: translateY(-1px);
+}
+
+.project-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* =========================
+   Card Header
+   ========================= */
+
+.project-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.project-card-header h2 {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.project-key {
+  display: block;
+  margin-top: 5px;
+
+  color: var(--color-text-subtle);
+
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.project-arrow {
+  color: var(--color-text-faint);
+
+  font-size: 17px;
+
+  transition:
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.project-card:hover .project-arrow {
+  color: var(--color-primary);
+  transform: translateX(2px);
+}
+
+/* =========================
+   Description
+   ========================= */
+
+.project-description {
+  max-width: 420px;
+
+  margin: 22px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 12px;
+  line-height: 1.6;
+
+  display: -webkit-box;
+  /* -webkit-line-clamp: 2; */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =========================
+   Stats
+   ========================= */
+
+.project-stats {
+  display: flex;
+  align-items: center;
+
+  margin-top: auto;
+  padding-top: 22px;
+}
+
+.project-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 90px;
+}
+
+.project-stat-value {
+  color: var(--color-text);
+
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.project-stat-label {
+  color: var(--color-text-subtle);
+
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.project-stat-divider {
+  width: 1px;
+  height: 30px;
+
+  margin: 0 20px;
+
+  background: var(--color-border-hover);
+}
+
+/* =========================
+   Footer
+   ========================= */
+
+.project-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 20px;
+  padding-top: 13px;
+
+  border-top: 1px solid var(--color-border);
+
+  color: var(--color-text-subtle);
+
+  font-size: 11px;
+}
+
+.project-view {
+  color: var(--color-text-muted);
+
+  transition: color var(--transition-fast);
+}
+
+.project-card:hover .project-view {
+  color: var(--color-text-secondary);
+}
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 800px) {
+  .projects-page {
+    padding: 24px;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .projects-page {
+    padding: 20px 16px;
+  }
+
+  .projects-header {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .new-project-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .project-card {
+    min-height: 230px;
+  }
+}

@@ -11,14 +11,14 @@ exports.getProjects = async (req, res)=>{
 }
 
 exports.insertProjects = async (req, res)=>{
-    const {name} = req.body;
+    const {name, description} = req.body;
     if(!name)
         throw new AppError("Project name required", 400);
     
     const owner_id = req.user.id;
     const slug = name.toLowerCase().replace(/\s+/g, "-");
 
-    const project = await createProject(name, slug, owner_id);
+    const project = await createProject(name, slug, owner_id, description);
     // await createDefaultEnvironments(project.id);  //!LOOOK INTO THISS
     res.status(201).json(project)      
 }

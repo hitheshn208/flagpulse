@@ -1,0 +1,493 @@
+.environments-page {
+  max-width: 980px;
+  padding: 24px 28px;
+}
+
+/* =========================
+   Header
+========================= */
+
+.environments-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 24px;
+}
+
+.environments-header h1 {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 700;
+
+  letter-spacing: -0.02em;
+}
+
+.environments-header p {
+  margin: 4px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 13px;
+}
+
+.add-environment-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 8px 14px;
+
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: background var(--transition-fast);
+}
+
+.add-environment-btn:hover {
+  background: var(--color-primary-hover);
+}
+
+/* =========================
+   Grid
+========================= */
+
+.environments-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(290px, 1fr));
+
+  gap: 14px;
+}
+
+/* =========================
+   Environment Card
+========================= */
+
+.env-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  padding: 20px;
+
+  background: var(--color-surface-raised);
+
+  border: 1px solid var(--color-border);
+  border-top-width: 3px;
+  border-top-style: solid;
+
+  border-radius: 4px;
+}
+
+.env-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.env-card__status {
+  width: 8px;
+  height: 8px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: var(--color-enabled);
+
+  box-shadow: 0 0 6px var(--color-enabled);
+}
+
+.env-card__name {
+  color: var(--color-text);
+
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.env-card__description {
+  margin: 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================
+   Connected Clients
+========================= */
+
+.connected-clients {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 12px;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  color: var(--color-text-muted);
+
+  font-size: 12px;
+}
+
+.connected-clients__status {
+  width: 6px;
+  height: 6px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: var(--color-enabled);
+
+  animation: environment-pulse 2s infinite;
+}
+
+.connected-clients strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+@keyframes environment-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* =========================
+   SDK Key
+========================= */
+
+.sdk-key__label {
+  margin-bottom: 6px;
+
+  color: var(--color-text-muted);
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.sdk-key__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sdk-key__row code {
+  flex: 1;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  padding: 6px 10px;
+
+  background: var(--color-code-bg);
+
+  border: 1px solid var(--color-code-border);
+  border-radius: var(--radius-sm);
+
+  color: var(--color-code-text);
+
+  font-family: var(--font-mono);
+  font-size: 11px;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* =========================
+   Copy Button
+========================= */
+
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 4px 8px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+
+  background: transparent;
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.copy-btn:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-text);
+}
+
+.copy-btn svg {
+  color: var(--color-text);
+}
+
+/* =========================
+   Card Actions
+========================= */
+
+.env-card__actions {
+  display: flex;
+  gap: 7px;
+
+  padding-top: 12px;
+
+  border-top: 1px solid var(--color-border);
+}
+
+.rotate-key-btn,
+.manage-btn {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  padding: 7px;
+
+  border-radius: 5px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.rotate-key-btn {
+  background: var(--color-text-secondary);
+  border: 1px solid var(--color-border-hover);
+
+  color: var(--color-surface-hover);
+}
+
+.rotate-key-btn:hover {
+  background: var(--color-surface-highlight);
+}
+
+.manage-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+
+  color: var(--color-text-muted);
+}
+
+.manage-btn:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-text);
+}
+
+/* =========================
+   Add Environment Card
+========================= */
+
+.add-environment-card {
+  min-height: 220px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 24px;
+
+  background: transparent;
+
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+
+  color: var(--color-text-muted);
+
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.add-environment-card:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-text);
+}
+
+.add-environment-card__icon {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px dashed var(--color-border);
+  border-radius: 50%;
+
+  color: var(--color-text-muted);
+}
+
+/* =========================
+   Rotate Modal
+========================= */
+
+.rotate-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 500;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.rotate-modal {
+  width: 100%;
+  max-width: 400px;
+
+  padding: 24px;
+
+  background: var(--color-surface-raised);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.rotate-modal__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 12px;
+}
+
+.rotate-modal__icon {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface-hover);
+
+  color: var(--color-text-secondary);
+}
+
+.rotate-modal__header h3 {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.rotate-modal__description {
+  margin: 0 0 20px;
+
+  color: var(--color-text-secondary);
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.rotate-modal__description strong {
+  color: var(--color-text);
+}
+
+.rotate-modal__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.rotate-modal__confirm,
+.rotate-modal__cancel {
+  flex: 1;
+
+  padding: 9px;
+
+  border-radius: var(--radius-sm);
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.rotate-modal__confirm {
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+
+  color: var(--color-primary-text);
+
+  font-family: var(--font-sans);
+}
+
+.rotate-modal__confirm:hover {
+  background: var(--color-primary-hover);
+}
+
+.rotate-modal__cancel {
+  background: transparent;
+  border: 1px solid var(--color-border);
+
+  color: var(--color-text-secondary);
+}
+
+.rotate-modal__cancel:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-text);
+}
