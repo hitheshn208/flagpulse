@@ -1,9 +1,9 @@
 import { X, Copy, Check, Clock, Pencil } from 'lucide-react'
 import { useState } from 'react'
-import { type Flag, ENVIRONMENTS } from '../data'
+import { type Flag, ActualFlag, ENVIRONMENTS } from '../data'
 
 interface FlagDetailProps {
-  flag: Flag
+  flag: ActualFlag
   onClose: () => void
   onToast: (msg: string, type: 'success' | 'error' | 'info') => void
 }

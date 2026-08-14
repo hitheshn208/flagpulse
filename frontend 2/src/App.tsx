@@ -8,24 +8,29 @@ import AuditLogPage from './pages/AuditLogPage'
 import Sidebar from './components/Sidebar'
 import TopBar from './components/TopBar'
 import ToastContainer, { type ToastData } from './components/Toast'
-import { ENVIRONMENTS, type Project, type Environment, type EnvName, type ActualProject, ActualEnvironment } from './data'
+import { ActualEnvironment } from './data'
 import { getProjects } from './services/project.service'
 import { getEnvironments } from './services/environment.service'
 
+import { useSelector, useDispatch } from 'react-redux'
+import { RootState } from './app/store'
+import { setCurrentProject, setProjects } from './features/projectSlice'
+import { setPage } from './features/uiSlice'
+import { setEnvironments, setCurrentEnv } from './features/environmentSlice'
 type Page = 'projects' | 'flags' | 'environments' | 'settings' | 'audit' | 'create-flag'
 
 let toastIdCounter = 0
 
 export default function App() {
-  const [page, setPage] = useState<Page>('projects')
 
-  const [projects, setProjects] = useState<ActualProject[]>([]);
-  const [currentProject, setCurrentProject] = useState<ActualProject>()
-  
 
-  const [environments, setEnvironments] = useState<ActualEnvironment[]>([]);
-  const [currentEnv, setCurrentEnv] = useState<Environment>(ENVIRONMENTS[2])
-  
+  const dispatch = useDispatch();
+
+  const page = useSelector((state:RootState)=> state.uiState.page);
+
+  const currentProject = useSelector((state: RootState) => state.project.currentProject)
+  const projects = useSelector((state:RootState)=> state.project.projects)
+
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [toasts, setToasts] = useState<ToastData[]>([])
 
@@ -38,37 +43,35 @@ export default function App() {
     setToasts(t => t.filter(x => x.id !== id))
   }, [])
 
-    const fetchProjects = async () => {
+  const fetchProjects = async () => {
     const response= await getProjects();
-    setProjects(response);
-    setCurrentProject(response[0])
+    dispatch(setProjects(response));
+    dispatch(setCurrentProject(response[0]));
   }
   useEffect(()=>{
     fetchProjects();
   }, []);
 
-    const fetchEnvironments =  async (projectId: string ) => {
-      let response : ActualEnvironment[]
-      if(projectId !== ""){
-        response = await getEnvironments(projectId);
-        setEnvironments(response)
-      }
+  const fetchEnvironments =  async (projectId: string ) => {
+    let response : ActualEnvironment[]
+    if(projectId !== ""){
+      response = await getEnvironments(projectId);
+      dispatch(setEnvironments(response))
     }
+  }
 
     useEffect(()=>{
       fetchEnvironments(currentProject ? currentProject.id : "");
     },[currentProject])
 
-  const navigate = (p: string) => setPage(p as Page)
+  const navigate = (p: string) => dispatch(setPage(p as Page))
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#000000' }}>
       <Sidebar
         currentPage={page === 'create-flag' ? 'flags' : page}
         onNavigate={navigate}
-        currentProject={currentProject}
-        projects={projects}
-        onProjectChange={p => { setCurrentProject(p); setPage('flags') }}
+        onProjectChange={(p) => {  dispatch(setCurrentProject(p)); dispatch(setPage('flags')) }}
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(s => !s)}
       />
@@ -76,21 +79,17 @@ export default function App() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <TopBar
           currentPage={page === 'create-flag' ? 'flags' : page}
-          currentProject={currentProject}
-          currentEnv={currentEnv}
-          environments={ENVIRONMENTS}
-          onEnvChange={env => setCurrentEnv(env)}
+          onEnvChange={env => dispatch(setCurrentEnv(env))}
           sidebarCollapsed={sidebarCollapsed}
           onToggleSidebar={() => setSidebarCollapsed(s => !s)}
         />
 
         <main style={{ flex: 1, overflow: 'auto' }}>
           {page === 'projects' && (
-            <ProjectsPage onSelectProject={p => { setCurrentProject(p); setPage('flags') }} projects={projects}/>
+            <ProjectsPage onSelectProject={p => { dispatch(setCurrentProject(p)); dispatch(setPage('flags')) }} projects={projects}/>
           )}
           {(page === 'flags') && (
             <FlagsPage
-              currentEnv={currentEnv.key as EnvName}
               onNavigate={navigate}
               onToast={addToast}
             />
@@ -99,10 +98,10 @@ export default function App() {
             <CreateFlagPage onNavigate={navigate} onToast={addToast} />
           )}
           {page === 'environments' && (
-            <EnvironmentsPage onToast={addToast} environments={environments}/>
+            <EnvironmentsPage onToast={addToast}/>
           )}
           {page === 'settings' && (
-            <SettingsPage project={currentProject} onToast={addToast} />
+            <SettingsPage onToast={addToast} />
           )}
           {page === 'audit' && (
             <AuditLogPage />

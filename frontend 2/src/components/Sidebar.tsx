@@ -8,8 +8,11 @@ import {
   Zap,
 } from "lucide-react";
 
+import { useDispatch, useSelector } from "react-redux";
+
 import { ActualProject, type Project } from "../data";
 import "./Sidebar.css";
+import { RootState } from "@/app/store";
 
 type Page =
   | "projects"
@@ -21,8 +24,6 @@ type Page =
 interface SidebarProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
-  currentProject: ActualProject | undefined;
-  projects: ActualProject[];
   onProjectChange: (project: ActualProject) => void;
   collapsed: boolean;
   onToggle: () => void;
@@ -38,11 +39,13 @@ const NAV = [
 export default function Sidebar({
   currentPage,
   onNavigate,
-  currentProject,
-  projects,
   onProjectChange,
   collapsed,
 }: SidebarProps) {
+
+  const currentProject = useSelector((state: RootState) => state.project.currentProject)
+  const projects = useSelector((state:RootState)=> state.project.projects)
+
   return (
     <aside className={`sidebar ${collapsed ? "sidebar--collapsed" : ""}`}>
       {/* Logo */}

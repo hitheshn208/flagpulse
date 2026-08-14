@@ -296,23 +296,21 @@
 }
 
 .flags-table th:nth-child(1) {
-  width: 48%;
+  width: 40%;
 }
 
 .flags-table th:nth-child(2) {
+  text-align: center;
   width: 15%;
 }
 
 .flags-table th:nth-child(3) {
-  width: 15%;
+  text-align: center;
+  width: 20%;
 }
 
 .flags-table th:nth-child(4) {
-  width: 18%;
-}
-
-.flags-table th.action-column {
-  width: 4%;
+  width: 30%;
 }
 
 /* =================================
@@ -346,6 +344,10 @@
 
 .flag-row td {
   padding: 13px 16px;
+}
+
+.flag-row td:nth-child(2), .flag-row td:nth-child(3){
+  text-align: center;
 }
 
 /* =================================
@@ -418,6 +420,31 @@
   font-weight: 500;
 }
 
+.boolean-capsule{
+  background: color-mix(in srgb, var(--type-boolean) 15%, transparent);
+  color: var(--type-boolean);
+  border: 1px solid color-mix(in srgb, var(--type-boolean) 30%, transparent);
+}
+
+.number-capsule{
+  background: color-mix(in srgb, var(--type-number) 15%, transparent);
+  color: var(--type-number);
+  border: 1px solid color-mix(in srgb, var(--type-number) 30%, transparent);
+}
+
+.string-capsule{
+  background: color-mix(in srgb, var(--type-string) 15%, transparent);
+  color: var(--type-string);
+  border: 1px solid color-mix(in srgb, var(--type-string) 30%, transparent);
+}
+
+.json-capsule{
+  background: color-mix(in srgb, var(--type-json) 15%, transparent);
+  color: var(--type-json);
+  border: 1px solid color-mix(in srgb, var(--type-json) 30%, transparent);
+}
+
+
 /* =================================
    Toggle
 ================================= */
@@ -462,6 +489,10 @@
   background: var(--color-enabled);
 }
 
+.flag-toggle.disabled {
+  background: var(--color-disabled);
+}
+
 .flag-toggle.enabled span {
   left: 16px;
 }
@@ -489,23 +520,6 @@
   font-size: 11px;
 }
 
-.avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 20px;
-  height: 20px;
-
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-
-  background: var(--color-surface-hover);
-  color: var(--color-text-secondary);
-
-  font-size: 7px;
-  font-weight: 700;
-}
 
 /* =================================
    Arrow

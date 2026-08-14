@@ -33,6 +33,22 @@ export interface ActualEnvironment{
   clients?: number
 }
 
+export interface ActualFlag{
+  id: string
+  name: string
+  key: string
+  type: "boolean" | "string" | "number" | "json"
+  description: string | null
+  environment_id: string
+  is_enabled: boolean
+  default_value: string | number | boolean | object
+  rollout_percentage: number | null
+  targeting_attribute: string | null
+  targeting_value: string | null
+  targeting_return_value: string | number | boolean | object
+  updated_at: string
+}
+
 export interface Environment {
   id: string
   name: string

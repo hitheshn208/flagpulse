@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Copy, Check, Shield, Trash2, UserPlus } from 'lucide-react'
 import { ActualProject, type Project } from '../data'
+import { useSelector } from "react-redux";
+import { RootState } from '@/app/store';
 
 interface SettingsPageProps {
-  project: ActualProject | undefined;
   onToast: (msg: string, type: 'success' | 'error' | 'info') => void
 }
 
@@ -62,7 +63,11 @@ function DeleteModal({ projectName, onClose, onConfirm }: { projectName: string 
   )
 }
 
-export default function SettingsPage({ project, onToast }: SettingsPageProps) {
+
+export default function SettingsPage({ onToast }: SettingsPageProps) {
+
+  const project = useSelector((state: RootState) => state.project.currentProject);
+
   const [projectName, setProjectName] = useState(project?.name)
   const [showDelete, setShowDelete] = useState(false)
   const [copied, setCopied] = useState(false)

@@ -9,9 +9,10 @@ import {
 
 import { type ActualEnvironment } from "../../data";
 import "./EnvironmentPage.css";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store";
 
 interface EnvironmentsPageProps {
-  environments: ActualEnvironment[];
   onToast: (
     msg: string,
     type: "success" | "error" | "info"
@@ -101,9 +102,11 @@ function RotateModal({
 }
 
 export default function EnvironmentsPage({
-  environments,
   onToast,
 }: EnvironmentsPageProps) {
+
+  const environments = useSelector((state:RootState)=> state.environment.environments)
+
   const [rotateTarget, setRotateTarget] =
     useState<ActualEnvironment | null>(null);
 
@@ -181,17 +184,22 @@ interface EnvCardProps {
   index: number
 }
 
-function EnvCard({
-  env,
-  onRotate,
-  onToast,
-  index
-}: EnvCardProps) {
+function EnvCard({env, onRotate, onToast, index}: EnvCardProps) {
   const maskedKey = env.sdk_key.slice(0, 4) +"••••••••••••••••" +env.sdk_key.slice(-4);
-  const borderTopColors = [ "rgb(130, 255, 128)", "rgb(56, 115, 255)", "rgb(210, 119, 255)", "orange", "cyan", "pink", "red", "yellow", "indigo", "teal", "emerald", "rose"];
-  
+  const environmentColors = [
+    "#60A5FA", 
+    "#34D399", 
+    "#FBBF24",
+    "#F87171", 
+    "#A78BFA", 
+    "#22D3EE", 
+    "#FB923C", 
+    "#F472B6", 
+    "#94A3B8", 
+    "#4ADE80", 
+  ];
   return (
-    <div className="env-card" >
+    <div className="env-card" style={{borderTopColor: environmentColors[index % environmentColors.length]}} >
       {/* Header */}
       <div className="env-card__header">
         {/* <span className="env-card__status" /> */}

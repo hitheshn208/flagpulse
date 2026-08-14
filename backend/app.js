@@ -10,7 +10,8 @@ const flagRouter = require("./routes/flags");
 const sseRouter = require("./routes/sse");
 
 const {verifyUser} = require("./middleware/auth");
-const errorHandler = require("./middleware/errorHandler")
+const errorHandler = require("./middleware/errorHandler");
+const { testQuery } = require('./model/projectModel');
 
 const app = express();
 app.use(express.json());
@@ -31,6 +32,11 @@ app.use((req, res, next)=>{
 app.get("/protected", verifyUser, (req, res)=>{
     return res.json({ message: "Protected Route", user: req.user})
 })
+
+// app.get("/testQuery", async (req, res)=>{
+//     const response = await testQuery();
+//     return res.json(response)
+// })
 
 //Routers
 app.use("/api/v1/stream", sseRouter);

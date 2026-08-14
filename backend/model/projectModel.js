@@ -8,14 +8,6 @@ exports.createProject = async (name, slug, owner_id, description = null) =>{
     return response.rows[0];
 }
 
-// exports.createDefaultEnvironments = async (id)=>{
-//     await db.query("INSERT INTO environments (project_id, name, slug) VALUES ($1, $2, $3), ($4, $5, $6), ($7, $8, $9)",
-//         [id, "Development", "dev",
-//         id, "Staging", "staging",
-//         id, "Production", "production"]
-//     )
-// }
-
 exports.getProjects = async (owner_id)=>{
     // const response = await db.query("SELECT id, name, slug, created_at FROM projects WHERE owner_id = $1", [owner_id]);
     const response = await db.query(`SELECT p.id, p.name, p.slug, p.created_at, p.description, count(distinct e.id) as environments_count, count(distinct f.id) as flags_count
@@ -142,4 +134,10 @@ exports.updateProject = async (projectId, name, slug)=>{
 
 exports.removeProject = async (projectId)=>{
     const response = await db.query("DELETE FROM projects WHERE id = $1", [projectId]);
+}
+
+
+exports.testQuery = async ()=>{
+    const response = await db.query(`select * from flags f join flag_values fs ON fs.flag_id = f.id`);
+    return response.rows;
 }

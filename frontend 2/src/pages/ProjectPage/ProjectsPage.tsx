@@ -8,19 +8,17 @@ interface ProjectsPageProps {
   onSelectProject: (project: ActualProject) => void
 }
 
-export default function ProjectsPage({
-  projects,
-  onSelectProject,
-}: ProjectsPageProps) {
+export default function ProjectsPage({projects, onSelectProject}: ProjectsPageProps) {
 
+  console.log(projects);
 
-  const totalFlags = PROJECTS.reduce(
-    (sum, project) => sum + project.flagCount,
+  const totalFlags = projects.reduce(
+    (sum, project) => sum + Number(project.flags_count),
     0
   )
 
-  const totalEnvironments = PROJECTS.reduce(
-    (sum, project) => sum + project.envCount,
+  const totalEnvironments = projects.reduce(
+    (sum, project) => sum + Number(project.environments_count),
     0
   )
 
@@ -34,7 +32,7 @@ export default function ProjectsPage({
           <p>Manage your projects and feature flags</p>
 
           <span className="projects-summary">
-            {PROJECTS.length} projects · {totalFlags} flags ·{' '}
+            {projects.length} projects · {totalFlags} flags ·{' '}
             {totalEnvironments} environments
           </span>
         </div>

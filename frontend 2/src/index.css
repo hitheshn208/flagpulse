@@ -98,14 +98,16 @@ body {
   --color-primary-text: #000000;
 
   /* Environment colors */
-  --env-1: #ffffff;
-  --env-2: #a1a1aa;
-  --env-3: #71717a;
-  --env-4: #d4d4d8;
-  --env-5: #52525b;
-  --env-6: #e4e4e7;
-  --env-7: #737373;
-  --env-8: #fafafa;
+  --env-1: #60a5fa;
+  --env-2: #34d399;
+  --env-3: #fbbf24;
+  --env-4: #f87171;
+  --env-5: #a78bfa;
+  --env-6: #22d3ee;
+  --env-7: #fb923c;
+  --env-8: #f472b6;
+  --env-9: #94a3b8;
+  --env-10: #4ade80;
 
   /* Flag type */
   --color-type-bg: #111111;
@@ -130,4 +132,10 @@ body {
   --transition-fast: 0.15s ease;
 
   --color-enabled: #14ca00;
+  --color-disabled: #202020;
+
+  --type-boolean: #34d399; /* green  - true/false toggle */
+  --type-number:  #60a5fa; /* blue   - numeric values */
+  --type-string:  #fbbf24; /* amber  - text values */
+  --type-json:    #a78bfa; /* violet - structured/object data */
 }
