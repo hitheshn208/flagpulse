@@ -1,5 +1,5 @@
 const AppError = require("../utils/AppError");
-const {changeFlagValue, removeFlag, changeFlagStatus, getEnvIdsOfFlags} = require("../model/flagModel");
+const {changeFlagValue, removeFlag, changeFlagStatus, getEnvIdsOfFlags, retriveFlagValue} = require("../model/flagModel");
 const {invalidateFlagValuesFromCache, editFlagValuesInCache} = require("../model/flagCache");
 const { insertAuditLog, getLogs } = require("../model/auditLogModel");
 const { sendClient } = require("../services/sse");
@@ -75,5 +75,17 @@ exports.toggleFlag = async (req, res) => {
     const response = await changeFlagStatus({envId, flagId, is_enabled});
     await editFlagValuesInCache(envId, response);
     await sendClient(envId, { reason: "flag_updated", ...response } );
+    return res.json(response);
+}
+
+
+exports.getFlagValue = async (req, res)=>{
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+    const flagId = req.params.flagId;
+    if (!uuidRegex.test(flagId))
+        throw new AppError("Invalid flag id", 400);
+
+    const response = await retriveFlagValue(flagId)
     return res.json(response);
 }

@@ -15,7 +15,8 @@ import './FlagsPage.css'
 import { useSelector, useDispatch } from 'react-redux'
 import type { RootState } from '@/app/store'
 import { getFlags } from '@/services/environment.service'
-import { setFlags } from '@/features/flagSlice'
+import { setFlags, setToggleValue, setCurrentFlag } from '@/features/flagSlice'
+import { toggleFlagValue } from '@/services/flag.service'
 
 type Page =
   | 'projects'
@@ -71,21 +72,12 @@ const flagsByEnv = useSelector(
   (state: RootState) => state.flag.flagsByEnv
 )
 
-const flagsOfEnv = currentEnv
-  ? flagsByEnv[currentEnv.id]
-  : undefined
+const flagsOfEnv = currentEnv ? flagsByEnv[currentEnv.id] : undefined
 
-  const [selectedFlag, setSelectedFlag] =
-    useState<ActualFlag | null>(null)
-
+  const selectedFlag = useSelector((state:RootState)=> state.flag.selectedFlag)
   const [search, setSearch] = useState('')
-
-  const [typeFilter, setTypeFilter] =
-    useState<FilterType>('all')
-
-  const [statusFilter, setStatusFilter] =
-    useState<StatusFilter>('all')
-
+  const [typeFilter, setTypeFilter] =  useState<FilterType>('all')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [loading, setLoading] = useState(false)
 
   /*
@@ -94,9 +86,7 @@ const flagsOfEnv = currentEnv
    */
  useEffect(() => {
   if (!currentEnv) return
-
   if (flagsByEnv[currentEnv.id]) return
-
   fetchFlags(currentEnv.id)
 }, [currentEnv])
 
@@ -112,18 +102,12 @@ const flagsOfEnv = currentEnv
           envId: environmentId,
         })
       )
+      console.log('Fetched flags for',currentEnv?.name) 
 
-      console.log(
-        'Fetched flags for',
-        currentEnv?.name
-      )
     } catch (error) {
       console.error('Failed to fetch flags:', error)
+      onToast('Failed to fetch flags', 'error')
 
-      onToast(
-        'Failed to fetch flags',
-        'error'
-      )
     } finally {
       setLoading(false)
     }
@@ -141,11 +125,7 @@ const flagsOfEnv = currentEnv
     0
   )
 
-  const currentEnvironmentColor =
-    ENVIRONMENT_COLORS[
-      currentEnvironmentIndex %
-        ENVIRONMENT_COLORS.length
-    ]
+  const currentEnvironmentColor = ENVIRONMENT_COLORS[currentEnvironmentIndex % ENVIRONMENT_COLORS.length]
 
   /*
    * Number of enabled flags in the current environment.
@@ -198,27 +178,14 @@ const flagsOfEnv = currentEnv
    * Currently this only changes the UI/Redux state
    * through the update function you will add later.
    */
-  const toggleFlag = (
-    flag: ActualFlag,
-    value: boolean
-  ) => {
-    /*
-     * TODO:
-     * Call your backend API here.
-     *
-     * Example:
-     *
-     * await toggleFlagValue(
-     *   flag.id,
-     *   flag.environment_id,
-     *   value
-     * )
-     */
-
-    onToast(
-      `Flag ${value ? 'enabled' : 'disabled'} in ${currentEnv?.name}`,
-      'success'
-    )
+  const toggleFlag = async ( flag: ActualFlag, value: boolean ) => {
+    try {
+      await toggleFlagValue(currentEnv?.id, flag.id, value)
+      dispatch(setToggleValue({envId: currentEnv?.id, flagId: flag.id, value: value}));
+      onToast(`Flag ${value ? 'enabled' : 'disabled'} in ${currentEnv?.name}`,'success')
+    } catch (e) {
+      onToast(`Failed to ${value} the flag`,'error')
+    }
   }
 
   const clearFilters = () => {
@@ -401,7 +368,7 @@ const flagsOfEnv = currentEnv
                       )
                     }
                     onClick={() =>
-                      setSelectedFlag(flag)
+                      dispatch(setCurrentFlag(flag))
                     }
                   />
                 ))
@@ -421,9 +388,8 @@ const flagsOfEnv = currentEnv
 
       {selectedFlag && (
         <FlagDetailSlideOver
-          flag={selectedFlag}
           onClose={() =>
-            setSelectedFlag(null)
+            dispatch(setCurrentFlag(null))
           }
           onToast={onToast}
         />
@@ -511,23 +477,12 @@ interface ToggleProps {
   onChange: (value: boolean) => void
 }
 
-function Toggle({
-  on,
-  onChange,
-}: ToggleProps) {
+function Toggle({on,onChange,}: ToggleProps) {
   return (
     <button
       type="button"
-      className={`flag-toggle ${
-        on
-          ? 'enabled'
-          : 'disabled'
-      }`}
-      aria-label={
-        on
-          ? 'Disable flag'
-          : 'Enable flag'
-      }
+      className={`flag-toggle ${on? 'enabled' : 'disabled'}`}
+      aria-label={ on ? 'Disable flag' : 'Enable flag' }
       onClick={(event) => {
         event.stopPropagation()
         onChange(!on)

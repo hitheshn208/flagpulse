@@ -47,6 +47,7 @@ export interface ActualFlag{
   targeting_value: string | null
   targeting_return_value: string | number | boolean | object
   updated_at: string
+  created_at: string
 }
 
 export interface Environment {
@@ -73,6 +74,22 @@ export interface Flag {
   createdAt: string
   justUpdated?: boolean
   tags?: string[]
+}
+
+
+export interface FlagEnvironmentValue {
+  id: string
+  flag_id: string
+  environment_id: string
+  is_enabled: boolean
+  rollout_percentage: number | null
+  targeting_attribute: string | null
+  targeting_value: string | null
+  targeting_return_value: string | number | boolean | object
+  updated_at: string
+  environment_name: string
+  environment_slug: string
+  environment_icon: string
 }
 
 export interface AuditEntry {

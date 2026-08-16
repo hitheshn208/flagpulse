@@ -43,3 +43,11 @@ exports.getEnvIdsOfFlags = async (flagId)=>{
     const envIds = await db.query("SELECT environment_id FROM flag_values WHERE flag_id = $1", [flagId])
     return envIds.rows;
 }
+exports.retriveFlagValue = async (flagId)=>{
+    const response = await db.query(`SELECT fv.id, fv.flag_id, fv.environment_id, fv.is_enabled, fv.rollout_percentage, fv.targeting_attribute, fv.targeting_value, fv.targeting_return_value, fv.updated_at, e.name as environment_name, e.slug as environment_slug, e.icon as environment_icon
+        FROM flag_values fv
+        JOIN environments e ON fv.environment_id = e.id
+        WHERE fv.flag_id = $1`, [flagId]);
+
+    return response.rows
+}

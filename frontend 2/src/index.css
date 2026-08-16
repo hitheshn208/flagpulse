@@ -82,7 +82,7 @@ body {
   --color-surface-highlight: #262626;
 
   /* Borders */
-  --color-border: #1f1f1f;
+  --color-border: #353535;
   --color-border-hover: #333333;
 
   /* Text */
@@ -132,7 +132,7 @@ body {
   --transition-fast: 0.15s ease;
 
   --color-enabled: #14ca00;
-  --color-disabled: #202020;
+  --color-disabled: #3d3d3d;
 
   --type-boolean: #34d399; /* green  - true/false toggle */
   --type-number:  #60a5fa; /* blue   - numeric values */
