@@ -45,6 +45,7 @@ export default function Sidebar({
 
   const currentProject = useSelector((state: RootState) => state.project.currentProject)
   const projects = useSelector((state:RootState)=> state.project.projects)
+  const {email, name} = useSelector((state: RootState)=> state.user)
 
   return (
     <aside className={`sidebar ${collapsed ? "sidebar--collapsed" : ""}`}>
@@ -137,18 +138,18 @@ export default function Sidebar({
       {/* User */}
       <div className="sidebar__user">
         <div className="user-avatar">
-          AK
+          {(name? name :  "User").toUpperCase().slice(0,2)}
         </div>
 
         {!collapsed && (
           <>
             <div className="user-info">
               <div className="user-name">
-                Arjun Kapoor
+                {name ? name : "User"}
               </div>
 
               <div className="user-role">
-                Admin
+                {email}
               </div>
             </div>
 

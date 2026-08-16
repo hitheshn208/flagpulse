@@ -1,7 +1,7 @@
 const db = require("../config/postgres");
 
 exports.findUserByEmail  = async (email) => {
-    const response = await db.query("SELECT id, email, password_hash FROM users WHERE email = $1", [email]);
+    const response = await db.query("SELECT id, email, password_hash, name FROM users WHERE email = $1", [email]);
     return response.rows[0]
 }
 

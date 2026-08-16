@@ -8,6 +8,8 @@ type AuthUser = {
 }
 
 type AuthResponse = {
+    email: string
+    name: string
     message: String
 }
 

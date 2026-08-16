@@ -80,7 +80,7 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
   }
 
   return (
-    <div style={{ padding: '24px 28px', maxWidth: 760 }}>
+    <div style={{ padding: '24px 28px' }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontFamily: "'Sora', sans-serif", fontSize: 22, fontWeight: 700, color: '#F0FDF4', margin: 0, letterSpacing: '-0.02em' }}>Project Settings</h1>
         <p style={{ fontSize: 13, color: '#6B8E87', margin: '4px 0 0' }}>Manage configuration, team access, and danger zone</p>

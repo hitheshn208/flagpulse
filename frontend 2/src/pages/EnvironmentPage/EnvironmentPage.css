@@ -302,7 +302,7 @@
 }
 
 .rotate-key-btn:hover {
-  background: var(--color-surface-highlight);
+  background: var(--color-text);
 }
 
 .manage-btn {

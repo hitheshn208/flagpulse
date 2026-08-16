@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import ProjectsPage from './pages/ProjectPage/ProjectsPage'
 import FlagsPage from './pages/FlagsPage/FlagsPage'
-import CreateFlagPage from './pages/CreateFlagPage'
+import CreateFlagPage from './pages/CreateFlagPage/CreateFlagPage'
 import EnvironmentsPage from './pages/EnvironmentPage/EnvironmentsPage'
 import SettingsPage from './pages/SettingsPage'
 import AuditLogPage from './pages/AuditLogPage'

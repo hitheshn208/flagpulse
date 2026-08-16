@@ -2,6 +2,10 @@ import { useState } from 'react'
 import { ArrowLeft, Copy, Check } from 'lucide-react'
 
 import './CreateFlagPage.css'
+import { createFlag } from '@/services/project.service'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@/app/store'
+import { addNewFlag } from '@/features/flagSlice'
 
 type Page = 'flags' | 'create-flag' | string
 
@@ -61,49 +65,37 @@ function toKey(name: string) {
     .replace(/(^-|-$)/g, '')
 }
 
-export default function CreateFlagPage({
-  onNavigate,
-  onToast,
-}: CreateFlagPageProps) {
+export default function CreateFlagPage({onNavigate,onToast,}: CreateFlagPageProps) {
   const [name, setName] = useState('')
   const [keyOverride, setKeyOverride] = useState('')
   const [keyEdited, setKeyEdited] = useState(false)
-
-  const [description, setDescription] =
-    useState('')
-
+  const [description, setDescription] = useState('')
   const [type, setType] = useState<FlagType>('boolean')
-
   const [defaultBool, setDefaultBool] = useState(false)
-
   const [defaultStr, setDefaultStr] =  useState('')
-
-  const [defaultNum, setDefaultNum] = useState('0')
-
+  const [defaultNum, setDefaultNum] = useState<number>()
   const [defaultJson, setDefaultJson] = useState('{}')
 
+  const currentProject = useSelector((state:RootState)=>state.project.currentProject);
+  const dispatch = useDispatch();
   const [envScope, setEnvScope] = useState<Record<string, boolean>>({
     development: true,
     staging: true,
     production: false,
   })
 
-  const [copied, setCopied] =
-    useState(false)
+  const [copied, setCopied] = useState(false)
 
-  const key = keyEdited
-    ? keyOverride
-    : toKey(name)
+  const key = keyEdited ? keyOverride : toKey(name)
 
-  const displayKey =
-    key || 'my-flag-key'
+  const displayKey = key || 'my-flag-key'
 
   const codeSnippet =
     type === 'boolean'
       ? `const isEnabled = useFlag('${displayKey}', false)`
       : `const value = useFlag('${displayKey}', ${
           type === 'number'
-            ? defaultNum || '0'
+            ? String(defaultNum) || '0'
             : type === 'string'
               ? `'${defaultStr || 'default'}'`
               : '{}'
@@ -112,23 +104,34 @@ export default function CreateFlagPage({
   const handleCopy = () => {
     navigator.clipboard
       .writeText(codeSnippet)
-      .catch(() => {})
-
+      .catch(() => {
+        onToast("Failed to copy", "error")
+      })
     setCopied(true)
-
     setTimeout(() => {
       setCopied(false)
-    }, 2000)
+    }, 1500)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+
+    const flagValue = type === "boolean" ? defaultBool
+      : type === "string" ? defaultStr 
+      : type === "number" ? defaultNum
+      : type === "json" ? defaultJson : null
+    if(!flagValue)
+      return;
+    const data = {
+      key,
+      name,
+      type,
+      description,
+      default_value: flagValue
+    }
+    const response = await createFlag(data, currentProject?.id)
+    dispatch(addNewFlag({...response, data}))
     if (!name.trim()) return
-
-    onToast(
-      `Flag "${key}" created successfully`,
-      'success'
-    )
-
+    onToast(`Flag "${key}" created successfully`,'success')
     onNavigate('flags')
   }
 
@@ -303,20 +306,9 @@ export default function CreateFlagPage({
                       <button
                         key={String(value)}
                         type="button"
-                        className={`boolean-option ${
-                          defaultBool === value
-                            ? 'selected'
-                            : ''
-                        }`}
-                        onClick={() =>
-                          setDefaultBool(
-                            value
-                          )
-                        }
-                      >
-                        {value
-                          ? 'true'
-                          : 'false'}
+                        className={`boolean-option ${defaultBool === value? 'selected': ''}`}
+                        onClick={() =>setDefaultBool(value)}>
+                        {value? 'true' : 'false'}
                       </button>
                     )
                   )}
@@ -344,16 +336,13 @@ export default function CreateFlagPage({
                   <input
                     type="number"
                     value={defaultNum}
+                    placeholder='Default numeric value'
                     onChange={(e) =>
-                      setDefaultNum(
-                        e.target.value
-                      )
+                      setDefaultNum(parseInt(e.target.value))
                     }
-                    placeholder="0"
-                    className="number-value"
                   />
 
-                  <input
+                  {/* <input
                     placeholder="Min"
                     className="number-limit"
                   />
@@ -361,7 +350,7 @@ export default function CreateFlagPage({
                   <input
                     placeholder="Max"
                     className="number-limit"
-                  />
+                  /> */}
                 </div>
               )}
 

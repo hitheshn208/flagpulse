@@ -3,6 +3,8 @@ import { Eye, EyeOff, Zap, AlertCircle } from 'lucide-react'
 import { login } from '@/services/auth.service'
 import axios from "axios"
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { initialiseUser } from '@/features/userSlice'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -11,13 +13,15 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
       try {
-        await login({ email, password });
+        const response  = await login({ email, password });
+        dispatch(initialiseUser({name: response.name, email: response.email}));
         navigate("/");
       } catch (error: unknown) {
         console.log(error)

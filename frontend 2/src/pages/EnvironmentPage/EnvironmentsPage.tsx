@@ -214,7 +214,7 @@ function EnvCard({env, onRotate, onToast, index}: EnvCardProps) {
       </p>
 
       {/* Connected Clients */}
-      <div className="connected-clients">
+      {/* <div className="connected-clients">
         <span className="connected-clients__status" />
 
         <Users size={12} />
@@ -225,7 +225,7 @@ function EnvCard({env, onRotate, onToast, index}: EnvCardProps) {
           </strong>{" "}
           clients connected
         </span>
-      </div>
+      </div> */}
 
       {/* SDK Key */}
       <div className="sdk-key">
