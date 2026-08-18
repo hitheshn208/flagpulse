@@ -1,8 +1,18 @@
+import { store } from "@/app/store";
 import axios from "axios";
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true
+})
+
+api.interceptors.request.use((config)=>{
+    const projectId = store.getState().project.currentProject?.id
+
+    if(projectId){
+        config.headers["X-FlagPulse-Project-Id"] = projectId;
+    }
+    return config;
 })
 
 api.interceptors.response.use(

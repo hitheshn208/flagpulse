@@ -1,4 +1,4 @@
-const {createProject, createDefaultEnvironments, getProjects, fetchAllEnvironments, insertEnvironment, insertFlag, removeEnvironment, updateProject, removeProject} = require("../model/projectModel");
+const {createProject, getProjects, fetchAllEnvironments, insertEnvironment, insertFlag, removeEnvironment, updateProject, removeProject} = require("../model/projectModel");
 const {invalidateFlagValuesFromCache} = require("../model/flagCache");
 const AppError = require("../utils/AppError");
 const { insertAuditLog } = require("../model/auditLogModel");
@@ -11,15 +11,16 @@ exports.getProjects = async (req, res)=>{
 }
 
 exports.insertProjects = async (req, res)=>{
-    const {name, description} = req.body;
+    const {name, description, url, environment_name, environment_icon} = req.body;
     if(!name)
         throw new AppError("Project name required", 400);
     
     const owner_id = req.user.id;
     const slug = name.toLowerCase().replace(/\s+/g, "-");
+    const environment_slug = environment_name.toLowerCase().replace(/\s+/g, "-");
 
-    const project = await createProject(name, slug, owner_id, description);
-    // await createDefaultEnvironments(project.id);  //!LOOOK INTO THISS
+    const project = await createProject({name, slug, url, owner_id, description, environment_name, environment_icon, environment_slug});
+    await insertAuditLog(project.id, null, null, req.user.id, `New Project ${project.name} was created`, null, null, null, "project_creation", "project");
     res.status(201).json(project)      
 }
 
@@ -46,10 +47,10 @@ exports.createProjectEnvironments = async (req, res)=>{
     
     const slug = name.toLowerCase().replace(/\s+/g, "-");
 
-    const {environment, flags} = await insertEnvironment(name, slug, projectId, icon);
+    const {environment} = await insertEnvironment(name, slug, projectId, icon);
+    await insertAuditLog(projectId, null, environment.id, req.user.id, `New environment ${environment.name} was created`, null, null, null, "environment_creation", "environment");
     return res.status(201).json({
-        environment, 
-        flags
+        environment
     });
 }
 
@@ -75,7 +76,7 @@ exports.createFlag = async (req, res)=>{
 
     const {flag_id, envIds} = await insertFlag(projectId, key, name, type, serialisedValue, description);
     await invalidateFlagValuesFromCache(envIds);//^Invalidate in cache
-    await insertAuditLog(flag_id, envIds, req.user.id, "New flag added", null, null, null, "create"); //^Log creation
+    await insertAuditLog(projectId, flag_id, null, req.user.id, `New flag ${name} was created`, null, null, null, "flag_creation", "flag"); //^Log creation
     await Promise.all(envIds.map(id=> sendClient(id.environment_id, {type: "flag_created", flag_id}))); //^Send event
 
     return res.status(201).json({
@@ -97,8 +98,8 @@ exports.deleteProjectEnvironment = async (req, res)=>{
     if (!uuidRegex.test(envId))
         throw new AppError("Invalid environment Id", 400);
 
-    await removeEnvironment(projectId, envId)
-
+    const deletedEnv = await removeEnvironment(projectId, envId)
+    await insertAuditLog(projectId, null, null, req.user.id, `${deletedEnv.name} environment was deleted`, null, null, null, "environment_deletion", "environment");
     return res.status(200).json({
         message : "Flag delete successfully"
     })

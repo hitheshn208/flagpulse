@@ -23,7 +23,7 @@ exports.editFlagValue = async (req, res) => {
     const old_value = JSON.stringify(response.old.rows[0]);
     const new_value = JSON.stringify(response.new.rows[0]);
 
-    await insertAuditLog(flagId, envId, req.user.id, "Flag value changed", old_value, new_value, reason ? reason : null, "update"); //^Log the changes
+    await insertAuditLog(req.projectId, flagId, envId, req.user.id, "Flag value changed", old_value, new_value, null, "flag_updation", "flag"); //^Log the changes
     await sendClient(envId, { type: "flag_updated", ...response.new.rows[0] } ); //^Send edited flags
     return res.json(response.new.rows);
 }
@@ -36,13 +36,13 @@ exports.deleteFlag = async (req, res)=>{
         throw new AppError("Invalid flag id", 400);
 
     const envIds = await getEnvIdsOfFlags(flagId)
-    await insertAuditLog(flagId, envIds, req.user.id, "Flag deleted", null, null, null, "delete");//^add to Log
-    await removeFlag(flagId);
+    const flagName = await removeFlag(flagId);
     await invalidateFlagValuesFromCache(envIds);//^Invalidate in cache
-    
+    await insertAuditLog(req.projectId, null, null, req.user.id, `${flagName} was deleted`, null, null, null, "flag_deletion", "flag");//^add to Log
     await Promise.all(envIds.map(id=> sendClient(id.environment_id, {type: "flag_deleted", flag_id: flagId})));//^Send event to all evnironments associated to the flag
 
     return res.json({
+        envIds,
         success: true,
         message: "Flag deleted"
     })
@@ -75,6 +75,7 @@ exports.toggleFlag = async (req, res) => {
     const response = await changeFlagStatus({envId, flagId, is_enabled});
     await editFlagValuesInCache(envId, response);
     await sendClient(envId, { reason: "flag_updated", ...response } );
+    await insertAuditLog(req.projectId, flagId, envId, req.user.id, null, !is_enabled, is_enabled, null, "flag_toggle", "flag")
     return res.json(response);
 }
 

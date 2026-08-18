@@ -1,16 +1,21 @@
 import { Plus } from 'lucide-react'
-import { PROJECTS, type Project, type ActualProject } from '../../data'
+import { type ActualProject } from '../../data'
 import './ProjectsPage.css'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import CreateProjectModal from '@/components/CreateProjectModal';
 
 interface ProjectsPageProps {
   projects : ActualProject[];
   onSelectProject: (project: ActualProject) => void
+  onToast: (
+    msg: string,
+    type: "success" | "error" | "info"
+  ) => void;
 }
 
-export default function ProjectsPage({projects, onSelectProject}: ProjectsPageProps) {
-
+export default function ProjectsPage({projects, onSelectProject, onToast}: ProjectsPageProps) {
   console.log(projects);
+  const [newProjectModal, setNewProjectModal] = useState(false);
 
   const totalFlags = projects.reduce(
     (sum, project) => sum + Number(project.flags_count),
@@ -37,7 +42,7 @@ export default function ProjectsPage({projects, onSelectProject}: ProjectsPagePr
           </span>
         </div>
 
-        <button className="new-project-btn" type="button">
+        <button className="new-project-btn" type="button" onClick={()=>setNewProjectModal(true)}>
           <Plus size={15} />
           New Project
         </button>
@@ -53,6 +58,7 @@ export default function ProjectsPage({projects, onSelectProject}: ProjectsPagePr
           />
         ))}
       </section>
+      {newProjectModal && <CreateProjectModal onClose={()=>setNewProjectModal(false)} onToast={onToast}/>}
     </main>
   )
 }

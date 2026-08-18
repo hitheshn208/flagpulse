@@ -1,10 +1,13 @@
 import { X, Copy, Check, Clock, Pencil } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { type FlagEnvironmentValue } from '../data'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import type { RootState } from '@/app/store'
-import { getFlagEnvironmentValues } from '@/services/flag.service'
+import { deleteflag, getFlagEnvironmentValues } from '@/services/flag.service'
 import './FlagDetailSlideOver.css'
+import { removeFlag } from '@/features/flagSlice'
+import Loader from './Loader'
+import { changeFlagCountOfproject } from '@/features/projectSlice'
 
 interface FlagDetailProps {
   onClose: () => void
@@ -61,13 +64,7 @@ function formatDateTime(dateString?: string) {
   })
 }
 
-function Toggle({
-  on,
-  onChange,
-}: {
-  on: boolean
-  onChange: (value: boolean) => void
-}) {
+function Toggle({on,onChange,}: {on: boolean; onChange: (value: boolean) => void}) {
   return (
     <button
       type="button"
@@ -118,45 +115,45 @@ function CopyButton({
   )
 }
 
-export default function FlagDetailSlideOver({
-  onClose,
-  onToast,
-}: FlagDetailProps) {
-  const [flagEnvironmentsValues, setFlagEnvironmentsValues] =
-    useState<FlagEnvironmentValue[]>([])
-
-  const flag = useSelector(
-    (state: RootState) => state.flag.selectedFlag
-  )
+export default function FlagDetailSlideOver({onClose,onToast,}: FlagDetailProps) {
+  const [flagEnvironmentsValues, setFlagEnvironmentsValues] =useState<FlagEnvironmentValue[]>([])
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const flag = useSelector((state: RootState) => state.flag.selectedFlag)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (!flag) return
-
     fetchFlagEnvironmentValues(flag.id)
   }, [flag?.id])
 
-  const fetchFlagEnvironmentValues = async (
-    flagId: string
-  ) => {
+  const fetchFlagEnvironmentValues = async (flagId: string) => {
     try {
-      const response =
-        await getFlagEnvironmentValues(flagId)
-
+      const response = await getFlagEnvironmentValues(flagId)
       setFlagEnvironmentsValues(response)
     } catch (error) {
       console.error(
-        'Failed to fetch flag environment values:',
-        error
-      )
-
-      onToast(
-        'Failed to load flag environments',
-        'error'
-      )
+        'Failed to fetch flag environment values:',error)
+      onToast('Failed to load flag environments','error')
     }
   }
 
   if (!flag) return null
+
+  const handleDelete = async (flagId : string)=>{
+    setDeleteLoading(true)
+    try{
+      const response = await deleteflag(flagId);
+      dispatch(removeFlag({envIds: response.envIds, flagId: flag.id}));
+      dispatch(changeFlagCountOfproject({count: -1}));
+    }catch(error){
+      onToast("Failed to delete the flag", "error");
+    }finally{
+      setDeleteLoading(false);
+      setShowDeleteModal(false);
+      onClose()
+    }
+  }
 
   return (
     <div className="flag-detail-overlay">
@@ -274,13 +271,7 @@ export default function FlagDetailSlideOver({
                   >
                     <span
                       className="environment-dot"
-                      style={{
-                        background:
-                          ENVIRONMENT_COLORS[
-                            index %
-                              ENVIRONMENT_COLORS.length
-                          ],
-                      }}
+                      style={{background: ENVIRONMENT_COLORS[index % ENVIRONMENT_COLORS.length]}}
                     />
 
                     <span className="environment-name">
@@ -378,7 +369,6 @@ export default function FlagDetailSlideOver({
         ========================= */}
 
         <div className="flag-detail-footer">
-
           <button
             type="button"
             className="save-button"
@@ -395,17 +385,61 @@ export default function FlagDetailSlideOver({
           <button
             type="button"
             className="delete-button"
-            onClick={() =>
-              onToast(
-                'Delete flag?',
-                'error'
-              )
-            }
-          >
-            Delete
+            onClick={() => setShowDeleteModal(true)}
+            disabled={deleteLoading}
+          > Delete
           </button>
-
         </div>
+
+      {showDeleteModal && (
+        <div className="delete-modal-overlay">
+          <div
+            className="delete-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-flag-title"
+          >
+            <div className="delete-modal-content">
+        <h2 id="delete-flag-title">
+          Delete flag?
+        </h2>
+
+        <p>
+          This will permanently delete{' '}
+          <strong>{flag.name}</strong> and remove it
+          from all environments.
+        </p>
+
+        <p className="delete-modal-warning">
+          This action cannot be undone.
+        </p>
+      </div>
+
+      <div className="delete-modal-actions">
+        <button
+          type="button"
+          className="delete-cancel-button"
+          onClick={() =>
+            setShowDeleteModal(false)
+          }
+          disabled={deleteLoading}
+
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          className="delete-confirm-button"
+          onClick={() => handleDelete(flag?.id)}
+          disabled={deleteLoading}
+        >
+          {deleteLoading ? "Deleting.." : "Delete"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       </div>
     </div>

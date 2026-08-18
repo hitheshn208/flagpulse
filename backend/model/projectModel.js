@@ -1,11 +1,22 @@
 const db = require("../config/postgres");
 const AppError = require("../utils/AppError");
 
-exports.createProject = async (name, slug, owner_id, description = null) =>{
-    const response = await db.query("INSERT INTO projects (name, slug, owner_id, description) VALUES ($1, $2, $3, $4) RETURNING id, name, slug, created_at", [name, slug, owner_id, description]);
-    response.rows[0]["environments_count"] = 0;
-    response.rows[0]["flags_count"] = 0;
-    return response.rows[0];
+exports.createProject = async ({name, slug, url, owner_id, description = null, environment_name, environment_slug, environment_icon}) =>{
+    const client = await db.connect();
+    try{
+        await client.query("BEGIN");
+        const response = await client.query("INSERT INTO projects (name, slug, url, owner_id, description) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, slug, url, created_at, description", [name, slug, url, owner_id, description]);
+        await client.query("INSERT INTO environments (project_id, name, slug, icon) VALUES ($1, $2, $3, $4)", [response.rows[0].id, environment_name, environment_slug, environment_icon]);
+        await client.query("COMMIT");
+        response.rows[0]["environments_count"] = 1;
+        response.rows[0]["flags_count"] = 0;
+        return response.rows[0];
+    }catch(error){
+        await client.query("ROLLBACK")
+        throw error
+    }finally{
+        client.release()        
+    }
 }
 
 exports.getProjects = async (owner_id)=>{
@@ -50,25 +61,19 @@ exports.insertEnvironment = async (name, slug, projectId, icon) => {
         );
         const environment = envResult.rows[0];
 
-        await client.query(
+        const rows = await client.query(
             `INSERT INTO flag_values (flag_id, environment_id, is_enabled, targeting_return_value)
             SELECT id, $1, false, default_value
             FROM flags
-            WHERE project_id = $2`,
+            WHERE project_id = $2
+            RETURNING id`,
         [environment.id, projectId]
         );
-
-        
-        const flags = await client.query(`
-            SELECT f.id, f.name, f.key, f.type, fv.environment_id, fv.is_enabled, f.default_value, fv.rollout_percentage, fv.targeting_attribute, fv.targeting_value, fv.targeting_return_value, fv.updated_at
-            FROM flag_values fv
-            JOIN flags f ON f.id = fv.flag_id
-            WHERE fv.environment_id = $1`, [environment.id]);
             
         await client.query("COMMIT");
 
-        environment["total_flags"] = flags.rows.length;
-        return {environment, flags: flags.rows};
+        environment["total_flags"] = rows.rowCount;
+        return {environment};
     } catch (err) {
         await client.query("ROLLBACK");
         throw err;
@@ -124,7 +129,8 @@ exports.removeEnvironment = async (projectId, envId) =>{
     if(project.rows.length === 0)
         throw new AppError("Project Not found", 400);
 
-    const response = await db.query("DELETE FROM environments WHERE id = $1 AND project_id=$2", [envId, projectId]);
+    const response = await db.query("DELETE FROM environments WHERE id = $1 AND project_id=$2 RETURNING *", [envId, projectId]);
+    return response.rows[0]
 }
 
 

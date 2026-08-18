@@ -12,6 +12,7 @@ exports.verifyUser = (req, res, next)=>{
     try{
         const decode = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decode;
+        req.projectId = req.headers["x-flagpulse-project-id"];
         next();
     }catch(e){
         throw new AppError("Unauthorized", 401);

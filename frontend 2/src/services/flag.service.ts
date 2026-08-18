@@ -10,3 +10,8 @@ export async function getFlagEnvironmentValues(flagId: string): Promise<FlagEnvi
     const response = await api.get(`/api/flags/${flagId}/environments`)
     return response.data
 }
+
+export async function deleteflag(flagId: string) : Promise<{envIds : string[]}>{
+    const response = await api.delete(`/api/flags/${flagId}`);
+    return response.data;
+}

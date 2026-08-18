@@ -86,7 +86,7 @@ export default function App() {
 
         <main style={{ flex: 1, overflow: 'auto' }}>
           {page === 'projects' && (
-            <ProjectsPage onSelectProject={p => { dispatch(setCurrentProject(p)); dispatch(setPage('flags')) }} projects={projects}/>
+            <ProjectsPage onSelectProject={p => { dispatch(setCurrentProject(p)); dispatch(setPage('flags')) }} projects={projects} onToast={addToast}/>
           )}
           {(page === 'flags') && (
             <FlagsPage

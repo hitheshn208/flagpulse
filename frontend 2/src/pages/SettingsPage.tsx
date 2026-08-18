@@ -1,29 +1,16 @@
 import { useState } from 'react'
 import { Copy, Check, Shield, Trash2, UserPlus } from 'lucide-react'
-import { ActualProject, type Project } from '../data'
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from '@/app/store';
+import { deleteProject } from '@/services/project.service';
+import { removeProject } from '@/features/projectSlice';
+import { setPage } from '@/features/uiSlice';
 
 interface SettingsPageProps {
   onToast: (msg: string, type: 'success' | 'error' | 'info') => void
 }
 
-const TEAM = [
-  { name: 'Arjun Kapoor', email: 'arjun@acmecorp.dev', role: 'Admin', initials: 'AK', color: '#10B981', joined: 'Oct 2025' },
-  { name: 'Jana Liu', email: 'jana@acmecorp.dev', role: 'Member', initials: 'JL', color: '#38BDF8', joined: 'Nov 2025' },
-  { name: 'Sara Mehta', email: 'sara@acmecorp.dev', role: 'Member', initials: 'SM', color: '#A78BFA', joined: 'Sep 2025' },
-  { name: 'Riya Khanna', email: 'riya@acmecorp.dev', role: 'Member', initials: 'RK', color: '#F59E0B', joined: 'Jan 2026' },
-  { name: 'Theo Muller', email: 'theo@acmecorp.dev', role: 'Member', initials: 'TM', color: '#10B981', joined: 'Dec 2025' },
-  { name: 'Ben Johnson', email: 'ben@acmecorp.dev', role: 'Viewer', initials: 'BJ', color: '#F43F5E', joined: 'Feb 2026' },
-]
-
-const ROLE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  Admin:  { bg: '#161E1C', text: '#C8DDD8', border: '#253330' },
-  Member: { bg: '#141C1E', text: '#B0C8D0', border: '#1E2C32' },
-  Viewer: { bg: '#161818', text: '#7A8E8A', border: '#222A28' },
-}
-
-function DeleteModal({ projectName, onClose, onConfirm }: { projectName: string | undefined ; onClose: () => void; onConfirm: () => void }) {
+function DeleteModal({ projectName, onClose, loading, onConfirm }: { projectName: string | undefined ; loading: boolean ;onClose: () => void; onConfirm: () => void }) {
   const [typed, setTyped] = useState('')
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -49,12 +36,12 @@ function DeleteModal({ projectName, onClose, onConfirm }: { projectName: string 
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={onConfirm}
-            disabled={typed !== projectName}
+            disabled={typed !== projectName || loading}
             style={{ flex: 1, background: typed === projectName ? '#F43F5E' : '#1E2926', color: typed === projectName ? '#fff' : '#6B8E87', border: 'none', borderRadius: 6, padding: '9px', fontSize: 13, fontWeight: 700, cursor: typed === projectName ? 'pointer' : 'not-allowed', fontFamily: "'Sora', sans-serif" }}
           >
             Delete Project
           </button>
-          <button onClick={onClose} style={{ flex: 1, background: 'transparent', border: '1px solid #1E2926', borderRadius: 6, padding: '9px', fontSize: 13, color: '#94A3A8', cursor: 'pointer' }}>
+          <button disabled={loading} onClick={onClose} style={{ flex: 1, background: 'transparent', border: '1px solid #1E2926', borderRadius: 6, padding: '9px', fontSize: 13, color: '#94A3A8', cursor: 'pointer' }}>
             Cancel
           </button>
         </div>
@@ -71,12 +58,30 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
   const [projectName, setProjectName] = useState(project?.name)
   const [showDelete, setShowDelete] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [loading, setloading] = useState(false)
+
+  const dispatch = useDispatch();
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(typeof project?.id === "string" ? project?.id : "").catch(() => {})
     setCopied(true)
     onToast('Project ID copied', 'info')
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleDelete = async ()=>{
+    setloading(true);
+    if(!project) return;
+    try{
+      await deleteProject(project?.id);
+      dispatch(removeProject({id: project?.id}));
+      dispatch(setPage("projects"));
+    }catch(error){
+      onToast("Failed to delete project", "error")
+    }finally{
+      setloading(false);
+      setShowDelete(false);
+    }
   }
 
   return (
@@ -91,8 +96,7 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
         {[
           { label: 'Total Flags', value: project?.flags_count },
           { label: 'Environments', value: project?.environments_count },
-          { label: 'Team Members', value: TEAM.length },
-          { label: 'Created', value: 'Sep 2025' },
+          { label: 'Created', value: project ? new Date(project?.created_at).toLocaleDateString('en-GB', { day: "2-digit", month:"long", year: "numeric"}) : "NA" },
         ].map(s => (
           <div key={s.label} style={{ background: '#101715', border: '1px solid #1E2926', borderRadius: 7, padding: '12px 14px' }}>
             <div style={{ fontSize: 9, color: '#6B8E87', fontWeight: 600, letterSpacing: '0.07em', marginBottom: 5 }}>{s.label.toUpperCase()}</div>
@@ -139,43 +143,6 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
         </div>
       </div>
 
-      {/* Team members */}
-      <div style={{ background: '#101715', border: '1px solid #1E2926', borderRadius: 8, padding: 20, marginBottom: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#6B8E87', letterSpacing: '0.06em' }}>TEAM MEMBERS</div>
-          <button
-            onClick={() => onToast('Invite dialog coming soon', 'info')}
-            style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#161E1C', border: '1px solid #253330', borderRadius: 5, padding: '5px 10px', fontSize: 11, fontWeight: 600, color: '#C8DDD8', cursor: 'pointer' }}
-          >
-            <UserPlus size={11} />
-            Invite
-          </button>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          {TEAM.map((member, i) => {
-            const rc = ROLE_COLORS[member.role]
-            return (
-              <div
-                key={i}
-                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '9px 0', borderBottom: i < TEAM.length - 1 ? '1px solid #1E2926' : 'none' }}
-              >
-                <div style={{ width: 30, height: 30, borderRadius: '50%', background: member.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#080C0B', flexShrink: 0 }}>
-                  {member.initials}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500, color: '#F0FDF4' }}>{member.name}</div>
-                  <div style={{ fontSize: 11, color: '#6B8E87' }}>{member.email}</div>
-                </div>
-                <div style={{ fontSize: 11, color: '#6B8E87', marginRight: 12 }}>Joined {member.joined}</div>
-                <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 20, background: rc.bg, color: rc.text, border: `1px solid ${rc.border}` }}>
-                  {member.role}
-                </span>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
       {/* Danger zone */}
       <div style={{ background: 'rgba(244,63,94,0.04)', border: '1px solid rgba(244,63,94,0.25)', borderRadius: 8, padding: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
@@ -187,7 +154,7 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
         </p>
         <button
           onClick={() => setShowDelete(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: 7, background: 'rgba(244,63,94,0.1)', color: '#F43F5E', border: '1px solid rgba(244,63,94,0.3)', borderRadius: 6, padding: '8px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 7, background: 'rgb(255, 39, 39)', color: '#FFFFFF', border: '1px solid rgba(244,63,94,0.3)', borderRadius: 6, padding: '8px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
         >
           <Trash2 size={13} />
           Delete this project
@@ -197,8 +164,9 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
       {showDelete && (
         <DeleteModal
           projectName={project?.name}
+          loading={loading}
           onClose={() => setShowDelete(false)}
-          onConfirm={() => { setShowDelete(false); onToast('Project deletion simulated', 'error') }}
+          onConfirm={handleDelete}
         />
       )}
     </div>

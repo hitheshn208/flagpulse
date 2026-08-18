@@ -26,7 +26,7 @@ const ICONS = {
 
 function Toast({ toast, onDismiss }: { toast: ToastData; onDismiss: () => void }) {
   useEffect(() => {
-    const t = setTimeout(onDismiss, 4000)
+    const t = setTimeout(onDismiss, 3000)
     return () => clearTimeout(t)
   }, [onDismiss])
 

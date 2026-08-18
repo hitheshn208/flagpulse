@@ -68,8 +68,8 @@ body {
 
 /* Selection */
 ::selection {
-  background: rgba(16, 185, 129, 0.25);
-  color: #F0FDF4;
+  background: rgb(255, 255, 255);
+  color: #000000;
 }
 
 :root {
@@ -84,13 +84,15 @@ body {
   /* Borders */
   --color-border: #353535;
   --color-border-hover: #333333;
+  --color-border-active: #969292;
 
   /* Text */
   --color-text: #ffffff;
   --color-text-secondary: #d4d4d4;
   --color-text-muted: #a1a1a1;
+  --color-text-label: #d8d8d8;
   --color-text-subtle: #737373;
-  --color-text-faint: #525252;
+  --color-text-faint: #727272;
 
   /* Accent */
   --color-primary: #ffffff;

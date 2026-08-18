@@ -6,6 +6,7 @@ import { createFlag } from '@/services/project.service'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/app/store'
 import { addNewFlag } from '@/features/flagSlice'
+import { changeFlagCountOfproject } from '@/features/projectSlice'
 
 type Page = 'flags' | 'create-flag' | string
 
@@ -46,18 +47,6 @@ const TYPES: {
   },
 ]
 
-// const ENVS = [
-//   'development',
-//   'staging',
-//   'production',
-// ]
-
-// const ENV_COLORS: Record<string, string> = {
-//   development: 'var(--env-1)',
-//   staging: 'var(--env-3)',
-//   production: 'var(--env-2)',
-// }
-
 function toKey(name: string) {
   return name
     .toLowerCase()
@@ -78,12 +67,6 @@ export default function CreateFlagPage({onNavigate,onToast,}: CreateFlagPageProp
 
   const currentProject = useSelector((state:RootState)=>state.project.currentProject);
   const dispatch = useDispatch();
-  const [envScope, setEnvScope] = useState<Record<string, boolean>>({
-    development: true,
-    staging: true,
-    production: false,
-  })
-
   const [copied, setCopied] = useState(false)
 
   const key = keyEdited ? keyOverride : toKey(name)
@@ -130,6 +113,7 @@ export default function CreateFlagPage({onNavigate,onToast,}: CreateFlagPageProp
     }
     const response = await createFlag(data, currentProject?.id)
     dispatch(addNewFlag({...response, data}))
+    dispatch(changeFlagCountOfproject({count : 1}))
     if (!name.trim()) return
     onToast(`Flag "${key}" created successfully`,'success')
     onNavigate('flags')

@@ -3,5 +3,8 @@ CREATE TABLE projects (
   name VARCHAR(255) NOT NULL,
   slug VARCHAR(255) UNIQUE NOT NULL,
   owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ  DEFAULT NOW()
+  created_at TIMESTAMPTZ  DEFAULT NOW(),
+  updated_at TIMESTAMPTZ  DEFAULT NOW(),
+  description TEXT DEFAULT NULL,
+  url TEXT NOT NULL
 );

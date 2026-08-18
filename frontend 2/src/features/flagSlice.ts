@@ -32,8 +32,6 @@ const flagSlice = createSlice({
         },
 
         addNewFlag: (state, action)=>{
-            state.flagsByEnv
-
             action.payload.envIds.forEach((envId: {environment_id :string}) => {
                 if(state.flagsByEnv[envId.environment_id] && envId.environment_id)
                     state.flagsByEnv[envId.environment_id]?.push({
@@ -52,10 +50,16 @@ const flagSlice = createSlice({
                         updated_at: String(new Date().toISOString()),
                         created_at: String(new Date().toISOString())})
             });
+        },
+
+        removeFlag: (state, action)=>{
+            action.payload.envIds.filter((env: {environment_id : string})=>{
+                state.flagsByEnv[env.environment_id] = state.flagsByEnv[env.environment_id]?.filter(flag=> flag.id !== action.payload.flagId)
+            })
         }
     }
 })
 
 
 export default flagSlice.reducer;
-export const {setFlags, setToggleValue, setCurrentFlag, addNewFlag} = flagSlice.actions
+export const {setFlags, setToggleValue, setCurrentFlag, addNewFlag, removeFlag} = flagSlice.actions

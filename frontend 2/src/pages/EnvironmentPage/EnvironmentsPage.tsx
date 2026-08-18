@@ -2,15 +2,22 @@ import { useState } from "react";
 import {
   Copy,
   Check,
-  RotateCcw,
   Plus,
-  Users,
+  Trash2,
+  Ellipsis, 
+  Settings,
 } from "lucide-react";
+import { RotateCcw } from "lucide-react-motion";
 
 import { type ActualEnvironment } from "../../data";
 import "./EnvironmentPage.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/store";
+import EnvIcon from "@/components/EnvIcon";
+import CreateEnvironmentModal from "@/components/CreateEnvironmentModal";
+import { deleteEnvironment } from "@/services/environment.service";
+import { changeEnvironmentCountOfproject } from "@/features/projectSlice";
+import { removeEnvironment } from "@/features/environmentSlice";
 
 interface EnvironmentsPageProps {
   onToast: (
@@ -101,14 +108,15 @@ function RotateModal({
   );
 }
 
-export default function EnvironmentsPage({
-  onToast,
-}: EnvironmentsPageProps) {
-
-  const environments = useSelector((state:RootState)=> state.environment.environments)
-
-  const [rotateTarget, setRotateTarget] =
-    useState<ActualEnvironment | null>(null);
+export default function EnvironmentsPage({onToast,}: EnvironmentsPageProps) {
+  const environments = useSelector((state:RootState)=> state.environment.environments);
+  const currentProject = useSelector((state: RootState)=> state.project.currentProject);
+  const dispatch = useDispatch();
+  const [rotateTarget, setRotateTarget] = useState<ActualEnvironment | null>(null);
+  const [createEnvModal, setCreateEnvModal] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<ActualEnvironment | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const handleRotate = () => {
     if (!rotateTarget) return;
@@ -120,6 +128,24 @@ export default function EnvironmentsPage({
       "info"
     );
   };
+
+  const handleDelete = async (env : ActualEnvironment | null) => {
+    if(!env || !currentProject)
+      return;
+    setDeleteLoading(true);
+    try{
+      await deleteEnvironment(currentProject?.id, env.id);
+      dispatch(changeEnvironmentCountOfproject({count : -1}));
+      dispatch(removeEnvironment({id: env.id}));
+      onToast(`${env.name} environment deleted successfully`, "success")
+    }catch(error){
+      onToast("Failed to delete Environment", "error");
+    }finally{
+      setDeleteLoading(false)
+      setDeleteTarget(null);
+      setDeleteModal(false);
+    }    
+  }
 
   return (
     <div className="environments-page">
@@ -134,7 +160,7 @@ export default function EnvironmentsPage({
           </p>
         </div>
 
-        <button className="add-environment-btn">
+        <button className="add-environment-btn" onClick={()=>setCreateEnvModal(true)}>
           <Plus size={14} />
           Add Environment
         </button>
@@ -149,17 +175,9 @@ export default function EnvironmentsPage({
             index={index}
             onRotate={() => setRotateTarget(env)}
             onToast={onToast}
+            onDelete={()=> {setDeleteTarget(env); setDeleteModal(true)}}
           />
         ))}
-
-        {/* Add Environment Card */}
-        {/* <button className="add-environment-card">
-          <div className="add-environment-card__icon">
-            <Plus size={14} />
-          </div>
-
-          <span>Add environment</span>
-        </button> */}
       </div>
 
       {/* Rotate Modal */}
@@ -170,6 +188,9 @@ export default function EnvironmentsPage({
           onConfirm={handleRotate}
         />
       )}
+
+      { createEnvModal && <CreateEnvironmentModal onClose={()=> setCreateEnvModal(false)} onToast={onToast}/>}
+      { deleteModal && <DeleteEnvModal isLoading={deleteLoading} onClose={()=> setDeleteModal(false)} deleteTarget={deleteTarget} onConfirm={()=> handleDelete(deleteTarget)}/>}
     </div>
   );
 }
@@ -181,51 +202,79 @@ interface EnvCardProps {
     msg: string,
     type: "success" | "error" | "info"
   ) => void;
-  index: number
+  index: number;
+  onDelete: ()=> void;
 }
 
-function EnvCard({env, onRotate, onToast, index}: EnvCardProps) {
-  const maskedKey = env.sdk_key.slice(0, 4) +"••••••••••••••••" +env.sdk_key.slice(-4);
+function EnvCard({ env, onRotate, onToast, onDelete, index }: EnvCardProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const maskedKey = env.sdk_key.slice(0, 4) + "••••••••••••••••" + env.sdk_key.slice(-4);
+
   const environmentColors = [
-    "#60A5FA", 
-    "#34D399", 
+    "#60A5FA",
+    "#34D399",
     "#FBBF24",
-    "#F87171", 
-    "#A78BFA", 
-    "#22D3EE", 
-    "#FB923C", 
-    "#F472B6", 
-    "#94A3B8", 
-    "#4ADE80", 
+    "#F87171",
+    "#A78BFA",
+    "#22D3EE",
+    "#FB923C",
+    "#F472B6",
+    "#94A3B8",
+    "#4ADE80",
   ];
+
   return (
-    <div className="env-card" style={{borderTopColor: environmentColors[index % environmentColors.length]}} >
+    <div
+      className="env-card"
+      style={{borderTopColor: environmentColors[index % environmentColors.length]}}>
       {/* Header */}
       <div className="env-card__header">
-        {/* <span className="env-card__status" /> */}
-        <span className="material-symbols-outlined">{env.icon}</span>
+        <EnvIcon name={env.icon} size={20} />
+
         <span className="env-card__name">
           {env.name}
         </span>
+
+        {/* Menu */}
+        <div className="env-card__menu">
+          <button
+            className="env-card__menu-btn"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label="Environment actions"
+          >
+            <Ellipsis size={18} />
+          </button>
+
+          {menuOpen && (
+            <div className="env-card__dropdown">
+              <button
+                className="env-card__dropdown-item"
+                onClick={() => {
+                  setMenuOpen(false);
+                }}
+              >
+                <Settings size={15} />
+                Manage
+              </button>
+
+              <button
+                className="env-card__dropdown-item env-card__dropdown-item--danger"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onDelete();
+                }}
+              >
+                <Trash2 size={15} />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <p className="env-card__description">
         Total flags {env.total_flags}
       </p>
-
-      {/* Connected Clients */}
-      {/* <div className="connected-clients">
-        <span className="connected-clients__status" />
-
-        <Users size={12} />
-
-        <span>
-          <strong>
-            {env.clients?.toLocaleString()}
-          </strong>{" "}
-          clients connected
-        </span>
-      </div> */}
 
       {/* SDK Key */}
       <div className="sdk-key">
@@ -249,22 +298,33 @@ function EnvCard({env, onRotate, onToast, index}: EnvCardProps) {
           className="rotate-key-btn"
           onClick={onRotate}
         >
-          <RotateCcw size={11} fontWeight={900}/>
+          <RotateCcw size={11} trigger="parent-hover" />
           Rotate Key
-        </button>
-
-        <button
-          className="manage-btn"
-          onClick={() =>
-            onToast(
-              "Manage environment settings",
-              "info"
-            )
-          }
-        >
-          Manage
         </button>
       </div>
     </div>
   );
+}
+
+function DeleteEnvModal({ onClose, deleteTarget, onConfirm, isLoading }: { onClose: () => void; deleteTarget: ActualEnvironment | null; onConfirm: ()=>void; isLoading: boolean }) {
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ background: 'var(--color-surface)', border: '1px solid #1E2926', borderTop: '3px solid rgb(200, 2, 2)', borderRadius: 5, padding: 24, maxWidth: 420, width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+          <h3 style={{ fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 600, color: '#F0FDF4', margin: 0 }}>Delete Environment</h3>
+        </div>
+        <p style={{ fontSize: 13, color: '#94A3A8', lineHeight: 1.6, marginBottom: 20 }}>
+          Deleting <strong style={{ color: '#F0FDF4' }}>{deleteTarget?.name}</strong> will permanently remove all flag values for this environment. This cannot be undone.
+        </p>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={onConfirm} style={{ flex: 1, background: 'rgb(200, 2, 2)', color: '#fff', border: 'none', borderRadius: 6, padding: '9px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: "'Sora', sans-serif" }} disabled={isLoading}>
+            Delete Environment
+          </button>
+          <button onClick={onClose} style={{ flex: 1, background: 'transparent', border: '1px solid #1E2926', borderRadius: 6, padding: '9px', fontSize: 13, color: '#94A3A8', cursor: 'pointer' }} disabled={isLoading}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }

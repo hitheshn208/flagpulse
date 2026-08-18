@@ -1,16 +1,16 @@
 const db = require("../config/postgres");
 const AppError = require("../utils/AppError");
 
-exports.insertAuditLog = async (flagId, envId, user_id, change_summary, old_value, new_value, reason, type)=>{
-    // if(Array.isArray(envId)) {
-    //     await Promise.all(envId.map(id => {
-    //         return db.query(`INSERT INTO audit_logs (flag_id, environment_id, user_id, change_summary, old_value, new_value, reason, type)        
-    //         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,[flagId, id.environment_id, user_id, change_summary, old_value, new_value, reason, type])
-    //     }))
-    // }else{
-    //     await db.query(`INSERT INTO audit_logs (flag_id, environment_id, user_id, change_summary, old_value, new_value, reason, type)        
-    //     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,[flagId, envId, user_id, change_summary, old_value, new_value, reason, type])
-    // }
+exports.insertAuditLog = async (projectId, flagId, envId, user_id, change_summary, old_value, new_value, reason, type, domain)=>{
+    if(Array.isArray(envId)) {
+        await Promise.all(envId.map(id => {
+            return db.query(`INSERT INTO audit_logs (project_id, flag_id, environment_id, user_id, change_summary, old_value, new_value, reason, type, domain)        
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8. $9, $10)`,[projectId, flagId, id.environment_id, user_id, change_summary, old_value, new_value, reason, type, domain])
+        }))
+    }else{
+        await db.query(`INSERT INTO audit_logs (project_id, flag_id, environment_id, user_id, change_summary, old_value, new_value, reason, type, domain)        
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,[projectId, flagId, envId, user_id, change_summary, old_value, new_value, reason, type, domain])
+    }
 
     return;
 }

@@ -21,9 +21,17 @@ const environmentSlice = createSlice({
         },
         setCurrentEnv: (state, action)=>{
             state.currentEnv = action.payload
+        },
+        addEnvironment: (state, action)=>{
+            state.environments.push(action.payload.environment);
+        },
+        removeEnvironment: (state, action)=>{
+            if(state.currentEnv?.id === action.payload.id)
+                state.currentEnv = undefined;
+            state.environments = state.environments.filter(env=>env.id !== action.payload.id)
         }
     }
 })
 
 export default environmentSlice.reducer;
-export const {setEnvironments, setCurrentEnv} = environmentSlice.actions;
+export const {setEnvironments, setCurrentEnv, addEnvironment, removeEnvironment} = environmentSlice.actions;

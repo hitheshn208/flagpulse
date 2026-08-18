@@ -26,9 +26,10 @@ exports.changeFlagValue = async ({is_enabled,  rollout_percentage, targeting_att
 }
 
 exports.removeFlag = async (flagId) => {
-    const response = await db.query("DELETE FROM flags where id = $1 RETURNING id", [flagId]);
+    const response = await db.query("DELETE FROM flags where id = $1 RETURNING id, name", [flagId]);
     if(response.rows.length === 0)
         throw new AppError("Flag not found", 404);
+    return response.rows[0].name;
 }
 
 exports.changeFlagStatus = async ({flagId, envId, is_enabled})=>{

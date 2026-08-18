@@ -12,3 +12,8 @@ export async function getFlags(envId: string | undefined): Promise<ActualFlag[] 
     const response = await api.get(`/api/environments/${envId}/flags`);
     return response.data
 }
+
+export async function deleteEnvironment(projectId : string, envId : string){
+    const response = await api.delete(`/api/projects/${projectId}/environments/${envId}`);
+    return response.data
+}
