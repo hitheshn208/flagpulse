@@ -1,14 +1,17 @@
-import { ActualProject } from "@/data";
+import { ActualProject, AuditLog } from "@/data";
 import { createSlice } from "@reduxjs/toolkit";
+import { stat } from "fs";
 
 interface CreateProjectState {
     currentProject: ActualProject | undefined
     projects: ActualProject[]
+    auditLogs: AuditLog[] | undefined
 }
 
 const initialState : CreateProjectState = {
     currentProject: undefined,
-    projects: []
+    projects: [],
+    auditLogs: undefined
 }
 
 export const projectSlice = createSlice({
@@ -16,13 +19,16 @@ export const projectSlice = createSlice({
     initialState,
     reducers: {
         setCurrentProject : (state, action)=>{
-            state.currentProject = action.payload
+            state.currentProject = action.payload;
+            state.auditLogs = undefined;
         },
         setProjects: (state, action)=>{
             state.projects = action.payload
+            state.auditLogs = undefined;
         },
         setNewProject : (state, action)=>{
             state.projects.push(action.payload);
+            state.auditLogs = undefined;
         },
         changeFlagCountOfproject : (state, action)=>{
             const project = state.projects.find(project => project.id === state.currentProject?.id)
@@ -41,9 +47,28 @@ export const projectSlice = createSlice({
 
             if(state.projects.length > 0)
                 state.currentProject = state.projects[0];
-        }
+            state.auditLogs = undefined;
+        },
+        setAuditLogs : (state, action)=>{
+            state.auditLogs = action.payload
+        },
+        updateProjectName: (state, action) => {
+            const project = state.projects.find(
+                (p) => p.id === action.payload.id
+            );
+
+            if (project){
+                project.name = action.payload.name;
+                project.url = action.payload.url
+            }
+
+            if (state.currentProject && state.currentProject?.id === action.payload.id){
+                state.currentProject.name = action.payload.name;
+                state.currentProject.url = action.payload.url;
+            }
+        },
     }
 })
 
-export const {setCurrentProject, setProjects, changeFlagCountOfproject, setNewProject, removeProject, changeEnvironmentCountOfproject} = projectSlice.actions
+export const {setCurrentProject, setProjects, updateProjectName, changeFlagCountOfproject, setNewProject, removeProject, changeEnvironmentCountOfproject, setAuditLogs} = projectSlice.actions
 export default projectSlice.reducer

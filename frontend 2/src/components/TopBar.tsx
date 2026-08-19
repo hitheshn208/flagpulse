@@ -92,7 +92,7 @@ export default function TopBar({currentPage,onEnvChange,sidebarCollapsed,onToggl
       <div className="topbar__spacer" />
 
       {/* Environment Switcher */}
-      {currentPage !== "projects" && (
+      {currentPage === "flags" && (
         <div className="env-switcher">
           {environments.map((env, index) => {
             const active = currentEnv?.id === env.id;

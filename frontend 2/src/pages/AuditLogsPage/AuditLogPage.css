@@ -1,0 +1,619 @@
+.audit-page {
+  width: 100%;
+  padding: 32px;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+/* --------------------------------
+   Header
+--------------------------------- */
+
+.audit-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 24px;
+}
+
+.audit-page-title {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 600;
+
+  letter-spacing: -0.035em;
+}
+
+.audit-page-description {
+  margin: 7px 0 0;
+
+  color: var(--color-text-muted);
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* --------------------------------
+   Table
+--------------------------------- */
+
+.audit-table {
+  width: 100%;
+
+  overflow: hidden;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+}
+
+/* --------------------------------
+   Table Header
+--------------------------------- */
+
+.audit-table-header {
+  display: grid;
+
+  grid-template-columns:
+    138px
+    165px
+    minmax(160px, 1.5fr)
+    minmax(130px, 1fr)
+    minmax(100px, 0.8fr)
+    minmax(150px, 1fr);
+
+  align-items: center;
+
+  min-height: 44px;
+  padding: 0 16px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  background: var(--color-surface-header);
+
+  color: var(--color-text-muted);
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* --------------------------------
+   Table Body
+--------------------------------- */
+
+.audit-table-body {
+  width: 100%;
+}
+
+.audit-row {
+  display: grid;
+
+  grid-template-columns:
+    138px
+    165px
+    minmax(160px, 1.5fr)
+    minmax(130px, 1fr)
+    minmax(100px, 0.8fr)
+    minmax(150px, 1fr);
+
+  align-items: center;
+
+  min-height: 56px;
+  padding: 0 16px;
+
+  border-bottom: 1px solid #222222;
+
+  transition: background var(--transition-fast);
+}
+
+.audit-row:last-child {
+  border-bottom: none;
+}
+
+.audit-row:hover {
+  background: var(--color-surface-hover);
+}
+
+/* --------------------------------
+   Cells
+--------------------------------- */
+
+.audit-cell {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  padding-right: 16px;
+}
+
+/* --------------------------------
+   Time
+--------------------------------- */
+
+.audit-time-cell {
+  color: var(--color-text-subtle);
+}
+
+.audit-time {
+  color: var(--color-text-muted);
+
+  font-family: var(--font-mono);
+  font-size: 11px;
+
+  white-space: nowrap;
+
+  cursor: default;
+}
+
+/* --------------------------------
+   Action
+--------------------------------- */
+
+.audit-action-cell {
+  overflow: hidden;
+}
+
+.audit-action {
+  display: inline-flex;
+  align-items: center;
+
+  max-width: 100%;
+
+  padding: 4px 7px;
+
+  border: 1px solid #303030;
+  border-radius: 5px;
+
+  background: #161616;
+
+  color: var(--color-text-secondary);
+
+  font-size: 11px;
+  font-weight: 500;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*
+ * Subtle distinction between domains.
+ * Still intentionally monochrome/Vercel-like.
+ */
+
+.audit-action-project {
+  background: #181818;
+  border-color: #343434;
+}
+
+.audit-action-environment {
+  background: #151515;
+  border-color: #303030;
+}
+
+.audit-action-flag {
+  background: #191919;
+  border-color: #373737;
+}
+
+/* --------------------------------
+   Entity
+--------------------------------- */
+
+.audit-entity-cell {
+  overflow: hidden;
+}
+
+.audit-entity {
+  display: block;
+
+  width: 100%;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--color-text-secondary);
+
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* --------------------------------
+   Environment
+--------------------------------- */
+
+.audit-environment-cell {
+  overflow: hidden;
+}
+
+.audit-environment {
+  max-width: 100%;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+}
+
+/* --------------------------------
+   User
+--------------------------------- */
+
+.audit-user-cell {
+  overflow: hidden;
+}
+
+.audit-user {
+  max-width: 100%;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* --------------------------------
+   Change
+--------------------------------- */
+
+.audit-change-cell {
+  overflow: hidden;
+}
+
+.audit-change {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  min-width: 0;
+}
+
+.audit-change-value {
+  display: block;
+
+  max-width: 105px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  padding: 3px 6px;
+
+  border-radius: 4px;
+
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.audit-change-old {
+  border: 1px solid #303030;
+  background: #141414;
+  color: #888888;
+}
+
+.audit-change-new {
+  border: 1px solid #383838;
+  background: #1c1c1c;
+  color: #dddddd;
+}
+
+.audit-change-created {
+  border: 1px solid #303030;
+  background: #171717;
+  color: #bdbdbd;
+}
+
+.audit-change-deleted {
+  border: 1px solid #2d2d2d;
+  background: #141414;
+  color: #858585;
+}
+
+.audit-change-arrow {
+  flex-shrink: 0;
+
+  color: #666666;
+
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.audit-change-empty {
+  color: var(--color-text-faint);
+  font-size: 12px;
+}
+
+/* --------------------------------
+   Empty State
+--------------------------------- */
+
+.audit-empty {
+  min-height: 220px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.audit-empty-title {
+  color: var(--color-text-secondary);
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.audit-empty-description {
+  margin-top: 5px;
+
+  color: var(--color-text-subtle);
+
+  font-size: 11px;
+}
+
+/* --------------------------------
+   Responsive
+--------------------------------- */
+
+@media (max-width: 1050px) {
+  .audit-page {
+    padding: 24px;
+  }
+
+  .audit-table {
+    overflow-x: auto;
+  }
+
+  .audit-table-header,
+  .audit-row {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 600px) {
+  .audit-page {
+    padding: 20px 16px;
+  }
+
+  .audit-page-title {
+    font-size: 21px;
+  }
+
+  .audit-page-description {
+    font-size: 12px;
+  }
+}
+
+/* --------------------------------
+   Filters
+--------------------------------- */
+
+.audit-filters {
+  width: 100%;
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+
+  margin-bottom: 8px;
+  padding: 6px 8px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+}
+
+.audit-filters-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  min-width: 0;
+}
+
+.audit-filters-title {
+  margin: 0 8px 0 5px;
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.audit-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  min-width: 0;
+}
+
+.audit-filter-label {
+  display: none;
+}
+
+.audit-filter-select-wrapper {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+}
+
+.audit-filter-select {
+  appearance: none;
+
+  height: 30px;
+
+  min-width: 112px;
+
+  padding: 0 27px 0 9px;
+
+  border: 1px solid #2c2c2c;
+  border-radius: var(--radius-sm);
+
+  outline: none;
+
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+
+  font-family: var(--font-sans);
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.audit-filter-select:hover {
+  border-color: var(--color-border-hover);
+  background: var(--color-surface-hover);
+}
+
+.audit-filter-select:focus {
+  border-color: #555555;
+}
+
+.audit-filter-select option {
+  background: #111111;
+  color: #ffffff;
+}
+
+.audit-filter-chevron {
+  position: absolute;
+
+  right: 8px;
+
+  pointer-events: none;
+
+  color: var(--color-text-subtle);
+}
+
+/* Clear filters */
+
+.audit-clear-filters {
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  margin-left: 2px;
+  padding: 0 8px;
+
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+  color: var(--color-text-muted);
+
+  font-family: var(--font-sans);
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.audit-clear-filters:hover {
+  background: var(--color-surface-highlight);
+  color: var(--color-text);
+}
+
+/* --------------------------------
+   Result count
+--------------------------------- */
+
+.audit-results {
+  display: flex;
+  justify-content: flex-end;
+
+  height: 22px;
+
+  padding: 0 2px;
+
+  color: var(--color-text-subtle);
+
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.action-button-logs{
+  margin-left:auto ;
+  display: flex;
+  gap: 10px;
+}
+
+.audit-log-delete-btn{
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface);
+  border:1px solid var(--color-text-subtle);
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  font-weight: 500;
+  font-size: 0.7rem;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.audit-log-refresh-btn{
+  background-color: var(--color-text);
+  color: var(--color-surface);
+  border:1px solid var(--color-text-subtle);
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  font-weight: 500;
+  font-size: 0.7rem;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+
+.audit-log-delete-btn:hover,
+.audit-log-refresh-btn:hover{
+  opacity: 1;
+}
+/* --------------------------------
+   Responsive
+--------------------------------- */
+
+@media (max-width: 700px) {
+  .audit-filters {
+    overflow-x: auto;
+  }
+
+  .audit-filters-left {
+    flex-shrink: 0;
+  }
+
+  .audit-filter-select {
+    min-width: 105px;
+  }
+}

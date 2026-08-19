@@ -22,3 +22,42 @@ exports.getLogs = async (flagId) =>{
 
     return response.rows;
 }
+
+exports.getProjectLogs = async (userId, projectId)=>{
+    const response = await db.query(`SELECT 
+        al.id,
+        al.project_id,
+        al.flag_id,
+        al.environment_id,
+        al.user_id,
+        al.change_summary,
+        al.old_value,
+        al.new_value,
+        al.reason,
+        al.type,
+        al.domain,
+        al.created_at,
+        f.key as flag_key,
+        e.name as environment_name,
+        u.name as user_name
+        
+        FROM audit_logs al
+        
+        LEFT JOIN flags f ON f.id = al.flag_id
+        LEFT JOIN environments e ON e.id = al.environment_id
+        LEFT JOIN users u ON u.id = al.user_id
+
+        WHERE al.project_id = $1 AND al.user_id = $2
+
+        ORDER BY al.created_at DESC
+        
+        LIMIT 15`, [projectId, userId]);
+
+        return response.rows
+}
+
+
+exports.removeAuditLogs = async (userId, projectId)=>{
+    await db.query("DELETE FROM audit_logs WHERE user_id = $1 AND project_id = $2", [userId, projectId])
+    return;
+}

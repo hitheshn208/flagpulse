@@ -1,4 +1,4 @@
-import { ActualEnvironment, ActualFlag, ActualProject } from "@/data";
+import { ActualEnvironment, ActualFlag, ActualProject, AuditLog } from "@/data";
 import api from "./api"
 
 export async function getProjects(): Promise<ActualProject[]>{
@@ -24,5 +24,21 @@ export async function createProject(data : Pick<ActualProject, "name" | "descrip
 
 export async function deleteProject(projectId: string){
     const response = await api.delete(`/api/projects/${projectId}`);
+    return response.data;
+}
+
+export async function fetchAuditLogs(projectId: string) : Promise<AuditLog[] | undefined>{
+    const response = await api.get(`/api/projects/${projectId}/auditlogs`)
+    return response.data;
+}
+
+export async function deleteAuditLogs(projectId: string){
+    const response = await api.delete(`/api/projects/${projectId}/auditlogs`)
+    return response.data;
+}
+
+
+export async function editProject(projectId: string, data : {name: string ; url: string | null}) {
+    const response = await api.patch(`/api/projects/${projectId}`, data);
     return response.data;
 }

@@ -166,6 +166,10 @@
   font-size: 11px;
 }
 
+.project-key a {
+  color: var(--color-text-link);
+}
+
 .project-arrow {
   color: var(--color-text-faint);
 

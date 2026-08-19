@@ -93,7 +93,7 @@ function ProjectCard({
           <h2>{project.name}</h2>
 
           <span className="project-key">
-            {project.slug}
+            {project.url ? <a href={project.url}>{project.url}</a>: project.slug}
           </span>
         </div>
 {/* 
@@ -104,7 +104,7 @@ function ProjectCard({
 
       {/* Description */}
       <p className="project-description">
-        {project.description ?? project.name + " project"}
+        {project.description ? project.description:  project.name + " project"}
       </p>
 
       {/* Project stats */}

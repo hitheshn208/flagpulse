@@ -12,3 +12,6 @@ CREATE TABLE audit_logs (
   domain VARCHAR(50) NOT NULL CHECK (domain IN ('project', 'environment', 'flag')),
   created_at TIMESTAMPTZ  DEFAULT NOW()
 );
+
+CREATE INDEX idx_audit_logs_project_created
+ON audit_logs(project_id, created_at DESC);

@@ -1,166 +1,389 @@
-import { useState } from 'react'
-import { Copy, Check, Shield, Trash2, UserPlus } from 'lucide-react'
+import { useEffect, useState } from "react";
+import {
+  Check,
+  Copy,
+  Pencil,
+  Shield,
+  Trash2,
+  ExternalLink,
+  Globe,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from '@/app/store';
-import { deleteProject } from '@/services/project.service';
-import { removeProject } from '@/features/projectSlice';
-import { setPage } from '@/features/uiSlice';
+import { RootState } from "@/app/store";
+import { deleteProject, editProject } from "@/services/project.service";
+import { removeProject, updateProjectName } from "@/features/projectSlice";
+import { setPage } from "@/features/uiSlice";
 
 interface SettingsPageProps {
-  onToast: (msg: string, type: 'success' | 'error' | 'info') => void
+  onToast: (msg: string, type: "success" | "error" | "info") => void;
 }
 
-function DeleteModal({ projectName, onClose, loading, onConfirm }: { projectName: string | undefined ; loading: boolean ;onClose: () => void; onConfirm: () => void }) {
-  const [typed, setTyped] = useState('')
+function DeleteModal({
+  projectName,
+  loading,
+  onClose,
+  onConfirm,
+}: {
+  projectName: string | undefined;
+  loading: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  const [typed, setTyped] = useState("");
+
+  const canDelete = typed === projectName && !loading;
+
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ background: '#101715', border: '1px solid #1E2926', borderTop: '3px solid #F43F5E', borderRadius: 10, padding: 28, maxWidth: 420, width: '100%', margin: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(244,63,94,0.15)', border: '1px solid rgba(244,63,94,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Trash2 size={14} style={{ color: '#F43F5E' }} />
+    <div className="fixed inset-0 z-500 flex items-center justify-center bg-black/70 p-5 backdrop-blur-[3px]">
+      <div className="w-full max-w-110 rounded-lg border border-(--color-border) bg-(--color-surface) p-6 shadow-2xl">
+        <div className="mb-5 flex items-center gap-3">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-sm border border-[#3a292b] bg-[#181313] text-[#f87171]">
+            <Trash2 size={15} />
           </div>
-          <h3 style={{ fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 700, color: '#F0FDF4', margin: 0 }}>Delete Project</h3>
+
+          <div>
+            <h3 className="text-[15px] font-semibold tracking-[-0.02em] text-(--color-text)">
+              Delete project
+            </h3>
+
+            <p className="mt-0.5 text-[11px] text-(--color-text-subtle)">
+              This action cannot be undone
+            </p>
+          </div>
         </div>
-        <p style={{ fontSize: 13, color: '#94A3A8', lineHeight: 1.6, marginBottom: 16 }}>
-          This action is <strong style={{ color: '#F43F5E' }}>permanent and irreversible</strong>. All flags, environments, and audit history will be permanently deleted.
+
+        <div className="mb-5 rounded-sm border border-[#35272a] bg-[#131111] px-3 py-2.5 text-xs leading-6 text-(--color-text-muted)">
+          All flags, environments, and audit history associated with this
+          project will be permanently deleted.
+        </div>
+
+        <p className="mb-2 text-xs text-(--color-text-muted)">
+          Type{" "}
+          <code className="rounded border border-(--color-code-border) bg-(--color-code-bg) px-1.5 py-0.5 font-mono text-[11px] text-(--color-text-secondary)">
+            {projectName}
+          </code>{" "}
+          to confirm.
         </p>
-        <p style={{ fontSize: 13, color: '#94A3A8', marginBottom: 8 }}>
-          Type <code style={{ fontFamily: "'JetBrains Mono', monospace", background: '#141F1C', padding: '1px 5px', borderRadius: 3, color: '#F0FDF4' }}>{projectName}</code> to confirm:
-        </p>
+
         <input
           value={typed}
-          onChange={e => setTyped(e.target.value)}
+          onChange={(e) => setTyped(e.target.value)}
           placeholder={projectName}
-          style={{ width: '100%', background: '#141F1C', border: '1px solid #1E2926', color: '#F0FDF4', borderRadius: 6, padding: '9px 12px', fontSize: 13, outline: 'none', marginBottom: 16, fontFamily: "'Inter', sans-serif" }}
+          autoFocus
+          className="mb-4 box-border w-full rounded-sm border border-(--color-border) bg-(--color-code-bg) px-3 py-2 text-xs text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-faint) focus:border-(--color-border-active)"
         />
-        <div style={{ display: 'flex', gap: 8 }}>
+
+        <div className="flex gap-2">
           <button
             onClick={onConfirm}
-            disabled={typed !== projectName || loading}
-            style={{ flex: 1, background: typed === projectName ? '#F43F5E' : '#1E2926', color: typed === projectName ? '#fff' : '#6B8E87', border: 'none', borderRadius: 6, padding: '9px', fontSize: 13, fontWeight: 700, cursor: typed === projectName ? 'pointer' : 'not-allowed', fontFamily: "'Sora', sans-serif" }}
+            disabled={!canDelete}
+            className="flex-1 rounded-sm border border-transparent px-3 py-2 text-xs font-semibold transition-opacity disabled:cursor-not-allowed disabled:bg-(--color-surface-highlight) disabled:text-(--color-text-faint)"
+            style={{
+              background: canDelete ? "#ef4444" : undefined,
+              color: canDelete ? "#fff" : undefined,
+            }}
           >
-            Delete Project
+            {loading ? "Deleting..." : "Delete project"}
           </button>
-          <button disabled={loading} onClick={onClose} style={{ flex: 1, background: 'transparent', border: '1px solid #1E2926', borderRadius: 6, padding: '9px', fontSize: 13, color: '#94A3A8', cursor: 'pointer' }}>
+
+          <button
+            disabled={loading}
+            onClick={onClose}
+            className="flex-1 rounded-sm border border-(--color-border) bg-transparent px-3 py-2 text-xs text-(--color-text-secondary) transition-colors hover:bg-(--color-surface-hover) disabled:cursor-not-allowed disabled:opacity-50"
+          >
             Cancel
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-
 export default function SettingsPage({ onToast }: SettingsPageProps) {
-
-  const project = useSelector((state: RootState) => state.project.currentProject);
-
-  const [projectName, setProjectName] = useState(project?.name)
-  const [showDelete, setShowDelete] = useState(false)
-  const [copied, setCopied] = useState(false)
-  const [loading, setloading] = useState(false)
+  const project = useSelector(
+    (state: RootState) => state.project.currentProject,
+  );
 
   const dispatch = useDispatch();
 
-  const handleCopyId = () => {
-    navigator.clipboard.writeText(typeof project?.id === "string" ? project?.id : "").catch(() => {})
-    setCopied(true)
-    onToast('Project ID copied', 'info')
-    setTimeout(() => setCopied(false), 2000)
-  }
+  const [projectName, setProjectName] = useState(project?.name ?? "");
 
-  const handleDelete = async ()=>{
-    setloading(true);
-    if(!project) return;
-    try{
-      await deleteProject(project?.id);
-      dispatch(removeProject({id: project?.id}));
+  const [projectUrl, setProjectUrl] = useState(project?.url ?? "");
+
+  const [showDelete, setShowDelete] = useState(false);
+
+  const [copied, setCopied] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const [savingProject, setSavingProject] = useState(false);
+
+  /*
+   * Keep local values in sync when the user
+   * switches to another project.
+   */
+  useEffect(() => {
+    setProjectName(project?.name ?? "");
+    setProjectUrl(project?.url ?? "");
+  }, [project?.id]);
+
+  const originalName = project?.name ?? "";
+  const originalUrl = project?.url ?? "";
+
+  const nameChanged = projectName.trim() !== originalName;
+
+  const urlChanged = projectUrl.trim() !== originalUrl;
+
+  const projectChanged = nameChanged || urlChanged;
+
+  const canSaveProject =
+    projectChanged && projectName.trim().length > 0 && !savingProject;
+
+  const handleCopyId = async () => {
+    try {
+      await navigator.clipboard.writeText(project?.id ?? "");
+
+      setCopied(true);
+
+      onToast("Project ID copied", "info");
+
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      onToast("Failed to copy project ID", "error");
+    }
+  };
+
+  const handleSaveProject = async () => {
+    if (!project || !canSaveProject) {
+      return;
+    }
+    setSavingProject(true);
+    try {
+      const payload = {
+        name: projectName.trim(),
+        url: projectUrl.trim() ? projectUrl.trim() : null,
+      };
+      await editProject(project.id, payload);
+      dispatch(updateProjectName({id: project.id, name: payload.name, url:payload.url}));
+      onToast("Project settings saved", "success");
+    } catch {
+      onToast("Failed to update project settings", "error");
+    } finally {
+      setSavingProject(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!project) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await deleteProject(project.id);
+
+      dispatch(
+        removeProject({
+          id: project.id,
+        }),
+      );
+
       dispatch(setPage("projects"));
-    }catch(error){
-      onToast("Failed to delete project", "error")
-    }finally{
-      setloading(false);
+    } catch {
+      onToast("Failed to delete project", "error");
+    } finally {
+      setLoading(false);
       setShowDelete(false);
     }
-  }
+  };
 
   return (
-    <div style={{ padding: '24px 28px' }}>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: "'Sora', sans-serif", fontSize: 22, fontWeight: 700, color: '#F0FDF4', margin: 0, letterSpacing: '-0.02em' }}>Project Settings</h1>
-        <p style={{ fontSize: 13, color: '#6B8E87', margin: '4px 0 0' }}>Manage configuration, team access, and danger zone</p>
+    <div className="w-full px-8 py-8 text-(--color-text)">
+      {/* Header */}
+      <div className="mb-7">
+        <h1 className="text-[24px] font-semibold tracking-[-0.035em] text-(--color-text)">
+          Project Settings
+        </h1>
+
+        <p className="mt-1.5 text-[13px] leading-5 text-(--color-text-muted)">
+          Manage your project configuration and settings.
+        </p>
       </div>
 
-      {/* Stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 24 }}>
+      {/* Stats */}
+      <div className="mb-5 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
         {[
-          { label: 'Total Flags', value: project?.flags_count },
-          { label: 'Environments', value: project?.environments_count },
-          { label: 'Created', value: project ? new Date(project?.created_at).toLocaleDateString('en-GB', { day: "2-digit", month:"long", year: "numeric"}) : "NA" },
-        ].map(s => (
-          <div key={s.label} style={{ background: '#101715', border: '1px solid #1E2926', borderRadius: 7, padding: '12px 14px' }}>
-            <div style={{ fontSize: 9, color: '#6B8E87', fontWeight: 600, letterSpacing: '0.07em', marginBottom: 5 }}>{s.label.toUpperCase()}</div>
-            <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 20, fontWeight: 700, color: '#F0FDF4' }}>{s.value}</div>
+          {
+            label: "Total Flags",
+            value: project?.flags_count ?? 0,
+          },
+          {
+            label: "Environments",
+            value: project?.environments_count ?? 0,
+          },
+          {
+            label: "Created",
+            value: project
+              ? new Date(project.created_at).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })
+              : "—",
+          },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded-md border border-(--color-border) bg-(--color-surface) px-4 py-3.5"
+          >
+            <div className="mb-1.5 text-[10px] font-medium tracking-[0.06em] text-(--color-text-subtle)">
+              {stat.label.toUpperCase()}
+            </div>
+
+            <div className="text-[18px] font-semibold tracking-[-0.02em] text-(--color-text)">
+              {stat.value}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* General section */}
-      <div style={{ background: '#101715', border: '1px solid #1E2926', borderRadius: 8, padding: 20, marginBottom: 14 }}>
-        <div style={{ fontSize: 11, fontWeight: 600, color: '#6B8E87', letterSpacing: '0.06em', marginBottom: 16 }}>GENERAL</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#94A3A8', marginBottom: 5 }}>Project name</label>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <input
-                value={projectName}
-                onChange={e => setProjectName(e.target.value)}
-                style={{ flex: 1, background: '#141F1C', border: '1px solid #1E2926', color: '#F0FDF4', borderRadius: 6, padding: '8px 12px', fontSize: 13, outline: 'none', fontFamily: "'Inter', sans-serif" }}
-                onFocus={e => (e.target.style.borderColor = '#10B981')}
-                onBlur={e => (e.target.style.borderColor = '#1E2926')}
-              />
-              <button
-                onClick={() => onToast('Project name saved', 'success')}
-                style={{ background: '#10B981', color: '#080C0B', border: 'none', borderRadius: 6, padding: '8px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
-              >
-                Save
-              </button>
-            </div>
-          </div>
-          <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#94A3A8', marginBottom: 5 }}>Project ID</label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-              <code style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: '#38BDF8', background: '#0B100F', padding: '7px 10px', borderRadius: 5, border: '1px solid #1E2926', flex: 1 }}>
-                {project?.id}
-              </code>
-              <button onClick={handleCopyId} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: '1px solid #1E2926', borderRadius: 5, padding: '6px 10px', fontSize: 11, color: '#6B8E87', cursor: 'pointer' }}>
-                {copied ? <Check size={10} style={{ color: '#10B981' }} /> : <Copy size={10} />}
-                {copied ? 'Copied' : 'Copy'}
-              </button>
-            </div>
-            <div style={{ fontSize: 11, color: '#6B8E87', marginTop: 4 }}>Read-only. Used for API calls and SDK initialization.</div>
-          </div>
+      {/* General */}
+      <section className="mb-3.5 overflow-hidden rounded-md border border-(--color-border) bg-(--color-surface)">
+        <div className="border-b border-(--color-border) px-4.5 py-3.5">
+          <h2 className="text-xs font-medium text-(--color-text-secondary)">
+            General
+          </h2>
         </div>
-      </div>
 
-      {/* Danger zone */}
-      <div style={{ background: 'rgba(244,63,94,0.04)', border: '1px solid rgba(244,63,94,0.25)', borderRadius: 8, padding: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-          <Shield size={13} style={{ color: '#F43F5E' }} />
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#F43F5E', letterSpacing: '0.06em' }}>DANGER ZONE</div>
+        <div className="space-y-6 p-4.5">
+          {/* Project Name */}
+          <div>
+            <label className="mb-2 block text-xs font-medium text-(--color-text-secondary)">
+              Project name
+            </label>
+
+            <input
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              placeholder="Project name"
+              className="w-full rounded-sm border border-(--color-border) bg-(--color-code-bg) px-3 py-2 text-xs text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-faint) focus:border-(--color-border-active)"
+            />
+
+            <p className="mt-1.5 text-[11px] text-(--color-text-subtle)">
+              The name displayed throughout your FlagPulse project.
+            </p>
+          </div>
+
+          {/* Project URL */}
+          <div className=" mb-0">
+            <label className="mb-2 block text-xs font-medium text-(--color-text-secondary)" htmlFor="project-url">
+              Project URL
+            </label>
+
+            <div className="relative">
+              <Globe
+                size={13}
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-subtle)"
+              />
+
+              <input
+                id="project-url"
+                type="url"
+                value={projectUrl}
+                onChange={(e) => setProjectUrl(e.target.value)}
+                placeholder="https://example.com"
+                className="w-full rounded-sm border border-(--color-border) bg-(--color-code-bg) py-2 pl-9 pr-3 text-xs text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-faint) focus:border-(--color-border-active)"
+              />
+            </div>
+
+            <p className="mt-1.5 text-[11px] text-(--color-text-subtle)">
+              Optional. Add the URL of the project or application using
+              FlagPulse.
+            </p>
+
+            {projectUrl.trim() && (
+              <a
+                href={projectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-(--color-text-muted) transition-colors hover:text-(--color-text)"
+              >
+                <ExternalLink size={11} />
+                Open project
+              </a>
+            )}
+          </div>
+
+          {/* Save */}
+          <div className="flex items-center justify-end border-(--color-border)">
+            <button
+              onClick={handleSaveProject}
+              disabled={!canSaveProject}
+              className="flex items-center gap-1.5 rounded-sm bg-(--color-primary) px-3.5 py-2 text-xs font-semibold text-(--color-primary-text) transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:bg-(--color-surface-highlight) disabled:text-(--color-text-faint) disabled:opacity-100"
+            >
+              <Pencil size={12} />
+
+              {savingProject ? "Saving..." : "Save changes"}
+            </button>
+          </div>
+
+          {/* Divider */}
+          <div className="h-px bg-(--color-border)" />
+
+          {/* Project ID */}
+          <div>
+            <label className="mb-2 block text-xs font-medium text-(--color-text-secondary)">
+              Project ID
+            </label>
+
+            <div className="flex items-center gap-2">
+              <code className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-sm border border-(--color-code-border) bg-(--color-code-bg) px-2.5 py-2 font-mono text-[11px] text-(--color-code-text)">
+                {project?.id ?? "—"}
+              </code>
+
+              <button
+                onClick={handleCopyId}
+                className="flex shrink-0 items-center gap-1.5 rounded-sm border border-(--color-border) bg-(--color-surface) px-2.5 py-1.5 text-[11px] text-(--color-text-muted) transition-colors hover:bg-(--color-surface-hover) hover:text-(--color-text-secondary)"
+              >
+                {copied ? <Check size={11} /> : <Copy size={11} />}
+
+                {copied ? "Copied" : "Copy"}
+              </button>
+            </div>
+
+            <p className="mt-1.5 text-[11px] text-(--color-text-subtle)">
+              Read-only identifier used for API calls and SDK initialization.
+            </p>
+          </div>
         </div>
-        <p style={{ fontSize: 13, color: '#94A3A8', lineHeight: 1.6, marginBottom: 16 }}>
-          Deleting this project will permanently remove all feature flags, environments, and audit history. This action cannot be undone.
+      </section>
+
+      {/* Danger Zone */}
+      <section className="rounded-md border border-[#382629] bg-(--color-surface) p-4.5">
+        <div className="mb-1.5 flex items-center gap-2">
+          <Shield size={13} className="text-[#f87171]" />
+
+          <h2 className="text-[11px] font-medium tracking-wider text-[#f87171]">
+            DANGER ZONE
+          </h2>
+        </div>
+
+        <p className="mb-4 max-w-170 text-xs leading-6 text-(--color-text-muted)">
+          Deleting this project will permanently remove all feature flags,
+          environments, and audit history. This action cannot be undone.
         </p>
+
         <button
           onClick={() => setShowDelete(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: 7, background: 'rgb(255, 39, 39)', color: '#FFFFFF', border: '1px solid rgba(244,63,94,0.3)', borderRadius: 6, padding: '8px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+          className="flex items-center gap-1.5 rounded-sm border border-[#4a292d] bg-transparent px-3 py-2 text-xs font-medium text-[#f87171] transition-colors hover:bg-[#181112]"
         >
           <Trash2 size={13} />
           Delete this project
         </button>
-      </div>
+      </section>
 
+      {/* Delete Modal */}
       {showDelete && (
         <DeleteModal
           projectName={project?.name}
@@ -170,5 +393,5 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
         />
       )}
     </div>
-  )
+  );
 }

@@ -4,11 +4,11 @@ import FlagsPage from './pages/FlagsPage/FlagsPage'
 import CreateFlagPage from './pages/CreateFlagPage/CreateFlagPage'
 import EnvironmentsPage from './pages/EnvironmentPage/EnvironmentsPage'
 import SettingsPage from './pages/SettingsPage'
-import AuditLogPage from './pages/AuditLogPage'
+import AuditLogPage from './pages/AuditLogsPage/AuditLogPage'
 import Sidebar from './components/Sidebar'
 import TopBar from './components/TopBar'
 import ToastContainer, { type ToastData } from './components/Toast'
-import { ActualEnvironment } from './data'
+import { ActualEnvironment, AuditLog } from './data'
 import { getProjects } from './services/project.service'
 import { getEnvironments } from './services/environment.service'
 
@@ -104,7 +104,7 @@ export default function App() {
             <SettingsPage onToast={addToast} />
           )}
           {page === 'audit' && (
-            <AuditLogPage />
+            <AuditLogPage onToast={addToast}/>
           )}
         </main>
       </div>
