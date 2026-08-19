@@ -92,8 +92,8 @@ function ProjectCard({
         <div>
           <h2>{project.name}</h2>
 
-          <span className="project-key">
-            {project.url ? <a href={project.url}>{project.url}</a>: project.slug}
+          <span className="project-key" onClick={(e) => e.stopPropagation()}>
+            {project.url ? <a href={project.url} target='_blank' className='hover:text-white'>{project.url}</a>: project.slug}
           </span>
         </div>
 {/* 

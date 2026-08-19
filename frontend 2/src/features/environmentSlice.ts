@@ -29,9 +29,14 @@ const environmentSlice = createSlice({
             if(state.currentEnv?.id === action.payload.id)
                 state.currentEnv = undefined;
             state.environments = state.environments.filter(env=>env.id !== action.payload.id)
+        },
+        changeEnvironmentKey: (state, action)=>{
+            const environment = state.environments.find(env => env.id === action.payload.id);
+            if(environment)
+                environment.sdk_key = action.payload.sdk_key;
         }
     }
 })
 
 export default environmentSlice.reducer;
-export const {setEnvironments, setCurrentEnv, addEnvironment, removeEnvironment} = environmentSlice.actions;
+export const {setEnvironments, setCurrentEnv, addEnvironment, removeEnvironment, changeEnvironmentKey} = environmentSlice.actions;

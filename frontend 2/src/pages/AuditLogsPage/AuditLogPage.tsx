@@ -135,6 +135,10 @@ const getEntity = (log: AuditLog) => {
     return log.flag_key || "—";
   }
 
+  if(log.type === "key_rotation"){
+    return "—"
+  }
+
   if (log.domain === "environment") {
     return log.environment_name || log.old_value || "—";
   }
@@ -143,6 +147,9 @@ const getEntity = (log: AuditLog) => {
 };
 
 const getEnvironment = (log: AuditLog) => {
+  if(log.type === "key_rotation")
+    return log.environment_name || "—";
+  
   if (log.domain !== "flag") {
     return "—";
   }
@@ -205,7 +212,7 @@ function AuditLogRow({ log }: { log: AuditLog }) {
       </div>
 
       <div className="audit-cell audit-action-cell">
-        <span className={`audit-action audit-action-${log.domain}`}>
+        <span className={`audit-action audit-action-${log.type}`}>
           {getActionLabel(log.type)}
         </span>
       </div>

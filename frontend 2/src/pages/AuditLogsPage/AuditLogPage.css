@@ -168,7 +168,7 @@
 
   padding: 4px 7px;
 
-  border: 1px solid #303030;
+  /* border: 1px solid #303030; */
   border-radius: 5px;
 
   background: #161616;
@@ -188,21 +188,33 @@
  * Still intentionally monochrome/Vercel-like.
  */
 
-.audit-action-project {
-  background: #181818;
-  border-color: #343434;
+.audit-action-project_creation,
+.audit-action-environment_creation,
+.audit-action-flag_creation {
+  background-color: rgba(99, 153, 34, 0.12);
+  color: #97C459;
+  border: 1px solid rgba(99, 153, 34, 0.3);
 }
 
-.audit-action-environment {
-  background: #151515;
-  border-color: #303030;
+.audit-action-environment_deletion,
+.audit-action-flag_deletion{
+  background-color: rgba(226, 75, 74, 0.12);
+  color: #F09595; 
+  border: 1px solid rgba(226, 75, 74, 0.3)
 }
 
-.audit-action-flag {
-  background: #191919;
-  border-color: #373737;
+.audit-action-flag_toggle {
+  background-color: rgba(55, 138, 221, 0.12);
+  color: #85B7EB; 
+  border:1px solid rgba(55, 138, 221, 0.3)
 }
 
+.audit-action-key_rotation,
+.audit-action-flag_updation {
+  background-color: transparent; 
+  color: rgba(255,255,255,0.7); 
+  border: 1px solid rgba(255,255,255,0.16);
+}
 /* --------------------------------
    Entity
 --------------------------------- */

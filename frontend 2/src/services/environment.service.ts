@@ -17,3 +17,8 @@ export async function deleteEnvironment(projectId : string, envId : string){
     const response = await api.delete(`/api/projects/${projectId}/environments/${envId}`);
     return response.data
 }
+
+export async function rotateEnvironmentKey(envId: string): Promise<string>{
+    const response = await api.patch(`api/environments/${envId}/rotate-key`);
+    return response.data;
+}

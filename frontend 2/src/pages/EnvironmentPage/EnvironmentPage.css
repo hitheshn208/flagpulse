@@ -426,7 +426,7 @@
 
 .rotate-modal {
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
 
   padding: 24px;
 
@@ -457,7 +457,7 @@
 
   background: var(--color-surface-hover);
 
-  color: var(--color-text-secondary);
+  color: rgb(211, 144, 0);
 }
 
 .rotate-modal__header h3 {
