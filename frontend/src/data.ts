@@ -1,5 +1,5 @@
 export type FlagType = 'boolean' | 'string' | 'number' | 'json'
-export type EnvIconName = 'globe' | 'code' | 'flask' | 'rocket' | 'bug' | 'settings'
+export type EnvIconName = 'globe' | 'code' | 'flask' | 'rocket' | 'bug' | 'settings' | 'flag_toggle' | "flag_creation" | "flag_updation"
 
 export interface Project {
   id: string

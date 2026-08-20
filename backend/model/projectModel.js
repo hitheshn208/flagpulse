@@ -142,8 +142,7 @@ exports.removeProject = async (projectId)=>{
     const response = await db.query("DELETE FROM projects WHERE id = $1", [projectId]);
 }
 
-
-exports.testQuery = async ()=>{
-    const response = await db.query(`select * from flags f join flag_values fs ON fs.flag_id = f.id`);
-    return response.rows;
+exports.getAllUrls = async ()=>{
+    const response = await db.query("SELECT url FROM Projects");
+    return response.rows
 }

@@ -1,4 +1,4 @@
-import { Code2, FlaskConical, Rocket, Globe, Bug, Settings } from 'lucide-react'
+import { Code2, FlaskConical, Rocket, Globe, Bug, Settings, ToggleLeft, SquarePlus, SquarePen } from 'lucide-react'
 import type { EnvIconName } from '../data'
 
 const MAP: Record<EnvIconName, React.FC<{ size?: number; style?: React.CSSProperties }>> = {
@@ -8,6 +8,9 @@ const MAP: Record<EnvIconName, React.FC<{ size?: number; style?: React.CSSProper
   globe:    Globe,
   bug:      Bug,
   settings: Settings,
+  flag_toggle: ToggleLeft,
+  flag_creation : SquarePlus,
+  flag_updation: SquarePen,
 }
 
 export const ENV_ICON_OPTIONS: { key: EnvIconName; label: string }[] = [
@@ -17,6 +20,7 @@ export const ENV_ICON_OPTIONS: { key: EnvIconName; label: string }[] = [
   { key: 'flask',    label: 'Science' },
   { key: 'bug',      label: 'Bug'     },
   { key: 'settings', label: 'Settings'},
+  { key: 'flag_toggle', label: 'Flag Toggle'},
 ]
 
 interface EnvIconProps {

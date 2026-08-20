@@ -20,7 +20,7 @@ exports.getProjects = async (req, res) => {
     res.json(projects);
 };
 
-exports.insertProjects = async (req, res) => {
+exports.insertProject = async (req, res) => {
     const { name, description, url, environment_name, environment_icon } =
         req.body;
     if (!name) throw new AppError("Project name required", 400);

@@ -1,10 +1,10 @@
 const express = require("express");
-const {getProjects, insertProjects,getAuditLogs, deleteAuditLogs, getProjectEnvironments, createProjectEnvironments, createFlag, deleteProjectEnvironment, editProject, deleteProject} = require("../controllers/projectController")
+const {getProjects, insertProject,getAuditLogs, deleteAuditLogs, getProjectEnvironments, createProjectEnvironments, createFlag, deleteProjectEnvironment, editProject, deleteProject} = require("../controllers/projectController")
 
 const projectRouter = express.Router();
 
 projectRouter.get("/", getProjects)
-projectRouter.post("/", insertProjects);
+projectRouter.post("/", insertProject);
 projectRouter.patch("/:id", editProject);
 projectRouter.delete("/:id", deleteProject);
 projectRouter.get("/:id/environments", getProjectEnvironments)

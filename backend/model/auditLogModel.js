@@ -15,10 +15,35 @@ exports.insertAuditLog = async (projectId, flagId, envId, user_id, change_summar
     return;
 }
 
-exports.getLogs = async (flagId) =>{
-    const response = await db.query("SELECT * FROM audit_logs WHERE flag_id = $1 ORDER BY created_at DESC", [flagId]);
-    if(response.rows.length === 0)
-        throw new AppError("Flag not found", 404); //^ Min 1 log (when the flag was created) will be there
+exports.getLogs = async (flagId, projectId, userId) =>{
+    const response = await db.query(`SELECT 
+        al.id,
+        al.project_id,
+        al.flag_id,
+        al.environment_id,
+        al.user_id,
+        al.change_summary,
+        al.old_value,
+        al.new_value,
+        al.reason,
+        al.type,
+        al.domain,
+        al.created_at,
+        f.key as flag_key,
+        e.name as environment_name,
+        u.name as user_name
+        
+        FROM audit_logs al
+        
+        LEFT JOIN flags f ON f.id = al.flag_id
+        LEFT JOIN environments e ON e.id = al.environment_id
+        LEFT JOIN users u ON u.id = al.user_id
+
+        WHERE al.project_id = $1 AND al.user_id = $2 AND al.flag_id = $3
+
+        ORDER BY al.created_at DESC
+        
+        LIMIT 5`, [projectId, userId, flagId]);
 
     return response.rows;
 }

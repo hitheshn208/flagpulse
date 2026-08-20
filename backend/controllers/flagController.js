@@ -15,7 +15,7 @@ exports.editFlagValue = async (req, res) => {
     if (!uuidRegex.test(envId))
         throw new AppError("Invalid environment id", 400);
     
-    const { is_enabled, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value, reason } = req.body;
+    const { is_enabled, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value } = req.body; //^ reason if required
 
     const response = await changeFlagValue({flagId, envId, is_enabled, rollout_percentage, targeting_attribute, targeting_value, targeting_return_value});
     await invalidateFlagValuesFromCache(envId);//^Invalidate from cache
@@ -25,7 +25,7 @@ exports.editFlagValue = async (req, res) => {
 
     await insertAuditLog(req.projectId, flagId, envId, req.user.id, "Flag value changed", old_value, new_value, null, "flag_updation", "flag"); //^Log the changes
     await sendClient(envId, { type: "flag_updated", ...response.new.rows[0] } ); //^Send edited flags
-    return res.json(response.new.rows);
+    return res.json(response.new.rows[0]);
 }
 
 exports.deleteFlag = async (req, res)=>{
@@ -55,7 +55,7 @@ exports.flagLogs = async (req,res)=>{
     if (!uuidRegex.test(flagId))
         throw new AppError("Invalid flag id", 400);
 
-    const logs = await getLogs(flagId);
+    const logs = await getLogs(flagId, req.projectId, req.user.id);
 
     return res.json(logs);
 }

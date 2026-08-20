@@ -1,0 +1,732 @@
+/* =========================================
+   Environment Section
+========================================= */
+
+.flag-env-section {
+  width: 100%;
+}
+
+.flag-env-section-label {
+  margin-bottom: 10px;
+
+  color: var(--color-text-muted);
+
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.flag-env-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+
+/* =========================================
+   Environment Card
+========================================= */
+
+.flag-env-card {
+  width: 100%;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+
+  overflow: hidden;
+
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.flag-env-card-disable{
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.flag-env-card:hover {
+  border-color: var(--color-border-hover);
+  background: var(--color-surface-hover);
+}
+
+.flag-env-card.is-editing {
+  border-color: var(--color-border-active);
+  background: var(--color-surface);
+}
+
+
+/* =========================================
+   Environment Header
+========================================= */
+
+.flag-env-header {
+  min-height: 48px;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 10px 12px;
+}
+
+.flag-env-identity {
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 9px;
+}
+
+.flag-env-dot {
+  width: 7px;
+  height: 7px;
+
+  flex: 0 0 7px;
+
+  border-radius: 50%;
+}
+
+.flag-env-name {
+  min-width: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--color-text);
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+
+/* =========================================
+   Normal Environment Actions
+========================================= */
+
+.flag-env-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  min-width: 0;
+
+  gap: 9px;
+}
+
+.flag-env-value {
+  display: block;
+
+  max-width: 200px;
+
+  padding: 4px 7px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  border: 1px solid var(--color-code-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-code-bg);
+
+  color: var(--color-code-text);
+
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* =========================================
+   Toggle
+========================================= */
+
+.flag-env-toggle {
+  position: relative;
+
+  width: 32px;
+  height: 18px;
+
+  /* flex: 0 0 28px; */
+
+  padding: 0;
+
+  border: none;
+  border-radius: 999px;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.flag-env-toggle span {
+  position: absolute;
+
+  top: 2px;
+  left: 2px;
+
+  width: 14px;
+  height: 14px;
+
+  border-radius: 50%;
+
+  background: var(--color-text);
+
+  transition: transform var(--transition-fast);
+}
+
+.flag-env-toggle.enabled {
+  background: var(--color-enabled);
+}
+
+.flag-env-toggle.enabled span {
+  left: 16px;
+}
+
+.flag-env-toggle.disabled {
+  background: var(--color-disabled);
+}
+
+.flag-env-toggle:hover {
+  opacity: 0.8;
+}
+
+
+/* =========================================
+   Edit Button
+========================================= */
+
+.flag-env-edit-button {
+  height: 26px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  padding: 0 9px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+
+  color: var(--color-text-muted);
+
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.flag-env-edit-button:hover {
+  border-color: var(--color-border-hover);
+
+  background: var(--color-surface-highlight);
+
+  color: var(--color-text);
+}
+
+
+/* =========================================
+   Editor
+========================================= */
+
+.flag-env-editor {
+  width: 100%;
+
+  border-top: 1px solid var(--color-border);
+
+  background: var(--color-surface-raised);
+}
+
+
+/* =========================================
+   Editor Header
+========================================= */
+
+.flag-env-editor-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 11px 12px;
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.flag-env-editor-title {
+  color: var(--color-text);
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.flag-env-editor-subtitle {
+  margin-top: 2px;
+
+  color: var(--color-text-subtle);
+
+  font-size: 9px;
+}
+
+.flag-env-editor-close {
+  width: 25px;
+  height: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+
+  color: var(--color-text-subtle);
+
+  cursor: pointer;
+
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.flag-env-editor-close:hover {
+  border-color: var(--color-border);
+
+  background: var(--color-surface-hover);
+
+  color: var(--color-text);
+}
+
+
+/* =========================================
+   Generic Inputs
+========================================= */
+
+.flag-env-editor-input {
+  width: calc(100% - 24px);
+  height: 36px;
+
+  display: block;
+
+  margin: 12px;
+
+  padding: 0 10px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-code-bg);
+
+  color: var(--color-text);
+
+  font-family: var(--font-sans);
+  font-size: 12px;
+
+  outline: none;
+
+  transition: border-color var(--transition-fast);
+}
+
+.flag-env-editor-input::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.flag-env-editor-input:focus {
+  border-color: var(--color-border-active);
+}
+
+
+/* =========================================
+   Boolean Editor
+========================================= */
+
+.flag-env-boolean-editor {
+  display: flex;
+
+  gap: 6px;
+
+  padding: 12px;
+}
+
+.flag-env-boolean-editor button {
+  min-width: 70px;
+  height: 34px;
+
+  padding: 0 14px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-code-bg);
+
+  color: var(--color-text-muted);
+
+  font-family: var(--font-mono);
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.flag-env-boolean-editor button:hover {
+  border-color: var(--color-border-hover);
+
+  color: var(--color-text);
+}
+
+.flag-env-boolean-editor button.selected {
+  border-color: var(--color-border-active);
+
+  background: var(--color-surface-highlight);
+
+  color: var(--color-text);
+}
+
+
+/* =========================================
+   JSON Editor
+========================================= */
+
+.flag-env-json-editor {
+  width: 100%;
+
+  padding: 12px;
+}
+
+.flag-env-json-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(100px, 1fr)
+    minmax(100px, 1fr)
+    105px
+    28px;
+
+  gap: 7px;
+
+  padding: 0 2px 6px;
+}
+
+.flag-env-json-header span {
+  color: var(--color-text-subtle);
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.07em;
+}
+
+.flag-env-json-rows {
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.flag-env-json-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(100px, 1fr)
+    minmax(100px, 1fr)
+    105px
+    28px;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.flag-env-json-row input,
+.flag-env-json-row select {
+  width: 100%;
+  height: 32px;
+
+  min-width: 0;
+
+  padding: 0 8px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-code-bg);
+
+  color: var(--color-text);
+
+  font-family: var(--font-sans);
+  font-size: 10px;
+
+  outline: none;
+
+  transition: border-color var(--transition-fast);
+}
+
+.flag-env-json-row input::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.flag-env-json-row input:focus,
+.flag-env-json-row select:focus {
+  border-color: var(--color-border-active);
+}
+
+
+/* =========================================
+   JSON Remove
+========================================= */
+
+.flag-env-json-remove {
+  width: 28px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+
+  color: var(--color-text-subtle);
+
+  cursor: pointer;
+
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.flag-env-json-remove:hover:not(:disabled) {
+  border-color: var(--color-border);
+
+  background: var(--color-surface-hover);
+
+  color: var(--color-text);
+}
+
+.flag-env-json-remove:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.25;
+}
+
+
+/* =========================================
+   Add Property
+========================================= */
+
+.flag-env-json-add {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: 9px;
+
+  padding: 3px 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--color-text-muted);
+
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: color var(--transition-fast);
+}
+
+.flag-env-json-add:hover {
+  color: var(--color-text);
+}
+
+
+/* =========================================
+   JSON Error
+========================================= */
+
+.flag-env-json-error {
+  margin-top: 8px;
+
+  color: #f87171;
+
+  font-size: 10px;
+}
+
+
+/* =========================================
+   Editor Footer
+========================================= */
+
+.flag-env-editor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 7px;
+
+  padding: 9px 12px;
+
+  border-top: 1px solid var(--color-border);
+}
+
+
+/* Cancel */
+
+.flag-env-cancel {
+  height: 28px;
+
+  padding: 0 10px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+
+  color: var(--color-text-muted);
+
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.flag-env-cancel:hover {
+  border-color: var(--color-border-hover);
+
+  background: var(--color-surface-hover);
+
+  color: var(--color-text);
+}
+
+
+/* Save */
+
+.flag-env-save {
+  height: 28px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  padding: 0 11px;
+
+  border: 1px solid var(--color-primary);
+
+  border-radius: var(--radius-sm);
+
+  background: var(--color-primary);
+
+  color: var(--color-primary-text);
+
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.flag-env-save:hover {
+  background: var(--color-primary-hover);
+}
+
+/* =========================================
+   Empty
+========================================= */
+
+.flag-env-empty {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 70px;
+
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+
+  color: var(--color-text-subtle);
+
+  font-size: 11px;
+}
+
+
+/* =========================================
+   Responsive
+========================================= */
+
+@media (max-width: 520px) {
+  .flag-env-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .flag-env-actions {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+  .flag-env-value {
+    max-width: 150px;
+    text-overflow: ellipsis;
+  }
+
+  .flag-env-json-header,
+  .flag-env-json-row {
+    grid-template-columns:
+      minmax(80px, 1fr)
+      minmax(80px, 1fr)
+      90px
+      28px;
+  }
+}
