@@ -147,6 +147,9 @@ const getEntity = (log: AuditLog) => {
 };
 
 const getEnvironment = (log: AuditLog) => {
+  if(log.type === "environment_creation")
+    return log.new_value || "—"
+
   if(log.type === "key_rotation")
     return log.environment_name || "—";
   

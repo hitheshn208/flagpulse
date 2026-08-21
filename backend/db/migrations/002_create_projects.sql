@@ -5,6 +5,5 @@ CREATE TABLE projects (
   owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ  DEFAULT NOW(),
   updated_at TIMESTAMPTZ  DEFAULT NOW(),
-  description TEXT DEFAULT NULL,
-  url TEXT NOT NULL
+  description TEXT DEFAULT NULL
 );

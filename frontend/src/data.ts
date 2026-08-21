@@ -1,17 +1,6 @@
 export type FlagType = 'boolean' | 'string' | 'number' | 'json'
 export type EnvIconName = 'globe' | 'code' | 'flask' | 'rocket' | 'bug' | 'settings' | 'flag_toggle' | "flag_creation" | "flag_updation"
 
-export interface Project {
-  id: string
-  name: string
-  key: string
-  description: string
-  envCount: number
-  flagCount: number
-  lastActivity: string
-  collaborators: { initials: string; color: string }[]
-}
-
 export interface ActualProject {
   id: string
   name: string
@@ -20,7 +9,6 @@ export interface ActualProject {
   environments_count: number
   flags_count: number
   description: string | null
-  url: string | null
 }
 
 export interface ActualEnvironment{
@@ -32,6 +20,7 @@ export interface ActualEnvironment{
   icon: string
   total_flags: number
   clients?: number
+  url: string | null
 }
 
 export type AuditType =

@@ -1,10 +1,10 @@
-const { getEnvId } = require("../model/sdkModel");
+const { getEnvId, getEnvIdForSSE } = require("../model/sdkModel");
 const AppError = require("../utils/AppError");
 const connections = new Map();
 const dashboardConnections = new Map();
 
 exports.addClient = async (sdkKey, res)=>{
-    const dbRes = await getEnvId(sdkKey);
+    const dbRes = await getEnvIdForSSE(sdkKey);
     if(dbRes.length === 0){
         console.log("Changed the sdk key");
         res.write(`data: ${JSON.stringify({"sdkKeyChanged": true})}\n\n`);

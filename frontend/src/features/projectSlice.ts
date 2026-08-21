@@ -59,12 +59,10 @@ export const projectSlice = createSlice({
 
             if (project){
                 project.name = action.payload.name;
-                project.url = action.payload.url
             }
 
             if (state.currentProject && state.currentProject?.id === action.payload.id){
                 state.currentProject.name = action.payload.name;
-                state.currentProject.url = action.payload.url;
             }
         },
     }

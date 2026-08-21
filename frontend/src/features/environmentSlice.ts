@@ -24,11 +24,14 @@ const environmentSlice = createSlice({
         },
         addEnvironment: (state, action)=>{
             state.environments.push(action.payload.environment);
+            state.currentEnv = action.payload.environment
         },
         removeEnvironment: (state, action)=>{
             if(state.currentEnv?.id === action.payload.id)
                 state.currentEnv = undefined;
             state.environments = state.environments.filter(env=>env.id !== action.payload.id)
+            if(state.environments.length)
+                state.currentEnv = state.environments[0]
         },
         changeEnvironmentKey: (state, action)=>{
             const environment = state.environments.find(env => env.id === action.payload.id);

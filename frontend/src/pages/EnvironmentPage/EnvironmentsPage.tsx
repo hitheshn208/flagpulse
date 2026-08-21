@@ -275,7 +275,9 @@ function EnvCard({ env, onRotate, onToast, onDelete, index }: EnvCardProps) {
         </div>
       </div>
 
-      <p className="env-card__description">Total flags {env.total_flags}</p>
+      <p className="env-card__url">
+        {env.url ? <a href={env.url} target='_blank' className='hover:text-white'>{env.url}</a>: "No URL Provided"}
+      </p>
 
       {/* SDK Key */}
       <div className="sdk-key">
@@ -327,7 +329,6 @@ function DeleteEnvModal({
         style={{
           background: "var(--color-surface)",
           border: "1px solid #1E2926",
-          borderTop: "3px solid rgb(200, 2, 2)",
           borderRadius: 5,
           padding: 24,
           maxWidth: 420,

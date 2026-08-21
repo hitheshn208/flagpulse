@@ -8,7 +8,7 @@ const {
     updateProject,
     removeProject
 } = require("../model/projectModel");
-const { invalidateFlagValuesFromCache } = require("../model/flagCache");
+const { invalidateFlagValuesFromCache, addNewOriginToCache, removeOriginFromCache } = require("../model/flagCache");
 const AppError = require("../utils/AppError");
 const { insertAuditLog, getProjectLogs, removeAuditLogs } = require("../model/auditLogModel");
 const { sendClient } = require("../services/sse");
@@ -21,8 +21,7 @@ exports.getProjects = async (req, res) => {
 };
 
 exports.insertProject = async (req, res) => {
-    const { name, description, url, environment_name, environment_icon } =
-        req.body;
+    const { name, description, environment_name, environment_icon, environment_url } = req.body;
     if (!name) throw new AppError("Project name required", 400);
 
     const owner_id = req.user.id;
@@ -32,12 +31,12 @@ exports.insertProject = async (req, res) => {
     const project = await createProject({
         name,
         slug,
-        url,
         owner_id,
         description,
         environment_name,
         environment_icon,
         environment_slug,
+        environment_url
     });
     await insertAuditLog(
         project.id,
@@ -51,6 +50,20 @@ exports.insertProject = async (req, res) => {
         "project_creation",
         "project",
     );
+    await insertAuditLog(
+        project.id,
+        null,
+        null,
+        req.user.id,
+        `New environment ${environment_name} was created`,
+        null,
+        environment_name,
+        null,
+        "environment_creation",
+        "environment",
+    );
+
+    await addNewOriginToCache(environment_url)
     res.status(201).json(project);
 };
 
@@ -72,12 +85,12 @@ exports.createProjectEnvironments = async (req, res) => {
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(projectId)) throw new AppError("Invalid project Id", 400);
 
-    const { name, icon } = req.body;
-    if (!name) throw new AppError("Environment name required", 400);
+    const { name, icon, url } = req.body;
+    if (!name || !url) throw new AppError("Environment name required", 400);
 
     const slug = name.toLowerCase().replace(/\s+/g, "-");
 
-    const { environment } = await insertEnvironment(name, slug, projectId, icon);
+    const { environment } = await insertEnvironment(name, slug, projectId, icon, url);
     await insertAuditLog(
         projectId,
         null,
@@ -85,11 +98,12 @@ exports.createProjectEnvironments = async (req, res) => {
         req.user.id,
         `New environment ${environment.name} was created`,
         null,
-        null,
+        environment.name,
         null,
         "environment_creation",
         "environment",
     );
+    await addNewOriginToCache(url);
     return res.status(201).json({
         environment,
     });
@@ -170,6 +184,8 @@ exports.deleteProjectEnvironment = async (req, res) => {
         "environment_deletion",
         "environment",
     );
+
+    await removeOriginFromCache(deletedEnv.url);
     return res.status(200).json({
         message: "Flag delete successfully",
     });
@@ -182,12 +198,12 @@ exports.editProject = async (req, res) => {
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(projectId)) throw new AppError("Invalid project Id", 400);
 
-    const { name, url } = req.body;
+    const { name } = req.body;
     if (!name) throw new AppError("Project Name required", 404);
 
     const slug = name.toLowerCase().replace(/\s+/g, "-");
 
-    await updateProject(projectId, name, slug, url);
+    await updateProject(projectId, name, slug);
     return res.json({
         message: "Project updated successfully",
     });

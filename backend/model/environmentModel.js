@@ -1,7 +1,20 @@
 const db = require("../config/postgres");
 
 exports.changeKey = async (envId)=>{
-    const response = await db.query("UPDATE environments SET sdk_key = gen_random_uuid() WHERE id = $1 RETURNING sdk_key, name", [envId]);
+    const response = await db.query(`
+        WITH old AS (
+            SELECT sdk_key
+            FROM environments
+            WHERE id = $1
+        )
+        UPDATE environments
+        SET sdk_key = gen_random_uuid()
+        FROM old
+        WHERE environments.id = $1
+        RETURNING
+            old.sdk_key AS old_sdk_key,
+            environments.sdk_key AS new_sdk_key,
+            environments.name;`, [envId]);
     return response.rows[0];
 }
 

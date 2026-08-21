@@ -132,7 +132,6 @@ export default function FlagEnvironments({
               key={`${environment.environment_id}-${environment.id}`}
               flag={flag}
               environment={environment}
-              color={ENVIRONMENT_COLORS[index % ENVIRONMENT_COLORS.length]}
               isEditing={isEditing}
               onEdit={() => setEditingEnvironmentId(environment.environment_id)}
               onCancel={() => setEditingEnvironmentId(null)}
@@ -161,7 +160,6 @@ export default function FlagEnvironments({
 interface EnvironmentCardProps {
   flag: FlagInfo;
   environment: FlagEnvironmentValue;
-  color: string;
   isEditing: boolean;
 
   onEdit: () => void;
@@ -180,7 +178,6 @@ interface EnvironmentCardProps {
 function EnvironmentCard({
   flag,
   environment,
-  color,
   isEditing,
   onEdit,
   onCancel,

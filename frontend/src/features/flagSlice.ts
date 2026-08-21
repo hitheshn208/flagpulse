@@ -29,9 +29,10 @@ const flagSlice = createSlice({
 
         setEditValue: (state, action)=>{
             const flags = state.flagsByEnv[action.payload.envId]
-            let flag = flags?.find(flag => flag.id === action.payload.flagId)
-            if(flag)
-                flag = {...flag, ...action.payload.data}
+            const flag = flags?.find(flag => flag.id === action.payload.flagId);
+            if (flag) {
+                Object.assign(flag, action.payload.data);
+            }
             console.log(action.payload.envId, action.payload.flagId, action.payload.data, flag);
         },
         

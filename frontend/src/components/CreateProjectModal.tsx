@@ -26,10 +26,10 @@ function isValidUrl(value: string) {
 export default function CreateProjectModal({ onClose, onToast }: CreateProjectModalProps) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [url, setUrl] = useState('')
-  const [urlError, setUrlError] = useState('')
   const [loading, setLoading] = useState(false);
-
+  
+  const [urlError, setUrlError] = useState('')
+  const [url, setUrl] = useState('')
   const [envName, setEnvName] = useState('Production')
   const [envIcon, setEnvIcon] = useState<EnvIconName>('globe')
 
@@ -49,7 +49,7 @@ export default function CreateProjectModal({ onClose, onToast }: CreateProjectMo
     if (!canSubmit) return
     setLoading(true);
     try{
-      const response = await createProject({name, description, url, environment_name: envName, environment_icon: envIcon})
+      const response = await createProject({name, description, environment_name: envName, environment_icon: envIcon, environment_url: url})
       dispatch(setNewProject(response));
       dispatch(setCurrentProject(response));
     }catch(error){
@@ -96,26 +96,6 @@ export default function CreateProjectModal({ onClose, onToast }: CreateProjectMo
               <input id="project-name" autoFocus value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Payments Service" className="w-full rounded-sm border border-(--color-border) bg-(--color-surface-raised) px-3 py-2 text-[12px] text-(--color-text) outline-none placeholder:text-(--color-text-faint) transition-colors duration-(--transition-fast) focus:border-(--color-border-active)" />
             </div>
 
-            {/* URL */}
-
-            <div>
-              <label htmlFor="project-url" className="mb-1.5 block text-[12px] font-semibold tracking-[0.04em] text-(--color-text-label)">
-                Project URL <span className="text-red-400">*</span>
-              </label>
-
-              <div className="relative">
-                <Globe size={12} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-(--color-text-faint)" />
-
-                <input id="project-url" value={url} onChange={(event) => { setUrl(event.target.value); validateUrl(event.target.value) }} placeholder="https://myapp.com" className={`w-full rounded-sm border bg-(--color-surface-raised) py-2 pl-7 pr-3 text-[12px] text-(--color-text) outline-none placeholder:text-(--color-text-faint) focus:border-(--color-border-active) ${urlError ? 'border-red-400/50' : 'border-(--color-border)'}`} />
-              </div>
-
-              {urlError ? (
-                <p className="mt-1 text-[12px] text-red-400">{urlError}</p>
-              ) : (
-                <p className="mt-1 text-[12px] leading-relaxed text-(--color-text-faint)">Where this project is deployed — shown as a quick link from the project card.</p>
-              )}
-            </div>
-
             {/* Description */}
 
             <div>
@@ -148,6 +128,26 @@ export default function CreateProjectModal({ onClose, onToast }: CreateProjectMo
               </label>
 
               <input id="environment-name" value={envName} onChange={(event) => setEnvName(event.target.value)} placeholder="e.g. Production" className="w-full rounded-sm border border-(--color-border) bg-(--color-surface-raised) px-3 py-2 text-[12px] text-(--color-text) outline-none placeholder:text-(--color-text-faint) focus:border-(--color-border-active)" />
+            </div>
+
+            {/* URL */}
+
+            <div>
+              <label htmlFor="env-url" className="mb-1.5 block text-[12px] font-semibold tracking-[0.04em] text-(--color-text-label)">
+                Environmenr URL<span className="text-red-400">*</span>
+              </label>
+
+              <div className="relative">
+                <Globe size={12} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-(--color-text-faint)" />
+
+                <input id="env-url" value={url} onChange={(event) => { setUrl(event.target.value); validateUrl(event.target.value) }} placeholder="https://myapp.com" className={`w-full rounded-sm border bg-(--color-surface-raised) py-2 pl-7 pr-3 text-[12px] text-(--color-text) outline-none placeholder:text-(--color-text-faint) focus:border-(--color-border-active) ${urlError ? 'border-red-400/50' : 'border-(--color-border)'}`} />
+              </div>
+
+              {urlError ? (
+                <p className="mt-1 text-[12px] text-red-400">{urlError}</p>
+              ) : (
+                <p className="mt-1 text-[12px] leading-relaxed text-(--color-text-faint)">Set the application URL for this environment. This URL is used to allow cross-origin requests from you application</p>
+              )}
             </div>
 
             {/* Icon */}

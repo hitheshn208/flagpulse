@@ -6,7 +6,7 @@ export async function getProjects(): Promise<ActualProject[]>{
     return response.data;
 }
 
-export async function createEnvironment(projectId : string, data : {name: string, icon: string}) : Promise<ActualEnvironment>{
+export async function createEnvironment(projectId : string, data : {name: string, icon: string, url: string}) : Promise<ActualEnvironment>{
     const response = await api.post(`/api/projects/${projectId}/environments`, data);
     return response.data;
 }
@@ -17,7 +17,7 @@ Promise<{flag_id: string; envIds: string[]; message: string}>{
     return response.data;
 }
 
-export async function createProject(data : Pick<ActualProject, "name" | "description" | "url"> & {environment_name: string ; environment_icon : string}) : Promise<ActualProject>{
+export async function createProject(data : Pick<ActualProject, "name" | "description"> & {environment_name: string ; environment_icon : string; environment_url: string}) : Promise<ActualProject>{
     const response = await api.post("/api/projects", data);
     return response.data;
 }
@@ -38,7 +38,7 @@ export async function deleteAuditLogs(projectId: string){
 }
 
 
-export async function editProject(projectId: string, data : {name: string ; url: string | null}) {
+export async function editProject(projectId: string, data : {name: string}) {
     const response = await api.patch(`/api/projects/${projectId}`, data);
     return response.data;
 }

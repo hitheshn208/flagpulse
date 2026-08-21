@@ -108,8 +108,6 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
 
   const [projectName, setProjectName] = useState(project?.name ?? "");
 
-  const [projectUrl, setProjectUrl] = useState(project?.url ?? "");
-
   const [showDelete, setShowDelete] = useState(false);
 
   const [copied, setCopied] = useState(false);
@@ -124,20 +122,14 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
    */
   useEffect(() => {
     setProjectName(project?.name ?? "");
-    setProjectUrl(project?.url ?? "");
   }, [project?.id]);
 
   const originalName = project?.name ?? "";
-  const originalUrl = project?.url ?? "";
 
   const nameChanged = projectName.trim() !== originalName;
 
-  const urlChanged = projectUrl.trim() !== originalUrl;
-
-  const projectChanged = nameChanged || urlChanged;
-
   const canSaveProject =
-    projectChanged && projectName.trim().length > 0 && !savingProject;
+    nameChanged && projectName.trim().length > 0 && !savingProject;
 
   const handleCopyId = async () => {
     try {
@@ -161,10 +153,9 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
     try {
       const payload = {
         name: projectName.trim(),
-        url: projectUrl.trim() ? projectUrl.trim() : null,
       };
       await editProject(project.id, payload);
-      dispatch(updateProjectName({id: project.id, name: payload.name, url:payload.url}));
+      dispatch(updateProjectName({id: project.id, name: payload.name}));
       onToast("Project settings saved", "success");
     } catch {
       onToast("Failed to update project settings", "error");
@@ -273,46 +264,6 @@ export default function SettingsPage({ onToast }: SettingsPageProps) {
             <p className="mt-1.5 text-[11px] text-(--color-text-subtle)">
               The name displayed throughout your FlagPulse project.
             </p>
-          </div>
-
-          {/* Project URL */}
-          <div className=" mb-0">
-            <label className="mb-2 block text-xs font-medium text-(--color-text-secondary)" htmlFor="project-url">
-              Project URL
-            </label>
-
-            <div className="relative">
-              <Globe
-                size={13}
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-subtle)"
-              />
-
-              <input
-                id="project-url"
-                type="url"
-                value={projectUrl}
-                onChange={(e) => setProjectUrl(e.target.value)}
-                placeholder="https://example.com"
-                className="w-full rounded-sm border border-(--color-border) bg-(--color-code-bg) py-2 pl-9 pr-3 text-xs text-(--color-text) outline-none transition-colors placeholder:text-(--color-text-faint) focus:border-(--color-border-active)"
-              />
-            </div>
-
-            <p className="mt-1.5 text-[11px] text-(--color-text-subtle)">
-              Optional. Add the URL of the project or application using
-              FlagPulse.
-            </p>
-
-            {projectUrl.trim() && (
-              <a
-                href={projectUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-(--color-text-muted) transition-colors hover:text-(--color-text)"
-              >
-                <ExternalLink size={11} />
-                Open project
-              </a>
-            )}
           </div>
 
           {/* Save */}

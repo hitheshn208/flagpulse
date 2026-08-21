@@ -30,3 +30,55 @@ exports.editFlagValuesInCache = async (environment_id, flag)=>{
 
     await this.setFlagValuesToCache(environment_id, updatedFlags);
 }
+
+exports.getEnvIdFromCache = async (sdk_key)=>{
+    return await rd.get(`envId@${sdk_key}`);
+}
+
+exports.setEnvIdToCache = async (environment_id, sdk_key)=>{
+    await rd.set(`envId@${sdk_key}`, environment_id, { EX: 300 })
+}
+
+exports.invalidateSdkKeyAndSet = async(oldSdkKey, newSdkKey, environmentId)=>{
+    await Promise.all([
+        rd.del(`envId@${oldSdkKey}`),
+        rd.set(`envId@${newSdkKey}`, environmentId, { EX: 300 })
+    ]);
+}
+
+exports.addNewOriginToCache = async(url)=>{
+    try {
+        const origin = new URL(url).origin
+        console.log("Adding", origin, "to cache");
+        if(origin)
+            await rd.sAdd("cors:origin", origin)
+    } catch (error) {
+        console.log(error);
+        return;
+    }
+}
+
+exports.removeOriginFromCache = async (url)=>{
+    try {
+        const origin = new URL(url).origin
+        console.log("Removing", origin, "from cache");
+        if(origin)
+            await rd.sRem("cors:origin", origin)
+    } catch (error) {
+        console.log(error);
+        return;
+    }
+}
+
+
+exports.changeCacheOrigin = async (oldUrl, newUrl)=>{
+    try {
+        await Promise.all([
+            rd.sRem("cors:origin", oldUrl),
+            rd.sAdd("cors:origin", newUrl)
+        ])
+    } catch (error) {
+        console.log(error);
+        return;
+    }
+}

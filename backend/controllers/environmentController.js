@@ -2,6 +2,7 @@ const { response } = require("express");
 const { changeKey, fetchAllFlags } = require("../model/environmentModel");
 const AppError = require("../utils/AppError");
 const { insertAuditLog } = require("../model/auditLogModel");
+const { invalidateSdkKeyAndSet } = require("../model/flagCache");
 
 
 exports.rotateEnvironmentKey = async (req, res)=>{
@@ -9,12 +10,16 @@ exports.rotateEnvironmentKey = async (req, res)=>{
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
     if (!uuidRegex.test(envId))
         throw new AppError("Invalid environment id", 400);
-    const {sdk_key, name} = await changeKey(envId);
 
-    if(!sdk_key)
+    const row = await changeKey(envId);
+
+    if (!row)
         throw new AppError("Environment not found", 404);
+    const { old_sdk_key, new_sdk_key, name } = row;
+
+    await invalidateSdkKeyAndSet(old_sdk_key, new_sdk_key, envId)
     await insertAuditLog(req.projectId, null, envId, req.user.id, `Rotated SDK Key of ${name} environment`, null, null, null, "key_rotation", "environment")
-    return res.status(200).json(sdk_key)
+    return res.status(200).json(new_sdk_key)
 }
 
 

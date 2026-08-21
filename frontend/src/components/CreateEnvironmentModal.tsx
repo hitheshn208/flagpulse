@@ -6,7 +6,6 @@ import { createEnvironment } from '@/services/project.service'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/app/store'
 import { changeEnvironmentCountOfproject } from '@/features/projectSlice'
-import { count } from 'console'
 import { addEnvironment } from '@/features/environmentSlice'
 
 interface CreateEnvironmentModalProps {
@@ -14,21 +13,32 @@ interface CreateEnvironmentModalProps {
   onToast: (msg: string, type: "success" | "error" | "info")=>void;
 }
 
+function isValidUrl(value: string) {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 export default function CreateEnvironmentModal({ onClose, onToast }: CreateEnvironmentModalProps) {
   const [name, setName] = useState('')
   const [icon, setIcon] = useState<EnvIconName>('globe');
+  const [url, setUrl] = useState("");
+  const [urlError, setUrlError] = useState('')
   const [loading, setLoading] = useState(false);
   
   const currentProject = useSelector((state : RootState)=> state.project.currentProject)
   const dispatch = useDispatch();
 
-  const canSubmit = name.trim().length > 0
+  const canSubmit = name.trim().length > 0 && !urlError && url.trim().length > 0;
 
   const handleSubmit = async () => {
     if (!canSubmit || !currentProject) return
     setLoading(true);
     try{
-      const response = await createEnvironment(currentProject?.id, {name, icon});
+      const response = await createEnvironment(currentProject?.id, {name, icon, url});
       dispatch(changeEnvironmentCountOfproject({count: 1}));
       dispatch(addEnvironment(response));
     }catch(error){
@@ -37,6 +47,14 @@ export default function CreateEnvironmentModal({ onClose, onToast }: CreateEnvir
       setLoading(false)
       onClose();
     }
+  }
+
+  const validateUrl = (value: string) => {
+    if (!value.trim()) {
+      setUrlError('')
+      return;
+    }
+    setUrlError(isValidUrl(value.trim()) ? '' : 'Enter a valid URL (include https://)')
   }
 
   return (
@@ -77,12 +95,35 @@ export default function CreateEnvironmentModal({ onClose, onToast }: CreateEnvir
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSubmit()
-              }}
               placeholder="e.g. Staging"
               className="w-full rounded-sm border border-(--color-border) bg-(--color-surface-raised) px-3 py-2 text-[13px] text-(--color-text) outline-none placeholder:text-(--color-text-faint) transition-colors duration-(--transition-fast) focus:border-(--color-border-active)"
             />
+          </div>
+
+
+          {/* URL */}
+
+          <div>
+            <label htmlFor="environment-url" className="mb-1.5 block text-[11px] font-semibold tracking-[0.04em] text-(--color-text-label)">
+              Environment URL <span className="text-red-400">*</span>
+            </label>
+
+            <input
+              id="environment-url"
+              autoFocus
+              value={url} 
+              onChange={(event) => { setUrl(event.target.value); validateUrl(event.target.value) }} 
+              placeholder="https://myapp.com"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSubmit()
+              }}
+              className="w-full rounded-sm border border-(--color-border) bg-(--color-surface-raised) px-3 py-2 text-[13px] text-(--color-text) outline-none placeholder:text-(--color-text-faint) transition-colors duration-(--transition-fast) focus:border-(--color-border-active)"
+            />
+            {urlError ? (
+                <p className="mt-1 text-[12px] text-red-400">{urlError}</p>
+              ) : (
+                <p className="mt-1 text-[12px] leading-relaxed text-(--color-text-faint)">Set the application URL for this environment. This URL is used to allow cross-origin requests from you application</p>
+              )}
           </div>
 
           {/* Icon Picker */}
