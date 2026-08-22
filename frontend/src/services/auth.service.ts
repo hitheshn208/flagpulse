@@ -22,3 +22,8 @@ export async function register(data : AuthUser) : Promise<AuthResponse>{
     const response = await api.post<AuthResponse>("/api/auth/register", data);
     return response.data;
 }
+
+export async function logout() : Promise<void> {
+    await api.post("/api/auth/logout");
+    return;
+}

@@ -6,5 +6,6 @@ exports.findUserByEmail  = async (email) => {
 }
 
 exports.createUser = async (name, email, hashedpassword) => {
-    await db.query("INSERT INTO users (name, email, password_hash, is_verified) VALUES ($1, $2, $3, $4)", [name, email, hashedpassword, true]);
+    const response = await db.query("INSERT INTO users (name, email, password_hash, is_verified) VALUES ($1, $2, $3, $4) RETURNING id, name, email", [name, email, hashedpassword, true]);
+    return response.rows[0];
 }

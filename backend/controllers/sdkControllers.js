@@ -12,15 +12,14 @@ exports.fetchFlags = async (req, res)=>{
         let environment_id = await getEnvIdFromCache(sdkKey);
 
         if(!environment_id){
-            let environment = await getEnvId(sdkKey); //^ fallback to db
-            if(!environment.id)
+            environment_id = await getEnvId(sdkKey); //^ fallback to db
+            if(!environment_id)
                 return res.status(401).json({ message: "Invalid sdk key" });
-            await setEnvIdToCache(environment.id, sdkKey);
+            await setEnvIdToCache(environment_id, sdkKey);
         }
 
 
-        let flags = await getFlagsFromCache(environment_id);
-        //^ Fallback to db
+        let flags = await getFlagsFromCache(environment_id); //^ Fallback to db
         if(!flags){
             flags = await getFlagsFromDb(environment_id);
             await setFlagValuesToCache(environment_id, flags);

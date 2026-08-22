@@ -1,21 +1,21 @@
-
 import { useState } from 'react'
 import { Eye, EyeOff, AlertCircle } from 'lucide-react'
-import { login } from '@/services/auth.service'
 import axios from 'axios'
-import { Link, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { initialiseUser } from '@/features/userSlice'
 import logoDark from "../assets/logo-dark.png"
+import { Link, useNavigate } from 'react-router-dom'
+import { register } from '@/services/auth.service'
+import { initialiseUser } from '@/features/userSlice'
+import { useDispatch } from 'react-redux'
 
-export default function LoginPage() {
+export default function RegisterPage() {
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch()
 
   const handleSubmit = async (e: React.SubmitEvent) => {
@@ -24,21 +24,17 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await login({ email, password })
-
+      const response = await register({name, email, password, confirmPassword});
       dispatch(
         initialiseUser({
           name: response.name,
           email: response.email,
         })
       )
-
-      navigate('/')
+      navigate("/");
     } catch (error: unknown) {
-      console.log(error)
-
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message ?? 'Login failed')
+        setError(error.response?.data?.message ?? 'Registration failed')
       } else {
         setError('An unexpected error occurred')
       }
@@ -57,14 +53,14 @@ export default function LoginPage() {
 
         {/* Keep this area blank for your logo */}
         <div>
-          <img src={logoDark} alt="Flagpulse logo" className='h-15 m-auto w-[70%] mb-4'/>
+          <img src={logoDark} alt="Flagpulse logo" className='h-15 m-auto w-[70%] mb-4' />
         </div>
 
         {/* Card */}
         <div className="bg-(--color-surface) border border-(--color-border) rounded-lg px-7 pt-7 pb-6 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
 
           <h2 className="text-[17px] text-(--color-text) mb-5 tracking-[-0.01em] font-bold ">
-            Sign in to your account
+            Create your account
           </h2>
 
           {/* Error banner */}
@@ -85,6 +81,35 @@ export default function LoginPage() {
             onSubmit={handleSubmit}
             className="flex flex-col gap-3.5"
           >
+
+            {/* Name */}
+            <div>
+              <label className="block text-xs font-medium text-(--color-text-label) mb-1.5">
+                Name
+              </label>
+
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Arjun"
+                required
+                className="
+                  w-full
+                  bg-(--color-surface-raised)
+                  border border-(--color-border)
+                  text-(--color-text)
+                  rounded-sm
+                  px-3 py-2.25
+                  text-[13px]
+                  outline-none
+                  font-sans
+                  transition-colors
+                  placeholder:text-(--color-text-subtle)
+                  focus:border-(--color-border-active)
+                "
+              />
+            </div>
 
             {/* Email */}
             <div>
@@ -126,6 +151,63 @@ export default function LoginPage() {
                   type={showPw ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  minLength={8}
+                  placeholder="••••••••••••"
+                  required
+                  className="
+                    w-full
+                    bg-(--color-surface-raised)
+                    border border-(--color-border)
+                    text-(--color-text)
+                    rounded-sm
+                    px-3 pr-9 py-2.25
+                    text-[13px]
+                    outline-none
+                    font-sans
+                    transition-colors
+                    placeholder:text-(--color-text-subtle)
+                    focus:border-(--color-border-active)
+                  "
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPw((s) => !s)}
+                  className="
+                    absolute
+                    right-2.5
+                    top-1/2
+                    -translate-y-1/2
+                    bg-transparent
+                    border-none
+                    cursor-pointer
+                    text-(--color-text-subtle)
+                    hover:text-(--color-text-muted)
+                    flex
+                    items-center
+                  "
+                >
+                  {showPw ? (
+                    <EyeOff size={14} />
+                  ) : (
+                    <Eye size={14} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-xs font-medium text-(--color-text-label) mb-1.5">
+                Confirm password
+              </label>
+
+              <div className="relative">
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  minLength={8}
                   placeholder="••••••••••••"
                   required
                   className="
@@ -192,15 +274,15 @@ export default function LoginPage() {
                 font-extrabold
               "
             >
-              {loading ? 'Signing in…' : 'Sign in'}
+              {loading ? 'Creating account…' : 'Create account'}
             </button>
 
           </form>
 
-          {/* Setup link */}
+          {/* Login link */}
           <div className="border-t border-(--color-border) mt-5 pt-4 text-center">
             <Link
-              to="/register"
+              to="/login"
               className="
                 text-xs
                 text-(--color-text-link)
@@ -209,7 +291,7 @@ export default function LoginPage() {
                 transition-colors
               "
             >
-              First-time setup? Create your account →
+              Already have an account? Sign in →
             </Link>
           </div>
         </div>

@@ -2,9 +2,7 @@ const db = require("../config/postgres");
 
 exports.getEnvId = async (sdkKey)=>{
     const response = await db.query("SELECT id FROM environments WHERE sdk_key = $1", [sdkKey]);
-    console.log("In get Env", response.rows[0]);
-    
-    return response.rows[0];
+    return response.rows[0]?.id;
 }
 
 exports.getFlagsFromDb = async(environment_id)=>{
@@ -18,7 +16,5 @@ exports.getFlagsFromDb = async(environment_id)=>{
 
 exports.getEnvIdForSSE = async (sdkKey)=>{
     const response = await db.query("SELECT id FROM environments WHERE sdk_key = $1", [sdkKey]);
-    console.log("In get Env", response.rows[0]);
-    
-    return response.rows;
+    return response.rows[0]?.id;
 }

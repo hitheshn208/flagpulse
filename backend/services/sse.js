@@ -1,27 +1,41 @@
-const { getEnvId, getEnvIdForSSE } = require("../model/sdkModel");
+const { getEnvIdFromCache, setEnvIdToCache } = require("../model/flagCache");
+const { getEnvId } = require("../model/sdkModel");
 const AppError = require("../utils/AppError");
 const connections = new Map();
 const dashboardConnections = new Map();
 
-exports.addClient = async (sdkKey, res)=>{
-    const dbRes = await getEnvIdForSSE(sdkKey);
-    if(dbRes.length === 0){
-        console.log("Changed the sdk key");
-        res.write(`data: ${JSON.stringify({"sdkKeyChanged": true})}\n\n`);
+exports.addClient = async (sdkKey, res) => {
+    try {
+        let environment_id = await getEnvIdFromCache(sdkKey);
+
+        if (!environment_id) { // not found in cache
+            environment_id = await getEnvId(sdkKey); // db fallback
+            if (!environment_id) {
+                console.log("Changed the sdk key");
+                res.write(`data: ${JSON.stringify({ type: "sdkKeyChanged" })}\n\n`);
+                res.end();
+                return null;
+            }
+            await setEnvIdToCache(environment_id, sdkKey);
+        }
+
+        if (!connections.has(environment_id))
+            connections.set(environment_id, []);
+        connections.get(environment_id).push(res);
+
+        console.log("Connection set");
+        // broadcastPresence(environment_id);
+        return environment_id;
+    } catch (e) {
+        console.log(e);
+        res.end();
         return null;
     }
-    const envId = dbRes[0].id;
-    if(!connections.has(envId))
-        connections.set(envId, []);
-    connections.get(envId).push(res);                                                                                                                                          
-    console.log("Connection set");
-    broadcastPresence(envId);
-    return envId;
-}
+};
 
-exports.removeClient = async (envId, res)=>{
+exports.removeClient = async (envId, res) => {
     const envClients = connections.get(envId);
-    if(envClients){
+    if (envClients) {
         const updated = envClients.filter(client => client !== res);
         connections.set(envId, updated);
         broadcastPresence(envId);
@@ -31,7 +45,7 @@ exports.removeClient = async (envId, res)=>{
 
 exports.sendClient = async (envId, data) => {
     const envClients = connections.get(envId);
-    if(!envClients){
+    if (!envClients) {
         return;
     }
     envClients.forEach(res => {
@@ -39,13 +53,13 @@ exports.sendClient = async (envId, data) => {
     });
 }
 
-exports.addDashboardClient = async(res, envId)=>{
+exports.addDashboardClient = async (res, envId) => {
     if (!dashboardConnections.has(envId)) {
         dashboardConnections.set(envId, []);
     }
     dashboardConnections.get(envId).push(res);
     console.log("Dasboard Client added");
-    
+
 };
 
 function broadcastPresence(environmentId) {
@@ -58,9 +72,9 @@ function broadcastPresence(environmentId) {
 }
 
 
-exports.removeDashboardClient = async (envId, res)=>{
+exports.removeDashboardClient = async (envId, res) => {
     const envClients = dashboardConnections.get(envId);
-    if(envClients){
+    if (envClients) {
         const updated = envClients.filter(client => client !== res);
         dashboardConnections.set(envId, updated);
         console.log("Removed a dashboard client");

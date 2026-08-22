@@ -10,9 +10,11 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { ActualProject, type Project } from "../data";
+import { ActualProject} from "../data";
 import "./Sidebar.css";
 import { RootState } from "@/app/store";
+import { logout } from "@/services/auth.service";
+import { useNavigate } from "react-router-dom";
 
 type Page =
   | "projects"
@@ -27,6 +29,7 @@ interface SidebarProps {
   onProjectChange: (project: ActualProject) => void;
   collapsed: boolean;
   onToggle: () => void;
+  onToast: (msg: string, type: "success" | "error" | "info") => void;
 }
 
 const NAV = [
@@ -41,11 +44,25 @@ export default function Sidebar({
   onNavigate,
   onProjectChange,
   collapsed,
+  onToast
 }: SidebarProps) {
 
   const currentProject = useSelector((state: RootState) => state.project.currentProject)
   const projects = useSelector((state:RootState)=> state.project.projects)
   const {email, name} = useSelector((state: RootState)=> state.user)
+  const pageNavigate = useNavigate()
+
+  const handleLogout = async ()=>{
+    try{
+      await logout();
+      onToast("Logged out", "success");
+      pageNavigate("/login");
+    }catch(error){
+      onToast("Failed to logout", "error");
+    }finally{
+      
+    }
+  }
 
   return (
     <aside className={`sidebar ${collapsed ? "sidebar--collapsed" : ""}`}>
@@ -153,7 +170,7 @@ export default function Sidebar({
               </div>
             </div>
 
-            <button className="logout-button">
+            <button className="logout-button" onClick={handleLogout}>
               <LogOut size={13} />
             </button>
           </>

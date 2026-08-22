@@ -74,6 +74,7 @@ export default function App() {
         onProjectChange={(p) => {  dispatch(setCurrentProject(p)); dispatch(setPage('flags')) }}
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(s => !s)}
+        onToast={addToast}
       />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>

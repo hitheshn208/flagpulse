@@ -22,9 +22,22 @@ exports.registerUser = async (req, res)=>{
 
     const hashedpassword = await bcrypt.hash(password, 10);
     
-    await createUser(name, email, hashedpassword);
+    const user = await createUser(name, email, hashedpassword);
 
-    return res.status(201).json({
+    const token = jwt.sign(
+        {id: user.id, email: user.email},
+        process.env.JWT_SECRET,
+        {expiresIn: '7d'}
+    )
+
+    res.cookie('token', token, {
+        httpOnly: true,
+        maxAge: 7*24*60*60*1000 
+    });
+
+    return res.status(200).json({
+        name: user.name,
+        email: user.email,
         message: "User registered successfully"
     })
 }
@@ -60,5 +73,14 @@ exports.loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         message: "Login successful",
+    })
+}
+
+exports.logoutUser = async (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true
+    });
+    return res.status(200).json({
+        message: "Logged out"
     })
 }

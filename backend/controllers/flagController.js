@@ -24,7 +24,7 @@ exports.editFlagValue = async (req, res) => {
     const new_value = JSON.stringify(response.new.rows[0]);
 
     await insertAuditLog(req.projectId, flagId, envId, req.user.id, "Flag value changed", old_value, new_value, null, "flag_updation", "flag"); //^Log the changes
-    await sendClient(envId, { type: "flag_updated", ...response.new.rows[0] } ); //^Send edited flags
+    await sendClient(envId, { type: "flag_updated", flag_id: flagId, ...response.new.rows[0] } ); //^Send edited flags
     return res.json(response.new.rows[0]);
 }
 
@@ -74,7 +74,7 @@ exports.toggleFlag = async (req, res) => {
     const {is_enabled} = req.body;
     const response = await changeFlagStatus({envId, flagId, is_enabled});
     await editFlagValuesInCache(envId, response);
-    await sendClient(envId, { reason: "flag_updated", ...response } );
+    await sendClient(envId, { type: "flag_updated", ...response } );
     await insertAuditLog(req.projectId, flagId, envId, req.user.id, null, !is_enabled, is_enabled, null, "flag_toggle", "flag")
     return res.json(response);
 }
