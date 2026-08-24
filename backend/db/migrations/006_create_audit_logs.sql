@@ -5,9 +5,9 @@ CREATE TABLE audit_logs (
   environment_id UUID REFERENCES environments(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   change_summary TEXT,
-  old_value TEXT,
-  new_value TEXT,
-  reason TEXT,
+  old_value TEXT DEFAULT NULL,
+  new_value TEXT DEFAULT NULL,
+  reason TEXT DEFAULT NULL,
   type TEXT,
   domain VARCHAR(50) NOT NULL CHECK (domain IN ('project', 'environment', 'flag')),
   created_at TIMESTAMPTZ  DEFAULT NOW()

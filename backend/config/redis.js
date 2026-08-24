@@ -1,11 +1,7 @@
 const {createClient} = require('redis');
-const dotenv = require('dotenv');
-const path = require('path');
-
-dotenv.config({path: path.join(__dirname, "../../.env")});
 
 const redisClient = createClient({
-    url: process.env.REDIS_URL
+    url: "redis://redis:6379"
 })
 
 redisClient.on('error', (err)=>{

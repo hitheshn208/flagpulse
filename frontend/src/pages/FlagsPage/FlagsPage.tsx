@@ -82,7 +82,6 @@ export default function FlagsPage({ onNavigate, onToast }: FlagsPageProps) {
           envId: environmentId,
         }),
       );
-      console.log("Fetched flags for", currentEnv?.name);
     } catch (error) {
       console.error("Failed to fetch flags:", error);
       onToast("Failed to fetch flags", "error");

@@ -145,3 +145,4 @@ vite.config.ts.timestamp-*
 
 test
 .vscode
+sdk-test-app

@@ -7,10 +7,10 @@ import { router } from './routes/router'
 import { store } from './app/store'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  // <React.StrictMode>
-  //   <App />
-  // </React.StrictMode>,
-  <Provider store={store}>
-    <RouterProvider router={router}/>
-  </Provider>
+  <React.StrictMode>
+    <Provider store={store}>
+      <RouterProvider router={router}/>
+    </Provider>
+  </React.StrictMode>,
+  
 )

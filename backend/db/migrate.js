@@ -1,39 +1,60 @@
 const {Client} = require("pg");
 const fs = require('fs');
 const path = require("path");
-const dotenv = require("dotenv");
-const { log } = require("console");
-
-dotenv.config({path: path.join(__dirname, "../../.env")})
 
 const client = new Client({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    host: "postgres",
+    port: 5432,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
 });
 
+const createTrackTable = async ()=>{
+    await client.query(`
+        CREATE TABLE IF NOT EXISTS schema_migrations (
+            id SERIAL PRIMARY KEY,
+            file_name TEXT NOT NULL UNIQUE
+        )`)
+}
+
+const getMigratedFiles = async ()=>{
+    const response = await client.query(`SELECT file_name FROM schema_migrations`);
+    const files = response.rows.map(row=> row.file_name);
+    return files
+}
+
 const run = async ()=>{
     await client.connect();
     console.log("Connected to Postgres");
 
+    await createTrackTable();
+
     const mdir = path.join(__dirname, "migrations");
-    console.log(mdir)
     const files = fs.readdirSync(mdir).filter(f => f.endsWith(".sql")).sort();
-    console.log(files);
-    
+    const migratedFiles = await getMigratedFiles(); 
 
     for(let i = 0; i < files.length; i++){
         const file = files[i];
-        const filePath = path.join(mdir, file);
-        console.log("File path printing", filePath);
-        const sql = fs.readFileSync(filePath, 'utf-8');
-        console.log("Running migration : ", file)
-        await client.query(sql);
-        console.log("Done : ", file);
-    }
 
+        if(migratedFiles.includes(file))
+            continue;
+
+        const filePath = path.join(mdir, file);
+        const sql = fs.readFileSync(filePath, 'utf-8');
+        await client.query("BEGIN");
+        try {
+            await client.query(sql);
+            await client.query(
+                `INSERT INTO schema_migrations (file_name) VALUES ($1)`,
+                [file]
+            );
+            await client.query("COMMIT");
+        } catch (err) {
+            await client.query("ROLLBACK");
+            throw err;
+        }
+    }
     console.log('All migrations completed successfully')
     await client.end()
 }

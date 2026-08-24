@@ -24,7 +24,6 @@ const flagSlice = createSlice({
             const flag = flags?.find(flag => flag.id === action.payload.flagId)
             if(flag)
                 flag.is_enabled = action.payload.value
-            console.log(action.payload.envId, action.payload.flagId, action.payload.value, flag);
         },
 
         setEditValue: (state, action)=>{
@@ -33,7 +32,6 @@ const flagSlice = createSlice({
             if (flag) {
                 Object.assign(flag, action.payload.data);
             }
-            console.log(action.payload.envId, action.payload.flagId, action.payload.data, flag);
         },
         
         setCurrentFlag: (state, action)=>{

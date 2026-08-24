@@ -113,8 +113,6 @@ export default function CreateFlagPage({
           break;
       }
     }
-    console.log(result);
-    
     return result;
   };
 

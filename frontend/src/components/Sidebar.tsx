@@ -5,7 +5,6 @@ import {
   ScrollText,
   ChevronDown,
   LogOut,
-  Zap,
 } from "lucide-react";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +14,8 @@ import "./Sidebar.css";
 import { RootState } from "@/app/store";
 import { logout } from "@/services/auth.service";
 import { useNavigate } from "react-router-dom";
+import iconDark from "../assets/cropped-icon-light.svg"
+import fontDark from "../assets/cropped-font-dark.svg"
 
 type Page =
   | "projects"
@@ -69,12 +70,12 @@ export default function Sidebar({
       {/* Logo */}
       <div className="sidebar__logo">
         <div className="sidebar__logo-icon">
-          <Zap size={14} fill="var(--color-text-primary)" stroke="none" />
+          <img src={iconDark} alt="icon" className="sidebar__logo-icon-img" />
         </div>
 
         {!collapsed && (
           <span className="sidebar__logo-text">
-            FlagPulse
+            <img src={fontDark} alt="flagpulse" />
           </span>
         )}
       </div>

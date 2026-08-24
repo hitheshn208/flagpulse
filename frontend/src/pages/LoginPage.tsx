@@ -35,8 +35,6 @@ export default function LoginPage() {
 
       navigate('/')
     } catch (error: unknown) {
-      console.log(error)
-
       if (axios.isAxiosError(error)) {
         setError(error.response?.data?.message ?? 'Login failed')
       } else {

@@ -23,9 +23,7 @@ exports.fetchFlags = async (req, res)=>{
         if(!flags){
             flags = await getFlagsFromDb(environment_id);
             await setFlagValuesToCache(environment_id, flags);
-            console.log("Cache miss");
-        }else
-            console.log("Cache hit");
+        }
         
         return res.json(flags);
     }catch(e){

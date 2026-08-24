@@ -11,7 +11,6 @@ exports.addClient = async (sdkKey, res) => {
         if (!environment_id) { // not found in cache
             environment_id = await getEnvId(sdkKey); // db fallback
             if (!environment_id) {
-                console.log("Changed the sdk key");
                 res.write(`data: ${JSON.stringify({ type: "sdkKeyChanged" })}\n\n`);
                 res.end();
                 return null;
@@ -22,12 +21,9 @@ exports.addClient = async (sdkKey, res) => {
         if (!connections.has(environment_id))
             connections.set(environment_id, []);
         connections.get(environment_id).push(res);
-
-        console.log("Connection set");
         // broadcastPresence(environment_id);
         return environment_id;
     } catch (e) {
-        console.log(e);
         res.end();
         return null;
     }
@@ -39,7 +35,6 @@ exports.removeClient = async (envId, res) => {
         const updated = envClients.filter(client => client !== res);
         connections.set(envId, updated);
         broadcastPresence(envId);
-        console.log("Removed a client");
     }
 }
 
@@ -58,7 +53,6 @@ exports.addDashboardClient = async (res, envId) => {
         dashboardConnections.set(envId, []);
     }
     dashboardConnections.get(envId).push(res);
-    console.log("Dasboard Client added");
 
 };
 
@@ -77,6 +71,5 @@ exports.removeDashboardClient = async (envId, res) => {
     if (envClients) {
         const updated = envClients.filter(client => client !== res);
         dashboardConnections.set(envId, updated);
-        console.log("Removed a dashboard client");
     }
 }
