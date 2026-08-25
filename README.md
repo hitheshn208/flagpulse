@@ -450,7 +450,7 @@ For larger changes, it is recommended to discuss the proposed architecture befor
 
 ## License
 
-This project is licensed under the **ISC License**.
+This project is licensed under the **GPLv3 License**.
 
 ---
 
