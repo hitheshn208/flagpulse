@@ -415,7 +415,7 @@ The backend mounts the SDK and SSE endpoints separately from the authenticated d
 
 Full documentation:
 
-**[FlagPulse Documentation](YOUR_DOCUMENTATION_LINK_HERE)**
+**[FlagPulse Documentation](https://flagpulse.h208.me/)**
 
 ---
 
