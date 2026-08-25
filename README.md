@@ -1,333 +1,314 @@
 # FlagPulse
 
-> A self-hosted feature flag management platform for controlling application behavior across environments.
+<p align="center">
+  <strong>Feature flags without the deployment anxiety.</strong>
+</p>
 
-FlagPulse provides a centralized dashboard for creating, managing, and monitoring feature flags across multiple projects and environments.
+<p align="center">
+  FlagPulse is a self-hosted feature flag management platform for controlling application behavior across environments, with real-time updates through Server-Sent Events.
+</p>
 
-It is designed around **environment-specific flag configuration**, **real-time updates**, **auditability**, and **SDK-based flag consumption**.
-
----
-
-## ✨ Features
-
-* 🔐 **Authentication**
-
-  * User registration and login
-  * JWT-based authentication
-  * HTTP-only authentication cookies
-
-* 📁 **Project Management**
-
-  * Create and manage projects
-  * Organize feature flags by project
-
-* 🌎 **Environment Management**
-
-  * Create multiple environments per project
-  * Configure environment URLs
-  * Generate and rotate SDK keys
-
-* 🚩 **Feature Flags**
-
-  * Boolean flags
-  * String flags
-  * Number flags
-  * JSON flags
-  * Environment-specific flag values
-  * Enable / disable flags
-  * Default values
-  * Rollout percentage
-  * Targeting attributes and values
-
-* ⚡ **Real-time Updates**
-
-  * Server-Sent Events (SSE)
-  * Dashboard updates without polling
-  * Flag changes propagated to connected clients
-
-* 📝 **Audit Logs**
-
-  * Track project changes
-  * Track environment changes
-  * Track flag creation, updates, toggles and deletion
-  * Track SDK key rotation
-  * View previous and new values where applicable
-
-* 🚀 **Caching**
-
-  * Redis-based flag caching
-  * SDK key → environment lookup caching
-  * Cache invalidation when flag configuration changes
-
-* 🛡️ **Dynamic CORS**
-
-  * Environment URLs are synchronized into Redis
-  * Requests can be validated against registered project origins
-
-* 🐳 **Dockerized Deployment**
-
-  * PostgreSQL
-  * Redis
-  * Backend
-  * Nginx-served frontend
-  * Docker Compose orchestration
+<p align="center">
+  <a href="#documentation">Documentation</a>
+  ·
+  <a href="#getting-started">Getting Started</a>
+  ·
+  <a href="#architecture">Architecture</a>
+  ·
+  <a href="#contributing">Contributing</a>
+</p>
 
 ---
 
-## 🏗️ Architecture
+## Overview
 
-FlagPulse consists of four primary application layers:
+FlagPulse provides a central place to create, manage, and monitor feature flags across multiple projects and environments.
 
-```text
-                    ┌──────────────────────┐
-                    │      FlagPulse UI     │
-                    │    React + Vite       │
-                    └──────────┬───────────┘
-                               │
-                               │ HTTP
-                               ▼
-                    ┌──────────────────────┐
-                    │     Nginx / Proxy     │
-                    └──────────┬───────────┘
-                               │
-                               ▼
-                    ┌──────────────────────┐
-                    │   Express Backend    │
-                    │       Node.js        │
-                    └──────┬────────┬──────┘
-                           │        │
-                ┌──────────┘        └──────────┐
-                ▼                              ▼
-       ┌────────────────┐              ┌────────────────┐
-       │   PostgreSQL   │              │     Redis      │
-       │ Persistent Data│              │ Cache + SSE    │
-       └────────────────┘              └────────────────┘
+Instead of coupling feature releases directly to deployments, FlagPulse allows applications to retrieve their flag configuration through the SDK and receive changes in real time. The platform combines a management dashboard, API, PostgreSQL persistence, Redis caching, and an SSE-based update layer into a single deployable stack.
+
+FlagPulse currently supports typed feature flags, environment-specific values, SDK key management, audit logging, caching, and real-time flag synchronization.
+
+---
+
+## Tech Stack
+
+<p align="center">
+
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
+
+</p>
+
+| Layer             | Technology              | Purpose                                            |
+| ----------------- | ----------------------- | -------------------------------------------------- |
+| Dashboard         | React + TypeScript      | Feature flag management interface                  |
+| Build Tool        | Vite                    | Frontend development and production build          |
+| State Management  | Redux Toolkit           | Application and project state                      |
+| Backend           | Node.js + Express       | REST API and server-side logic                     |
+| Database          | PostgreSQL              | Persistent application data                        |
+| Cache             | Redis                   | Flag and SDK key caching                           |
+| Real-time Updates | Server-Sent Events      | Push flag changes to connected clients             |
+| Authentication    | JWT + HTTP-only Cookies | User authentication and session handling           |
+| Reverse Proxy     | Nginx                   | Serves the frontend and routes application traffic |
+| Deployment        | Docker Compose          | Runs the complete FlagPulse stack                  |
+
+---
+
+## Core Features
+
+| Feature            | Description                                                              |
+| ------------------ | ------------------------------------------------------------------------ |
+| Projects           | Organize feature flags and environments into separate projects           |
+| Environments       | Manage independent environments with individual SDK keys                 |
+| Typed Flags        | Create boolean, string, number, and JSON feature flags                   |
+| Environment Values | Maintain flag state and configuration independently for each environment |
+| Real-time Updates  | Propagate flag changes to connected SDK clients through SSE              |
+| Redis Caching      | Cache flag configurations and SDK key lookups for faster access          |
+| SDK Key Rotation   | Rotate environment SDK keys and invalidate the previous key              |
+| Audit Logs         | Track project, environment, and flag changes                             |
+| Authentication     | Register, login, logout, and protect management APIs                     |
+| Project Isolation  | Associate management requests with the active FlagPulse project          |
+| Docker Deployment  | Run the dashboard, backend, PostgreSQL, Redis, and Nginx together        |
+
+---
+
+## How FlagPulse Works
+
+At a high level, FlagPulse separates **flag management** from **flag consumption**.
+
+The dashboard communicates with the backend to manage projects, environments, and flags. The backend persists configuration in PostgreSQL while Redis is used as a cache layer. Applications using the SDK authenticate using an environment-specific SDK key, retrieve their flags, and maintain a real-time SSE connection for subsequent updates.
+
+### Architecture
+```mermaid
+flowchart LR
+    Dashboard["Dashboard<br>React + TypeScript"] L_Dashboard_Nginx_0@-- HTTPS --> Nginx["Nginx<br>Reverse Proxy"]
+    Nginx L_Nginx_Backend_0@-- HTTP --> Backend["Backend API<br>Node.js + Express"]
+    Backend -- Read / Write --> Postgres[("PostgreSQL")]
+    Backend -- Cache --> Redis[("Redis")]
+    SDK["SDK Clients"] L_SDK_Nginx_0@-- REST API --> Nginx
+    Backend L_Backend_SDK_0@-- SSE --> SDK
+
+
+    L_Dashboard_Nginx_0@{ animation: none } 
+    L_Nginx_Backend_0@{ animation: none } 
+    L_SDK_Nginx_0@{ animation: none } 
+    L_Backend_SDK_0@{ animation: slow }
 ```
 
-The backend exposes dashboard APIs as well as endpoints used by SDK clients and SSE connections.
+## Flag Lifecycle
+
+A flag belongs to a project and receives an environment-specific value for every environment associated with that project.
+
+The flag definition contains its key, name, type, default value, and description. The environment-specific value controls whether the flag is enabled and stores additional configuration for that environment.
+
+| Flag Type | Example Value     | Typical Use                         |
+| --------- | ----------------- | ----------------------------------- |
+| `boolean` | `true`            | Enable or disable a feature         |
+| `string`  | `"new-dashboard"` | Change text or configuration values |
+| `number`  | `50`              | Numeric configuration               |
+| `json`    | `{ ... }`         | Structured configuration            |
+
+The underlying data model separates the flag definition from its environment-specific values, allowing the same flag to behave differently across environments.
 
 ---
 
-## 🔄 Flag Update Flow
+## Real-Time Updates
 
-When a flag is changed from the dashboard:
+FlagPulse uses **Server-Sent Events (SSE)** to propagate changes from the platform to connected SDK clients.
 
-1. The dashboard sends the update to the backend.
-2. The backend updates the environment-specific flag value.
-3. Relevant Redis cache entries are updated or invalidated.
-4. An audit log is created.
-5. An SSE event is sent to connected clients.
-6. Connected SDK/dashboard clients can react to the update.
+When a flag is updated, the backend updates the corresponding environment value, updates or invalidates the Redis cache, records the change in the audit log, and publishes an SSE event for the affected environment.
 
-This allows flag configuration changes to propagate without relying on continuous polling.
+This allows connected clients to react to flag changes without repeatedly polling the API. The dashboard's SDK usage preview also reflects the intended real-time SSE-based consumption model.
 
----
+```mermaid
+sequenceDiagram
+    participant Dashboard as Dashboard (Admin)
+    participant Backend as Backend API
+    participant Redis as Redis (Cache)
+    participant SDK as SDK Client
 
-## 🧩 Core Concepts
+    SDK->>Backend: GET /stream?sdkKey=xxx (EventSource)
+    Backend-->>SDK: 200 OK, connection held open
+    Backend-->>SDK: event: connected
 
-### Projects
+    Note over SDK,Backend: Connection stays open (SSE)
 
-A project represents an application or service managed through FlagPulse.
+    Dashboard->>Backend: PATCH /flags/:id (toggle ON)
+    Backend->>Redis: Update cached flag value
+    Backend-->>SDK: event: flag_updated (pushed instantly)
+    SDK->>SDK: Update local flag cache, notify subscribers
 
-Each project can contain:
-
-* Multiple environments
-* Multiple feature flags
-* Audit history
-
-### Environments
-
-Environments allow the same feature flag to have different configurations depending on where the application is running.
-
-For example:
-
-```text
-Project: My Application
-
-├── Development
-├── Staging
-└── Production
+    Note over SDK: No polling — UI reacts within ms
 ```
 
-Each environment has its own SDK key and flag values.
+---
 
-### Feature Flags
+## SDK Request Flow
 
-A feature flag defines a configurable value that can be consumed by an application.
+The SDK uses an environment-specific SDK key to retrieve the flags belonging to that environment.
 
-Supported types:
+Flag retrieval follows a cache-first approach. The backend first attempts to resolve the SDK key and flag configuration through Redis before falling back to PostgreSQL when the required data is not cached.
 
-| Type    | Example               |
-| ------- | --------------------- |
-| Boolean | `true`                |
-| String  | `"new-dashboard"`     |
-| Number  | `50`                  |
-| JSON    | `{ "theme": "dark" }` |
+This keeps frequently accessed flag configuration away from the database while still allowing the database to remain the source of truth.
 
-Flag configuration can vary between environments.
+```mermaid
+flowchart TD
+    Start(["SDK requests flags<br/>using environment SDK key"]) --> CheckCache{"Cached in<br/>Redis?"}
 
-### Rollouts
+    CheckCache -- "Yes" --> ReturnCache["Return flag config<br/>from Redis"]
+    CheckCache -- "No" --> QueryDB["Query PostgreSQL<br/>using environment_id"]
 
-Flags support percentage-based rollout configuration.
+    QueryDB --> Found{"Valid SDK key /<br/>environment found?"}
+    Found -- "No" --> Reject["401 Unauthorized"]
+    Found -- "Yes" --> PopulateCache["Write result to Redis<br/>(keyed by environment_id)"]
 
-For example:
+    PopulateCache --> ReturnDB["Return flag config"]
 
-```text
-Feature: new-checkout
+    ReturnCache --> End(["SDK caches values locally<br/>+ opens SSE connection"])
+    ReturnDB --> End
 
-Development → 100%
-Staging     → 50%
-Production  → 10%
+    style CheckCache stroke:#3b82f6,stroke-width:2px
 ```
-
-### Targeting
-
-Flag values can also contain targeting information:
-
-```text
-Targeting Attribute
-        ↓
-Targeting Value
-        ↓
-Return Value
-```
-
-This allows applications to receive different flag values based on configured targeting information.
 
 ---
 
-## ⚡ Real-Time Updates
+## Data Model
 
-FlagPulse uses **Server-Sent Events (SSE)** for real-time flag updates.
+FlagPulse uses PostgreSQL as its persistent data store.
 
-Instead of repeatedly polling the server:
+| Entity         | Responsibility                                           |
+| -------------- | -------------------------------------------------------- |
+| `users`        | Stores authenticated users                               |
+| `projects`     | Stores FlagPulse projects                                |
+| `environments` | Stores environments and their SDK keys                   |
+| `flags`        | Stores flag definitions                                  |
+| `flag_values`  | Stores environment-specific flag configuration           |
+| `audit_logs`   | Stores changes made to projects, environments, and flags |
 
-```text
-Client ── request ──> Server
-Client <── response ── Server
+The relationship between flags and environments is represented through `flag_values`, allowing each environment to maintain its own state for the same feature flag. The schema also supports rollout percentage and targeting-related fields at the data-model level.
 
-Client ── request ──> Server
-Client <── response ── Server
+```mermaid
+erDiagram
+	direction TB
+	USERS {
+		uuid id PK ""  
+		string email  ""
+  string name ""
+		string password_hash  ""  
+	}
+
+	PROJECTS {
+		uuid id PK ""  
+		uuid user_id FK ""  
+		string name  ""  
+	}
+
+	ENVIRONMENTS {
+		uuid id PK ""  
+		uuid project_id FK ""  
+		string name  ""  
+		string sdk_key  ""
+  string url ""
+	}
+
+	FLAGS {
+		uuid id PK ""  
+		uuid project_id FK ""  
+		string key  ""  
+		string description  ""  
+	}
+
+	AUDIT_LOGS {
+		uuid id PK ""  
+		uuid project_id FK ""
+  uuid environment_id FK "nullable, ON DELETE SET NULL" 
+		uuid flag_id FK "nullable, ON DELETE SET NULL"  
+		string action  ""  
+		timestamptz created_at  ""  
+	}
+
+	FLAG_VALUES {
+		uuid id PK ""  
+		uuid flag_id FK ""  
+		uuid environment_id FK ""  
+		boolean enabled  ""  
+		timestamptz updated_at  ""  
+	}
+
+	USERS||--o{PROJECTS:"owns"
+	PROJECTS||--o{ENVIRONMENTS:"contains"
+	PROJECTS||--o{FLAGS:"contains"
+	ENVIRONMENTS||--o{FLAG_VALUES:"has"
+	FLAGS}|--o{FLAG_VALUES:"has"
+	PROJECTS||--o{AUDIT_LOGS:"logs"
+	FLAGS|o--o{AUDIT_LOGS:"logs (nullable FK)"
+	ENVIRONMENTS}|--|{AUDIT_LOGS:"logs"
+
 ```
 
-FlagPulse maintains an SSE connection:
+---
 
-```text
-Client ═══════════════════════> Server
-       <────── SSE events ─────
-       <────── SSE events ─────
-       <────── SSE events ─────
-```
+## Dashboard
 
-Flag changes such as creation, updates, toggles, and deletion can trigger events for connected clients.
+The FlagPulse dashboard provides the management interface for projects and their feature flags.
+
+The current dashboard is organized around projects, flags, environments, audit logs, and settings, with project switching available from the main navigation.
+
+| Section      | Purpose                                                    |
+| ------------ | ---------------------------------------------------------- |
+| Projects     | Create and switch between projects                         |
+| Flags        | Create, inspect, update, enable, disable, and delete flags |
+| Environments | Manage environments and SDK keys                           |
+| Audit Log    | Review project, environment, and flag changes              |
+| Settings     | Manage application-level settings                          |
+| Create Flag  | Define new feature flags and their default values          |
 
 ---
 
-## 🗃️ Data Model
+## Audit Logging
 
-FlagPulse currently uses PostgreSQL for persistent application data.
+FlagPulse records important management actions so changes can be traced back to their source.
 
-The core entities are:
+Supported audit events include:
 
-```text
-User
- │
- └── Project
-      │
-      ├── Environment
-      │     └── Flag Value
-      │
-      └── Flag
-            └── Flag Value
+* Project creation
+* Environment creation and deletion
+* Flag creation, update, toggle, and deletion
+* SDK key rotation
 
-Project
- │
- └── Audit Logs
-```
-
-The database contains separate entities for users, projects, environments, flags, environment-specific flag values, and audit logs.
-
-The database schema is managed through numbered SQL migrations.
+Audit records retain information such as the project, flag, environment, user, previous value, new value, change type, and timestamp.
 
 ---
 
-## 🧠 Caching
+## Security
 
-Redis is used for frequently accessed and short-lived data.
+FlagPulse uses several layers of application security:
 
-Current caching includes:
+| Area                    | Implementation                      |
+| ----------------------- | ----------------------------------- |
+| Authentication          | JWT                                 |
+| Session Storage         | HTTP-only cookie                    |
+| Password Security       | bcrypt                              |
+| API Protection          | Authentication middleware           |
+| SDK Authentication      | Environment-specific SDK key        |
+| SDK Key Rotation        | Previous key invalidation           |
+| CORS                    | Project/environment origin handling |
+| Sensitive Configuration | Environment variables               |
 
-* Environment ID lookup by SDK key
-* Environment flag values
-* Registered CORS origins
+User authentication tokens are issued as HTTP-only cookies, while protected project, environment, and flag routes require authentication.
 
-Flag values are cached per environment and invalidated when relevant configuration changes.
-
-This reduces repeated database queries for SDK flag retrieval.
-
----
-
-## 🔐 Authentication & Security
-
-The dashboard API uses JWT-based authentication.
-
-Authentication flow:
-
-```text
-Login
-  │
-  ▼
-JWT generated
-  │
-  ▼
-HTTP-only cookie
-  │
-  ▼
-Authenticated API requests
-```
-
-Passwords are hashed before being stored.
-
-Protected dashboard routes require a valid authentication cookie.
-
-SDK access is handled separately through environment-specific SDK keys.
+SDK keys can also be rotated from the environment management interface, invalidating the existing key and requiring connected clients to switch to the new key.
 
 ---
 
-## 📡 API Structure
-
-The backend is organized around resource-specific API routes:
-
-```text
-/api/auth
-/api/projects
-/api/environments
-/api/flags
-/api/v1
-/api/v1/stream
-```
-
-The `/api/v1` namespace contains SDK-facing functionality, while the dashboard uses the authenticated project, environment, and flag APIs.
-
----
-
-## 🖥️ Dashboard
-
-The FlagPulse dashboard provides interfaces for:
-
-* Projects
-* Feature flags
-* Environments
-* Flag creation and editing
-* Environment-specific flag configuration
-* Settings
-* Audit logs
-
-The frontend uses React with TypeScript and Redux-based state management.
-
----
-
-## 📂 Project Structure
+## Project Structure
 
 ```text
 flagpulse/
@@ -359,75 +340,26 @@ flagpulse/
 └── .dockerignore
 ```
 
-## The backend follows a controller/model/route structure, while the frontend separates pages, components, Redux features, routing, and API services.
+## The backend is organized around controllers, models, routes, middleware, services, database migrations, and utility modules, while the frontend separates pages, reusable components, Redux slices, routing, and API services.
 
-## 🛠️ Tech Stack
-
-### Frontend
-
-* React
-* TypeScript
-* Vite
-* Redux
-* React Router
-* Lucide React
-
-### Backend
-
-* Node.js
-* Express
-* PostgreSQL
-* Redis
-* JWT
-* bcrypt
-* Server-Sent Events
-
-### Infrastructure
-
-* Docker
-* Docker Compose
-* Nginx
-
-The current Docker Compose setup runs PostgreSQL, Redis, the backend, and the Nginx/frontend service on a shared Docker network.
-
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-Make sure you have:
+Make sure the following are installed:
 
 * Docker
 * Docker Compose
 
-For local development without Docker, install:
+### Configuration
 
-* Node.js
-* PostgreSQL
-* Redis
-
----
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/hitheshn208/flagpulse.git
-
-cd flagpulse
-```
-
----
-
-### 2. Configure environment variables
-
-Create a `.env` file from the example:
+Create an environment file from the provided example:
 
 ```bash
 cp .env.example .env
 ```
 
-Configure:
+Configure the required database, JWT, and exposed port values:
 
 ```env
 DB_USER=
@@ -439,144 +371,91 @@ JWT_SECRET=
 PORT=
 ```
 
-Do not commit your `.env` file.
+These variables are consumed by the Docker Compose services and backend configuration.
 
----
+### Run FlagPulse
 
-### 3. Start FlagPulse
+Start the complete stack with:
 
 ```bash
 docker compose up --build
 ```
 
-The backend automatically runs database migrations before starting the server.
+The backend automatically runs database migrations before starting the server. PostgreSQL and Redis run as separate services, while the frontend is served through Nginx.
+
+### Services
+
+| Service    | Technology        | Role                              |
+| ---------- | ----------------- | --------------------------------- |
+| `postgres` | PostgreSQL 16     | Persistent database               |
+| `redis`    | Redis 7           | Cache and temporary state         |
+| `backend`  | Node.js + Express | API and real-time services        |
+| `nginx`    | Nginx             | Frontend server and reverse proxy |
+
+All services communicate through the dedicated `flagpulse_net` Docker network, with persistent volumes for PostgreSQL and Redis data.
 
 ---
 
-### 4. Open the dashboard
+## API
 
-Once the containers are running, open:
+FlagPulse exposes separate API surfaces for authentication, project management, environment management, flag management, SDK access, and real-time streaming.
 
-```text
-http://localhost:<PORT>
-```
+| API Area       | Base Path           |
+| -------------- | ------------------- |
+| Authentication | `/api/auth`         |
+| Projects       | `/api/projects`     |
+| Environments   | `/api/environments` |
+| Flags          | `/api/flags`        |
+| SDK            | `/api/v1`           |
+| SSE            | `/api/v1/stream`    |
 
-The frontend is served through Nginx.
-
----
-
-## 🧪 Development
-
-### Backend
-
-```bash
-cd backend
-
-npm install
-npm run dev
-```
-
-### Frontend
-
-```bash
-cd frontend
-
-npm install
-npm run dev
-```
+The backend mounts the SDK and SSE endpoints separately from the authenticated dashboard API routes.
 
 ---
 
-## 🗄️ Database Migrations
+## Documentation
 
-FlagPulse uses a migration-based PostgreSQL schema.
+Full documentation:
 
-Migrations are stored under:
-
-```text
-backend/db/migrations/
-```
-
-They are executed automatically when the Docker backend starts.
-
-Migration tracking is handled through the `schema_migrations` table.
+**[FlagPulse Documentation](YOUR_DOCUMENTATION_LINK_HERE)**
 
 ---
 
-## 📦 SDK Integration
+## Roadmap
 
-FlagPulse provides SDK support for consuming feature flags from applications.
-
-The SDK communicates with the FlagPulse backend using an environment-specific SDK key and can receive real-time updates through SSE.
-
-For SDK installation, usage, and framework-specific integration, see the dedicated **FlagPulse SDK repository**.
-
-> The SDK is intentionally maintained separately from this platform repository.
-
----
-
-## 🐳 Docker Services
-
-The production-style Docker setup consists of:
-
-| Service    | Purpose                            |
-| ---------- | ---------------------------------- |
-| `postgres` | Persistent application data        |
-| `redis`    | Caching and temporary state        |
-| `backend`  | Express API and SSE services       |
-| `nginx`    | Frontend serving and reverse proxy |
-
-Docker volumes are used for PostgreSQL and Redis persistence.
+| Area                   | Status             |
+| ---------------------- | ------------------ |
+| Project management     | Implemented        |
+| Environment management | Implemented        |
+| Typed feature flags    | Implemented        |
+| SDK key management     | Implemented        |
+| Redis caching          | Implemented        |
+| SSE updates            | Implemented        |
+| Audit logging          | Implemented        |
+| Docker deployment      | Implemented        |
+| Percentage rollouts    | Data model present |
+| Targeting              | Data model present |
 
 ---
 
-## 🗺️ Roadmap
-
-Potential future improvements:
-
-* [ ] Team members and project collaboration
-* [ ] Role-based access control
-* [ ] Advanced targeting rules
-* [ ] Percentage rollout improvements
-* [ ] Flag scheduling
-* [ ] Change approval workflows
-* [ ] Webhooks
-* [ ] More SDK integrations
-* [ ] Usage and flag evaluation analytics
-* [ ] Improved observability
-
----
-
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome.
 
-1. Fork the repository.
-2. Create a feature branch.
+If you would like to contribute to FlagPulse, start by opening an issue to discuss the change or submit a pull request with a clear description of the problem and implementation.
 
-```bash
-git checkout -b feature/your-feature
-```
-
-3. Make your changes.
-4. Commit your changes.
-
-```bash
-git commit -m "feat: add your feature"
-```
-
-5. Push the branch.
-
-```bash
-git push origin feature/your-feature
-```
-
-6. Open a Pull Request.
+For larger changes, it is recommended to discuss the proposed architecture before implementation.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **ISC License**.
 
-See `LICENSE` for details.
+---
+
+## Author
+
+**Hithesh N**
+
+Built with Node.js, React, PostgreSQL, Redis, Docker, and a lot of feature flags.
