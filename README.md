@@ -340,8 +340,6 @@ flagpulse/
 └── .dockerignore
 ```
 
-## The backend is organized around controllers, models, routes, middleware, services, database migrations, and utility modules, while the frontend separates pages, reusable components, Redux slices, routing, and API services.
-
 ## Getting Started
 
 ### Prerequisites
@@ -456,6 +454,6 @@ This project is licensed under the **ISC License**.
 
 ## Author
 
-**Hithesh N**
+**N Hithesh Kumar**
 
 Built with Node.js, React, PostgreSQL, Redis, Docker, and a lot of feature flags.
