@@ -109,7 +109,6 @@ export default function FlagDetailSlideOver({
       const response = await getFlagEnvironmentValues(flagId);
       setFlagEnvironmentsValues(response);
     } catch (error) {
-      console.error("Failed to fetch flag environment values:", error);
       onToast("Failed to load flag environments", "error");
     }
   };

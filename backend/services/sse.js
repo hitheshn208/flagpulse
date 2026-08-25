@@ -34,7 +34,7 @@ exports.removeClient = async (envId, res) => {
     if (envClients) {
         const updated = envClients.filter(client => client !== res);
         connections.set(envId, updated);
-        broadcastPresence(envId);
+        // broadcastPresence(envId);
     }
 }
 

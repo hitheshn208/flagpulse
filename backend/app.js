@@ -19,18 +19,9 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.use((req, res, next) => {
-    console.log(req.method, req.path);
-    next();
-})
-
 app.use("/api/v1/stream", projectOriginCors, sseRouter);
 app.use("/api/v1", projectOriginCors, sdkRouter);
 
-app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
-    credentials: true
-}));
 app.use("/api/auth", authRouter);
 app.use("/api/projects", verifyUser, projectRouter);
 app.use("/api/environments", verifyUser, envRouter);

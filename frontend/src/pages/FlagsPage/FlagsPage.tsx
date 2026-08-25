@@ -83,7 +83,6 @@ export default function FlagsPage({ onNavigate, onToast }: FlagsPageProps) {
         }),
       );
     } catch (error) {
-      console.error("Failed to fetch flags:", error);
       onToast("Failed to fetch flags", "error");
     } finally {
       setLoading(false);

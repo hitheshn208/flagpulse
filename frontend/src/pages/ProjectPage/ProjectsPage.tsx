@@ -14,7 +14,6 @@ interface ProjectsPageProps {
 }
 
 export default function ProjectsPage({projects, onSelectProject, onToast}: ProjectsPageProps) {
-  console.log(projects);
   const [newProjectModal, setNewProjectModal] = useState(false);
 
   const totalFlags = projects.reduce(
