@@ -1,8 +1,4 @@
-# FlagPulse
-
-<p align="center">
-  <strong>Feature flags without the deployment anxiety.</strong>
-</p>
+![FlagPulse Architecture](./assets/Banner.png)
 
 <p align="center">
   FlagPulse is a self-hosted feature flag management platform for controlling application behavior across environments, with real-time updates through Server-Sent Events.
@@ -29,6 +25,21 @@ FlagPulse provides a central place to create, manage, and monitor feature flags 
 Instead of coupling feature releases directly to deployments, FlagPulse allows applications to retrieve their flag configuration through the SDK and receive changes in real time. The platform combines a management dashboard, API, PostgreSQL persistence, Redis caching, and an SSE-based update layer into a single deployable stack.
 
 FlagPulse currently supports typed feature flags, environment-specific values, SDK key management, audit logging, caching, and real-time flag synchronization.
+
+---
+
+## Screenshots
+
+<table>
+  <tr>
+    <td><img src="./assets/screenshot1.png" alt="Screenshot 1"></td>
+    <td><img src="./assets/screenshot2.png" alt="Screenshot 2"></td>
+  </tr>
+  <tr>
+    <td><img src="./assets/screenshot3.png" alt="Screenshot 3"></td>
+    <td><img src="./assets/screenshot4.png" alt="Screenshot 4"></td>
+  </tr>
+</table>
 
 ---
 

@@ -5,3 +5,6 @@
 **/.gitignore
 **/.gitattributes
 .git
+LICENSE
+README.md
+assets
